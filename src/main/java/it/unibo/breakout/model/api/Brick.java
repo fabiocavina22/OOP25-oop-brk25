@@ -6,4 +6,5 @@ public interface Brick {
     boolean isIndestructible();
     void hit();
     boolean isDestroyed();
+    void moveDown(double amount);
 }

@@ -4,7 +4,7 @@ import it.unibo.breakout.model.api.Brick;
 public class BrickImpl implements Brick {
     private int life;
     private final boolean indestructible;
-    private final double x, y;
+    private double x, y;
 
     public BrickImpl(double x, double y, int type) {
             this.x = x;
@@ -17,6 +17,10 @@ public class BrickImpl implements Brick {
                 this.life = type; // vita = 1 o 2 colpi
             }
         }
+        @Override
+        public void moveDown(double amount) {
+            this.y += amount;
+        }
 
         @Override
         public void hit() {
@@ -28,12 +32,18 @@ public class BrickImpl implements Brick {
             return !indestructible && life <= 0;
         }
 
-    // Funzioni per Riccardo
-        public double getX() { return x; }
-        public double getY() { return y; }
+        @Override
+        public double getX() {
+            return this.x;
+        }
 
+        @Override
+        public double getY() {
+            return this.y;
+        }
 
-    // Funzioni per Fabio
-        public int getLife() { return life; }
-        public boolean isIndestructible() { return indestructible; }
-    }
+        @Override
+        public boolean isIndestructible() {
+            return this.indestructible;
+        }
+}

@@ -2,7 +2,7 @@ package it.unibo.breakout.model.api;
 
 import java.awt.Graphics;
 
-    public interface Paddle {
+public interface Paddle {
 
     void moveLeft() ;
     void moveRight() ;
@@ -10,4 +10,3 @@ import java.awt.Graphics;
     void draw(Graphics g);
 
 }
-

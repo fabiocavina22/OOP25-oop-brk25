@@ -1,4 +1,5 @@
 package it.unibo.breakout.model.api;
+
 import java.awt.Graphics;
 
     public interface Paddle {
@@ -7,9 +8,6 @@ import java.awt.Graphics;
     void moveRight() ;
     void clamp(int screenWidth) ;
     void draw(Graphics g);
-    public int getX() ;
-    public int getY() ;
-    public int getWidth();
-    public int getHeight();
 
 }
+

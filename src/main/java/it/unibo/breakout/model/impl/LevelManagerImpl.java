@@ -32,7 +32,7 @@ public class LevelManagerImpl implements LevelManager {
             int columns = screenWidth / brickWidth;
             for (int i = 0; i < columns; i++) {
                 double xPosition = i * brickWidth;
-                Brick newBrick = new BrickImpl(xPosition, yPosition, 1);
+                Brick newBrick = new BrickImpl(xPosition, yPosition, 1, brickWidth, brickHeight);
                 activeBricks.add(newBrick);
             }
         }

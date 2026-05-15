@@ -1,12 +1,15 @@
 package it.unibo.breakout.model.impl;
 import it.unibo.breakout.model.api.Brick;
+import it.unibo.breakout.model.api.collisions.Collidable;
 
-public class BrickImpl implements Brick {
+public class BrickImpl implements Brick, Collidable {
     private int life;
     private final boolean indestructible;
     private double x, y;
+    private double width;
+    private double height;
 
-    public BrickImpl(double x, double y, int type) {
+    public BrickImpl(double x, double y, int type, double width, double height) {
             this.x = x;
             this.y = y;
             if (type == 3) { // 3 = indistruttibile
@@ -16,6 +19,8 @@ public class BrickImpl implements Brick {
                 this.indestructible = false;
                 this.life = type; // vita = 1 o 2 colpi
             }
+            this.width = width;
+            this.height = height;
         }
         @Override
         public void moveDown(double amount) {
@@ -45,5 +50,14 @@ public class BrickImpl implements Brick {
         @Override
         public boolean isIndestructible() {
             return this.indestructible;
+        }
+
+        @Override
+        public int getWidth() {
+            return (int) this.width;
+        }
+        @Override
+        public int getHeight() {
+             return (int) this.height;
         }
 }

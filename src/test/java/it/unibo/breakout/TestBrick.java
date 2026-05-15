@@ -9,7 +9,7 @@ public class TestBrick {
     @Test
     public void testNormalBrick() {
         // Un mattone normale con 1 vita
-        BrickImpl b = new BrickImpl(10, 10, 1);
+        BrickImpl b = new BrickImpl(10, 10, 1, 2, 2);
         assertFalse(b.isDestroyed());
         b.hit();
         assertTrue(b.isDestroyed());
@@ -18,7 +18,7 @@ public class TestBrick {
     @Test
     public void testHardBrick() {
         // Un mattone con 2 vite
-        BrickImpl b = new BrickImpl(10, 10, 2);
+        BrickImpl b = new BrickImpl(10, 10, 2, 2, 2);
         b.hit();
         assertFalse(b.isDestroyed()); //vivo
         b.hit();
@@ -28,7 +28,7 @@ public class TestBrick {
     @Test
     public void testIndestructibleBrick() {
         // mattone indistruttibile
-        BrickImpl b = new BrickImpl(10, 10, 3);
+        BrickImpl b = new BrickImpl(10, 10, 3, 2,2);
         for(int i=0; i<100; i++) {
             b.hit();
         }

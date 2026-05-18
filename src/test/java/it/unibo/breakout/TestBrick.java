@@ -8,7 +8,7 @@ public class TestBrick {
 
     @Test
     public void testNormalBrick() {
-        // Un mattone normale con 1 vita
+        // A normal brick with 1 life
         BrickImpl b = new BrickImpl(10, 10, 1);
         assertFalse(b.isDestroyed());
         b.hit();
@@ -17,7 +17,7 @@ public class TestBrick {
 
     @Test
     public void testHardBrick() {
-        // Un mattone con 2 vite
+        // A double-hit brick with 2 lives
         BrickImpl b = new BrickImpl(10, 10, 2);
         b.hit();
         assertFalse(b.isDestroyed()); //vivo
@@ -27,7 +27,7 @@ public class TestBrick {
 
     @Test
     public void testIndestructibleBrick() {
-        // mattone indistruttibile
+        // An indestructible brick should never be destroyed
         BrickImpl b = new BrickImpl(10, 10, 3);
         for(int i=0; i<100; i++) {
             b.hit();

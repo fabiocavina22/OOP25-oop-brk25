@@ -3,10 +3,12 @@ package it.unibo.breakout.model.impl;
 //import java.awt.event.KeyEvent;
 //import java.awt.event.KeyListener;
 //import javax.swing.JPanel;
-import java.awt.Graphics;
+
+import it.unibo.breakout.model.api.Paddle;
+import it.unibo.breakout.model.api.collisions.Collidable;
 
 
-    public class PaddleImpl {
+    public class PaddleImpl implements Paddle, Collidable {
 
         private int x ;
         private final int y;
@@ -23,29 +25,38 @@ import java.awt.Graphics;
         this.speed = speed ;
     }
 
-    // Movimento
+    @Override
     public void moveLeft() {
         x -= speed;
     }
-
+    @Override
     public void moveRight() {
         x += speed;
     }
 
-    // Limiti schermo
+    @Override
     public void clamp(int screenWidth) {
         if (x < 0) x = 0;
         if (x + width > screenWidth) x = screenWidth - width;
     }
 
-    // Disegno (Swing)
-    public void draw(Graphics g) {
-        g.fillRect(x, y, width, height);
+    @Override
+    public double getX() {
+        return x;
     }
 
-    // Getter utili
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
 }

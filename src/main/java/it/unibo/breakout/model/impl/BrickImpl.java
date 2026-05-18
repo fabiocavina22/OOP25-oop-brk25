@@ -1,12 +1,15 @@
 package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Brick;
+import it.unibo.breakout.model.api.collisions.Collidable;
 
 public class BrickImpl implements Brick {
 
     private int life;
     private final boolean indestructible;
     private double x, y;
+    private double width;
+    private double height;
 
     /**
      * @param x    horizontal position in pixels

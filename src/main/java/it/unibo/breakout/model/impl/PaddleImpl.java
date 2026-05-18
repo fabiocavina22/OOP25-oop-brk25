@@ -15,7 +15,6 @@ import java.awt.Graphics;
         private int speed;
 
 
-
     public PaddleImpl (int x, int y, int width, int height, int speed){
         this.x = x ;
         this.y = y ;

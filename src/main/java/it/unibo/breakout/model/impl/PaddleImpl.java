@@ -3,7 +3,6 @@ package it.unibo.breakout.model.impl;
 //import java.awt.event.KeyEvent;
 //import java.awt.event.KeyListener;
 //import javax.swing.JPanel;
-import java.awt.Graphics;
 
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.api.collisions.Collidable;
@@ -40,11 +39,6 @@ import it.unibo.breakout.model.api.collisions.Collidable;
     public void clamp(int screenWidth) {
         if (x < 0) x = 0;
         if (x + width > screenWidth) x = screenWidth - width;
-    }
-
-    @Override
-    public void draw(Graphics g) {
-        g.fillRect(x, y, width, height);
     }
 
     @Override

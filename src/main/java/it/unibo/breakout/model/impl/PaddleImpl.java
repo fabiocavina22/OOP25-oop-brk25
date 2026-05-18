@@ -5,10 +5,9 @@ package it.unibo.breakout.model.impl;
 //import javax.swing.JPanel;
 
 import it.unibo.breakout.model.api.Paddle;
-import it.unibo.breakout.model.api.collisions.Collidable;
 
 
-    public class PaddleImpl implements Paddle, Collidable {
+    public class PaddleImpl implements Paddle {
 
         private int x ;
         private final int y;

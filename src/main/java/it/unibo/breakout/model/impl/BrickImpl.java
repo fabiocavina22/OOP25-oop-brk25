@@ -1,22 +1,21 @@
 package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Brick;
-import it.unibo.breakout.model.api.collisions.Collidable;
 
 public class BrickImpl implements Brick {
 
     private int life;
     private final boolean indestructible;
     private double x, y;
-    private double width;
-    private double height;
+    private int width;
+    private int height;
 
     /**
      * @param x    horizontal position in pixels
      * @param y    vertical position in pixels
      * @param type brick type: 1 = normal, 2 = double-hit, 3 = indestructible
      */
-    public BrickImpl(double x, double y, int type) {
+    public BrickImpl(double x, double y, int type, int width, int height) {
         this.x = x;
         this.y = y;
         if (type == 3) {
@@ -26,6 +25,8 @@ public class BrickImpl implements Brick {
             this.indestructible = false;
             this.life = type;
         }
+        this.width = width;
+        this.height = height;
     }
 
     /** Moves the brick down by the given amount of pixels. */
@@ -58,9 +59,20 @@ public class BrickImpl implements Brick {
         return this.y;
     }
 
+
     /** Returns true if the brick cannot be destroyed. */
     @Override
     public boolean isIndestructible() {
         return this.indestructible;
+    }
+
+    @Override
+    public int getWidth(){
+        return this.width;
+    }
+
+    @Override
+    public int getHeight(){
+        return this.height;
     }
 }

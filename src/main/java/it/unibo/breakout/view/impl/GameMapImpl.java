@@ -1,20 +1,30 @@
 package it.unibo.breakout.view.impl;
 
 import javax.swing.JFrame;
+
 //import javax.swing.*;
 import java.awt.*;
 
-import it.unibo.breakout.model.impl.PaddleImpl;
+import it.unibo.breakout.model.api.Ball;
+import it.unibo.breakout.model.api.LevelManager;
+import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.view.api.GameMap;
 
 public class GameMapImpl extends JFrame implements GameMap{
 
     @SuppressWarnings("unused")
-    private final PaddleImpl paddle;
+    private final Paddle paddle;
+    @SuppressWarnings("unused")
+    private final LevelManager levelManager;
+    @SuppressWarnings("unused")
+    private final Ball ball;
 
-    public GameMapImpl(PaddleImpl paddle){
+
+    public GameMapImpl(Paddle paddle, LevelManager levelManager, Ball ball){
 
     this.paddle = paddle;
+    this.levelManager = levelManager;
+    this.ball = ball;
 
     setTitle("DiDo's Breakout");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,7 +44,7 @@ public class GameMapImpl extends JFrame implements GameMap{
     // CENTER
     grid.gridx = 1;
     grid.weightx = 0.4;
-    add(new MainPanel(paddle), grid);
+    add(new MainPanel(paddle, levelManager, ball), grid);
 
     // RIGHT
     grid.gridx = 2;

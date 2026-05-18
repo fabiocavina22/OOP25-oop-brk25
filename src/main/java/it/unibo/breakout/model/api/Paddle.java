@@ -1,6 +1,8 @@
 package it.unibo.breakout.model.api;
 
-public interface Paddle {
+import it.unibo.breakout.model.api.collisions.Collidable;
+
+public interface Paddle extends Collidable {
 
     void moveLeft() ;
     void moveRight() ;

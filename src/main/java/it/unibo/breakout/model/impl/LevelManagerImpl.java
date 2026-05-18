@@ -24,7 +24,7 @@ public class LevelManagerImpl implements LevelManager {
 
     private static final double BASE_SPEED      = 30.0;
     private static final double SPEED_INCREMENT = 0.5;
-    private static final double ROW_GAP         = 10.0;
+    private static final double ROW_GAP         = 0.0;
     private static final int    INITIAL_ROWS    = 3;
 
     /**
@@ -94,6 +94,8 @@ public class LevelManagerImpl implements LevelManager {
 
         activeBricks.removeIf(b -> b.getY() > screenHeight);
 
+        activeBricks.removeIf(Brick::isDestroyed);
+
         distanceSinceLastRow += movement;
         if (distanceSinceLastRow >= rowSpacing) {
             generateNewRow(-brickHeight);
@@ -143,7 +145,7 @@ public class LevelManagerImpl implements LevelManager {
             double xPosition = i * brickWidth;
             int type = chooseBrickType(indestructibleCount, maxIndestructible);
             if (type == 3) indestructibleCount++;
-            activeBricks.add(new BrickImpl(xPosition, yPosition, type));
+            activeBricks.add(new BrickImpl(xPosition, yPosition, type, brickWidth, brickHeight));
         }
 
         rowsGenerated++;

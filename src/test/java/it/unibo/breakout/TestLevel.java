@@ -1,7 +1,8 @@
-package it.unibo.breakout.model.impl;
+package it.unibo.breakout;
 
 import it.unibo.breakout.model.api.Brick;
-import it.unibo.breakout.model.api.LevelManager;
+import it.unibo.breakout.model.impl.LevelManagerImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class LevelManagerImplTest {
     private static final int BRICK_WIDTH   = 80;
     private static final int BRICK_HEIGHT  = 20;
 
-    private LevelManager levelManager;
+    private LevelManagerImpl levelManager;
 
     @BeforeEach
     void setUp() {

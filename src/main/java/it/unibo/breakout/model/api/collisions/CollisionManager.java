@@ -2,12 +2,12 @@ package it.unibo.breakout.model.api.collisions;
 
 import java.util.List;
 
-import it.unibo.breakout.model.impl.BallImpl;
-import it.unibo.breakout.model.impl.BrickImpl;
-import it.unibo.breakout.model.impl.PaddleImpl;
+import it.unibo.breakout.model.api.Ball;
+import it.unibo.breakout.model.api.Brick;
+import it.unibo.breakout.model.api.Paddle;
 
 public interface CollisionManager {
 
-    public void handleCollisions(BallImpl ball, PaddleImpl paddle, List<BrickImpl> bricks);
+    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight);
 
 }

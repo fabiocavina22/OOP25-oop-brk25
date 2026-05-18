@@ -2,10 +2,8 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Ball;
 
-import it.unibo.breakout.model.api.collisions.Collidable;
 
-
-public class BallImpl implements Ball, Collidable {
+public class BallImpl implements Ball {
 
 
     private double x;

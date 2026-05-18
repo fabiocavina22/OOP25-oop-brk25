@@ -1,6 +1,8 @@
 package it.unibo.breakout.model.api;
 
-public interface Brick {
+import it.unibo.breakout.model.api.collisions.Collidable;
+
+public interface Brick extends Collidable{
 
     /** Returns the brick's X position in pixels. */
     double getX();

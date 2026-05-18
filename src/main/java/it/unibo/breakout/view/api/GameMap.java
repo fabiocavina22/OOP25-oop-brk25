@@ -7,6 +7,7 @@ public interface GameMap {
 
     //void showMessage(String message);  bisogna vedere se deve generare messaggi
 
+
 }
 
 

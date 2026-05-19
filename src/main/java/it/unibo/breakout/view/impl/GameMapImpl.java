@@ -53,7 +53,7 @@ public class GameMapImpl extends JFrame implements GameMap{
 
     setSize(1200, 700);
     setLocationRelativeTo(null);
-    setResizable(true);
+    setResizable(false);
 }
 
 

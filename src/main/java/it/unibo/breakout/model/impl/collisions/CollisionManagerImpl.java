@@ -91,19 +91,33 @@ public class CollisionManagerImpl implements CollisionManager {
 
         for (Brick brick : bricks) {
 
-        if (detector.isColliding(ball, brick)) {
+            if (detector.isColliding(ball, brick)) {
 
-            // rimbalzo semplice
-            ball.setVelocityY(-ball.getVelocityY());
+                // 1. Calcoliamo di quanti pixel la palla è "entrata" nel blocco da ogni lato
+                double overlapLeft = (ball.getX() + ball.getWidth()) - brick.getX();
+                double overlapRight = (brick.getX() + brick.getWidth()) - ball.getX();
+                double overlapTop = (ball.getY() + ball.getHeight()) - brick.getY();
+                double overlapBottom = (brick.getY() + brick.getHeight()) - ball.getY();
 
-            // distruzione brick
-            brick.hit();
-            points(brick);
+                // 2. Troviamo la compenetrazione minima per l'asse X e l'asse Y
+                double minOverlapX = Math.min(overlapLeft, overlapRight);
+                double minOverlapY = Math.min(overlapTop, overlapBottom);
 
+                // 3. Se la compenetrazione X è minore, la palla ha colpito un lato (sinistro o destro)
+                if (minOverlapX < minOverlapY) {
+                    ball.setVelocityX(-ball.getVelocityX()); // Rimbalzo orizzontale
+                }
+                else {
+                    // Altrimenti ha colpito la parte superiore o inferiore
+                    ball.setVelocityY(-ball.getVelocityY()); // Rimbalzo verticale
+                }
 
-            break; // evita multi-collisione nello stesso frame
-        }
+                // distruzione brick
+                brick.hit();
+                points(brick);
 
+                break; // evita multi-collisione nello stesso frame
+            }
         }
     }
 }

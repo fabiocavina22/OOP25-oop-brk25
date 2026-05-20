@@ -142,6 +142,8 @@ public class LevelManagerImpl implements LevelManager {
      */
     private void generateNewRow(double yPosition) {
         int columns             = screenWidth / brickWidth;
+         int totalBricksWidth = columns * brickWidth;
+        double horizontalOffset = (screenWidth - totalBricksWidth) / 2.0;
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
 

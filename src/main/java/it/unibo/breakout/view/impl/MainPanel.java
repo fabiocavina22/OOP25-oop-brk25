@@ -16,12 +16,19 @@ public class MainPanel extends JPanel {
     private final Paddle paddle;
     private final Ball ball;
     private final LevelManager levelManager;
+    private Image brickImage1;
+    private Image brickImage2;
+    private Image brickImage3;
 
     public MainPanel(Paddle paddle, LevelManager levelManager, Ball ball) {
 
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
+
+        brickImage1 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick1.jpg")).getImage();
+        brickImage2 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick2.jpg")).getImage();
+        brickImage3 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick3.jpg")).getImage();
 
         setBackground(Color.WHITE);
 
@@ -65,30 +72,31 @@ public class MainPanel extends JPanel {
         // MATTONI (DAL LEVEL MANAGER)
         for (Brick b : levelManager.getActiveBricks()) {
 
+            Image img;
             if (b.isIndestructible()) {
-                g.setColor(Color.BLACK);
+                img = brickImage3;
             } else if (b.getLife() == 2) {
-                g.setColor(Color.ORANGE);
+                img = brickImage2;
             } else {
-                g.setColor(Color.BLUE);
+                img = brickImage1;
             }
 
-            g.fillRect(
+            g.drawImage(img,
                     (int) b.getX() + 1,
-                    (int) b.getY()+ 1,
+                    (int) b.getY() + 1,
                     b.getWidth() - 2,
-                    b.getHeight() - 2
-            );
+                    b.getHeight() - 2,
+                    null);
 
             // Bordo
             g.setColor(Color.BLACK);
-
-                g.drawRect(
-                (int) b.getX(),
-                (int) b.getY(),
-                b.getWidth(),
-                b.getHeight()
+            g.drawRect(
+                    (int) b.getX(),
+                    (int) b.getY(),
+                    b.getWidth(),
+                    b.getHeight()
             );
+        }
 
             g.setColor(Color.RED);
 
@@ -99,5 +107,4 @@ public class MainPanel extends JPanel {
                 (int) ball.getRadius() * 2
             );
         }
-    }
 }

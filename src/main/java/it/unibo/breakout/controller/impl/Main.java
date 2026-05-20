@@ -20,7 +20,7 @@ public class Main {
         BallImpl ball = new BallImpl(300, 500, 8, 4.0, -4.0);
 
         // (screenWidth, brickWidth, brickHeight, screenHeight)
-        LevelManagerImpl levelManager = new LevelManagerImpl(gameWidth, 60, 20, gameHeight);
+        LevelManagerImpl levelManager = new LevelManagerImpl(gameWidth, 60, 60, gameHeight);
 
         // 3. Creazione della View
         GameMapImpl view = new GameMapImpl(paddle, levelManager, ball);

@@ -35,11 +35,12 @@ public final class App {
         final PaddleImpl      paddle       = new PaddleImpl(250, 600, 100, 15, 8);
         final BallImpl        ball         = new BallImpl(300, 500, 8, 4.0, -4.0);
         final LevelManagerImpl levelManager = new LevelManagerImpl(GAME_WIDTH, 60, 20, GAME_HEIGHT);
+        int score = 0;
 
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball);
         view.showWindow();
 
-        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT);
+        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score);
         controller.start();
     }
 }

@@ -8,6 +8,11 @@ import it.unibo.breakout.model.api.Paddle;
 
 public interface CollisionManager {
 
-    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight);
+    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score);
 
+    /**Keep the current player point 
+    */
+    int points(Brick brick);
 }
+
+    

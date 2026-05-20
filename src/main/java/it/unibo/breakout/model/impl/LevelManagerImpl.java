@@ -126,6 +126,10 @@ public class LevelManagerImpl implements LevelManager {
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
 
+    /**Keep the current player point 
+    */
+    
+
     // -------------------------------------------------------------------------
     // Private Methods
     // -------------------------------------------------------------------------

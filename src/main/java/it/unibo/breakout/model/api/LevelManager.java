@@ -53,4 +53,5 @@ public interface LevelManager {
      * @return true if any brick has crossed the threshold
      */
     boolean hasBricksReachedThreshold(double thresholdY);
+
 }

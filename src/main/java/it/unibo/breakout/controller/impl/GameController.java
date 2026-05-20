@@ -21,6 +21,8 @@ public class GameController implements KeyListener {
     private final CollisionManagerImpl collisionManager;
     private final GameMapImpl view;
 
+    private int score;
+
     private final Timer timer;
     private static final int DELAY_MS = 16; // ~60 FPS
 
@@ -35,16 +37,17 @@ public class GameController implements KeyListener {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
-    public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight) {
+    public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight, int score) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
         this.view = view;
         this.gameAreaWidth = gameAreaWidth;
         this.gameAreaHeight = gameAreaHeight;
+        this.score = score;
 
         // Inizializza il manager delle collisioni (MVC rispettato: passiamo solo le dimensioni)
-        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl());
+        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score);
 
         // Aggiungiamo l'ascoltatore della tastiera alla View
         this.view.addKeyListener(this);
@@ -85,7 +88,7 @@ public class GameController implements KeyListener {
         ball.move();
         levelManager.update(DELAY_MS / 1000.0);
 
-        collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight);
+        collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
 
         view.repaint();
     }

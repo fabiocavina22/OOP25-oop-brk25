@@ -1,5 +1,4 @@
 package it.unibo.breakout.model.impl;
-
 import it.unibo.breakout.model.api.Brick;
 
 public class BrickImpl implements Brick {

@@ -12,19 +12,33 @@ import it.unibo.breakout.model.api.collisions.CollisionManager;
 public class CollisionManagerImpl implements CollisionManager {
 
     private final CollisionDetector detector;
+    private int score;
 
-    public CollisionManagerImpl(CollisionDetector detector) {
+    public CollisionManagerImpl(CollisionDetector detector, int score) {
         this.detector = detector;
+        this.score = score;
     }
 
     @Override
-    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight){
+    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score){
         checkPaddleCollision(ball, paddle);
         checkBrickCollisions(ball, bricks);
         checkBorderCollision(ball, gameWidth, gameHeight);
     }
 
-
+    public int points(Brick brick){
+        if(brick.isIndestructible()){
+            return score;
+        }
+        if(brick.isDestroyed()){
+            score += 300;
+        }
+        else{
+            score += 150;
+        }
+        System.out.println(score); 
+        return score;
+    }
 
     private void checkPaddleCollision(Ball ball, Paddle paddle){
 
@@ -71,6 +85,8 @@ public class CollisionManagerImpl implements CollisionManager {
 
             // distruzione brick
             brick.hit();
+            points(brick);
+            
 
             break; // evita multi-collisione nello stesso frame
         }

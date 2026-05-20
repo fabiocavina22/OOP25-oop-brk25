@@ -11,7 +11,7 @@ public class Main {
         // 1. Impostazioni di base del pannello di gioco (pannello centrale)
         int gameWidth = 600; // Larghezza del pannello di gioco
         int gameHeight = 700; // Altezza del pannello di gioco
-
+        int score = 0;
         // 2. Creazione del Model
         // (x, y, width, height, speed)
         PaddleImpl paddle = new PaddleImpl(250, 600, 100, 15, 8);
@@ -27,7 +27,7 @@ public class Main {
         view.showWindow();
 
         // 4. Creazione del Controller e Avvio
-        GameController controller = new GameController(paddle, ball, levelManager, view, gameWidth, gameHeight);
+        GameController controller = new GameController(paddle, ball, levelManager, view, gameWidth, gameHeight, score);
         controller.start();
     }
 }

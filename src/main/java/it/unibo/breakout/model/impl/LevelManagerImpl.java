@@ -22,7 +22,7 @@ public class LevelManagerImpl implements LevelManager {
 
     private final Random rng = new Random();
 
-    private static final double BASE_SPEED      = 30.0;
+    private static final double BASE_SPEED      = 3.0;
     private static final double SPEED_INCREMENT = 0.5;
     private static final double ROW_GAP         = 0.0;
     private static final int    INITIAL_ROWS    = 3;
@@ -52,7 +52,7 @@ public class LevelManagerImpl implements LevelManager {
     public void reset() {
         activeBricks.clear();
         scrollSpeed          = BASE_SPEED;
-        distanceSinceLastRow = 0.0;
+        distanceSinceLastRow = rowSpacing;
         rowsGenerated        = 0;
         for (int r = 0; r < INITIAL_ROWS; r++) {
             generateNewRow(r * rowSpacing);

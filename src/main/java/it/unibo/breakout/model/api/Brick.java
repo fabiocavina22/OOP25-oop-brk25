@@ -21,4 +21,7 @@ public interface Brick extends Collidable{
 
     /** Moves the brick down by the given amount of pixels. */
     void moveDown(double amount);
+
+    /** Returns the points of life of the brick */
+    int getLife();
 }

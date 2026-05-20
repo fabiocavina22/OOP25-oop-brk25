@@ -59,7 +59,6 @@ public class BrickImpl implements Brick {
         return this.y;
     }
 
-
     /** Returns true if the brick cannot be destroyed. */
     @Override
     public boolean isIndestructible() {
@@ -74,5 +73,10 @@ public class BrickImpl implements Brick {
     @Override
     public int getHeight(){
         return this.height;
+    }
+
+    @Override
+    public int getLife(){
+        return this.life;
     }
 }

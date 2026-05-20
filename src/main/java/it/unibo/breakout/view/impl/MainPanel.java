@@ -65,11 +65,11 @@ public class MainPanel extends JPanel {
         // MATTONI (DAL LEVEL MANAGER)
         for (Brick b : levelManager.getActiveBricks()) {
 
-            if (b.isIndestructible()){
+            if (b.isIndestructible()) {
                 g.setColor(Color.BLACK);
-            }
-
-            else{
+            } else if (b.getLife() == 2) {
+                g.setColor(Color.ORANGE);
+            } else {
                 g.setColor(Color.BLUE);
             }
 

@@ -36,7 +36,7 @@ public class CollisionManagerImpl implements CollisionManager {
         else{
             score += 150;
         }
-        System.out.println(score); 
+        System.out.println(score);
         return score;
     }
 
@@ -49,8 +49,21 @@ public class CollisionManagerImpl implements CollisionManager {
 
             double offset = (ballCenter - paddleCenter) / (paddle.getWidth() / 2.0);
 
-            ball.setVelocityY(-ball.getVelocityY());
-            ball.setVelocityX(ball.getVelocityX () * offset);
+            // velocità totale attuale
+            double speed = Math.sqrt( ball.getVelocityX() * ball.getVelocityX() + ball.getVelocityY() * ball.getVelocityY() );
+
+            // nuova direzione
+            double maxBounceAngle = Math.toRadians(60);
+
+            // angolo finale
+            double bounceAngle = offset * maxBounceAngle;
+
+            // nuove velocità
+            double newVelocityX = speed * Math.sin(bounceAngle);
+            double newVelocityY = -speed * Math.cos(bounceAngle);
+
+            ball.setVelocityX(newVelocityX);
+            ball.setVelocityY(newVelocityY);
         }
 
     }
@@ -86,7 +99,7 @@ public class CollisionManagerImpl implements CollisionManager {
             // distruzione brick
             brick.hit();
             points(brick);
-            
+
 
             break; // evita multi-collisione nello stesso frame
         }

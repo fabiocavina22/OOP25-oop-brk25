@@ -126,9 +126,9 @@ public class LevelManagerImpl implements LevelManager {
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
 
-    /**Keep the current player point 
+    /**Keep the current player point
     */
-    
+
 
     // -------------------------------------------------------------------------
     // Private Methods
@@ -142,7 +142,7 @@ public class LevelManagerImpl implements LevelManager {
      */
     private void generateNewRow(double yPosition) {
         int columns             = screenWidth / brickWidth;
-         int totalBricksWidth = columns * brickWidth;
+        int totalBricksWidth = columns * brickWidth;
         double horizontalOffset = (screenWidth - totalBricksWidth) / 2.0;
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;

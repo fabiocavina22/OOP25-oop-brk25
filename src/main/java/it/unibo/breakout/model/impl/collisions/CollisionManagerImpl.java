@@ -106,7 +106,7 @@ public class CollisionManagerImpl implements CollisionManager {
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
         }
 
-        if(ball.getY() > paddle.getY() + paddle.getHeight() + 20){
+        if(ball.getY() > paddle.getY() + paddle.getHeight() + 21){
             loselives();
             ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
             ball.setVelocityX(0);

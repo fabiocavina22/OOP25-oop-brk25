@@ -13,6 +13,14 @@ public interface CollisionManager {
     /**Keep the current player point 
     */
     int points(Brick brick);
+    
+    /**get the player's number of lives 
+    */
+    int getlives();
+    
+    /**when you have lost all the lives is game over
+    */
+    boolean isGameOver();
 }
 
     

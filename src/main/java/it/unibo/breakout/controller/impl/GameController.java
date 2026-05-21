@@ -90,6 +90,11 @@ public class GameController implements KeyListener {
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
 
+        if(collisionManager.isGameOver()){
+            timer.stop();
+            return;
+        }
+
         view.repaint();
     }
 

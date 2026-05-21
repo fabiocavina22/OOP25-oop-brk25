@@ -13,6 +13,7 @@ public class CollisionManagerImpl implements CollisionManager {
 
     private final CollisionDetector detector;
     private int score;
+    private int lives = 3;
 
     public CollisionManagerImpl(CollisionDetector detector, int score) {
         this.detector = detector;
@@ -20,12 +21,13 @@ public class CollisionManagerImpl implements CollisionManager {
     }
 
     @Override
-    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score){
+    public void handleCollisions(Ball ball,Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score){
         checkPaddleCollision(ball, paddle);
         checkBrickCollisions(ball, bricks);
-        checkBorderCollision(ball, gameWidth, gameHeight);
+        checkBorderCollision(ball, gameWidth, gameHeight, paddle);
     }
 
+    @Override
     public int points(Brick brick){
         if(brick.isIndestructible()){
             return score;
@@ -38,6 +40,25 @@ public class CollisionManagerImpl implements CollisionManager {
         }
         System.out.println(score);
         return score;
+    }
+
+    
+    public int getlives(){
+        return lives;
+    }
+
+    
+    private void loselives(){
+        lives--;
+    }
+
+    public boolean isGameOver(){
+        if(lives <= 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     private void checkPaddleCollision(Ball ball, Paddle paddle){
@@ -68,7 +89,7 @@ public class CollisionManagerImpl implements CollisionManager {
 
     }
 
-    private void checkBorderCollision(Ball ball, int gameWidth, int gameHeight) {
+    private void checkBorderCollision(Ball ball, int gameWidth, int gameHeight, Paddle paddle) {
 
         if (ball.getX() <= 0) { //SX
             ball.setPosition(0, ball.getY());
@@ -85,6 +106,12 @@ public class CollisionManagerImpl implements CollisionManager {
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
         }
 
+        if(ball.getY() > paddle.getY() + paddle.getHeight() + 20){
+            loselives();
+            ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
+            ball.setVelocityX(0);
+            ball.setVelocityY(8);
+        }
     }
 
     private void checkBrickCollisions(Ball ball, List<Brick> bricks) {

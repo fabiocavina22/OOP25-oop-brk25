@@ -18,9 +18,13 @@ public interface CollisionManager {
     */
     int getlives();
     
-    /**when you have lost all the lives is game over
+    /**manage the game over
     */
     boolean isGameOver();
+
+    /**is a "signal" for the life lost
+     */
+    boolean isLifeLost();
 }
 
     

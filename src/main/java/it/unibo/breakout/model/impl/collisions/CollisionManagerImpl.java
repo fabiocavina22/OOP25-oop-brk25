@@ -14,6 +14,7 @@ public class CollisionManagerImpl implements CollisionManager {
     private final CollisionDetector detector;
     private int score;
     private int lives = 3;
+    private boolean lifeLost = false;
 
     public CollisionManagerImpl(CollisionDetector detector, int score) {
         this.detector = detector;
@@ -50,6 +51,13 @@ public class CollisionManagerImpl implements CollisionManager {
     
     private void loselives(){
         lives--;
+        lifeLost = true;
+    }
+
+    public boolean isLifeLost(){
+        boolean result = lifeLost;
+        lifeLost = false;
+        return result;
     }
 
     public boolean isGameOver(){
@@ -106,11 +114,11 @@ public class CollisionManagerImpl implements CollisionManager {
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
         }
 
-        if(ball.getY() > paddle.getY() + paddle.getHeight() + 21){
+        if(ball.getY() > paddle.getY() + paddle.getHeight() + 22 && !lifeLost){
             loselives();
             ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
             ball.setVelocityX(0);
-            ball.setVelocityY(8);
+            ball.setVelocityY(0);
         }
     }
 

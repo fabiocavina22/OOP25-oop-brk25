@@ -37,6 +37,9 @@ public class GameController implements KeyListener {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
+    //Variabile per gestire il respawn della pallina e il continuo del gioco
+    private boolean ready = false;
+
     public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight, int score) {
         this.paddle = paddle;
         this.ball = ball;
@@ -85,12 +88,27 @@ public class GameController implements KeyListener {
         }
         paddle.clamp(currentWidth);
 
+        if(ready){
+            ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
+            view.repaint();
+            return;
+        }
+
         ball.move();
         levelManager.update(DELAY_MS / 1000.0);
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
 
+        if(collisionManager.isLifeLost()){
+            ready = true;
+        }
+
         if(collisionManager.isGameOver()){
+            timer.stop();
+            return;
+        }
+
+        if(levelManager.hasBricksReachedThreshold(paddle.getY())){
             timer.stop();
             return;
         }
@@ -107,6 +125,11 @@ public class GameController implements KeyListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = true;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_SPACE && ready){
+            ready = false;
+            ball.setVelocityX(0);
+            ball.setVelocityY(8);
         }
     }
 

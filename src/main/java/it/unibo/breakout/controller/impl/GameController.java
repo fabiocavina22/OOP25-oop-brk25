@@ -40,6 +40,9 @@ public class GameController implements KeyListener {
     //Variabile per gestire il respawn della pallina e il continuo del gioco
     private boolean ready = false;
 
+    //Variabile per la gestione della pausa
+    private boolean pause = false;
+
     public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight, int score) {
         this.paddle = paddle;
         this.ball = ball;
@@ -79,6 +82,7 @@ public class GameController implements KeyListener {
 
         // Se la grafica non è ancora pronta (width=0), salta il frame
         if (currentWidth == 0) return;
+        if(pause) return;
         // 1. Gestione Input
         if (leftPressed) {
             paddle.moveLeft();
@@ -130,6 +134,9 @@ public class GameController implements KeyListener {
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(8);
+        }
+        if(e.getKeyCode() == KeyEvent.VK_P){
+            pause = !pause;
         }
     }
 

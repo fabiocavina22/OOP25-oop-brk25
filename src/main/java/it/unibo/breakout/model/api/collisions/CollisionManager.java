@@ -23,8 +23,12 @@ public interface CollisionManager {
     boolean isGameOver();
 
     /**is a "signal" for the life lost
-     */
+    */
     boolean isLifeLost();
+
+    /**manage the score that will appear in the leaderboard
+    */
+    int getScore();
 }
 
     

@@ -1,5 +1,6 @@
 package it.unibo.breakout.controller.impl;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.event.KeyEvent;
@@ -9,6 +10,7 @@ import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.collisions.CollisionManagerImpl;
+import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.MainPanel;
@@ -43,6 +45,9 @@ public class GameController implements KeyListener {
     //Variabile per la gestione della pausa
     private boolean pause = false;
 
+    //Variabile per gestire la classifica
+    private final LeaderboardImpl leaderboard = new LeaderboardImpl();
+
     public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight, int score) {
         this.paddle = paddle;
         this.ball = ball;
@@ -74,6 +79,18 @@ public class GameController implements KeyListener {
     public void start() {
         this.timer.start();
     }
+
+       private void gameOver(){
+            timer.stop();
+            int finalScore = collisionManager.getScore();
+            if(leaderboard.isHighScore(finalScore)){
+                String name = JOptionPane.showInputDialog(view, "Inserisci 3 lettere per il tuo nome:");
+                if(name != null && name.length() >= 3){
+                    leaderboard.add(name.substring(0,3), finalScore);
+                    leaderboard.save();
+                }
+            }
+        }
 
     private void update() {
 
@@ -108,17 +125,18 @@ public class GameController implements KeyListener {
         }
 
         if(collisionManager.isGameOver()){
-            timer.stop();
+            gameOver();;
             return;
         }
 
         if(levelManager.hasBricksReachedThreshold(paddle.getY())){
-            timer.stop();
+            gameOver();
             return;
         }
 
         view.repaint();
     }
+
 
     // --- KEYLISTENER ---
 

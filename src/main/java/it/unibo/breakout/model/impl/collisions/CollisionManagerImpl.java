@@ -69,6 +69,10 @@ public class CollisionManagerImpl implements CollisionManager {
         }
     }
 
+    public int getScore(){
+        return score;
+    }
+
     private void checkPaddleCollision(Ball ball, Paddle paddle){
 
         if(detector.isColliding(ball, paddle)){

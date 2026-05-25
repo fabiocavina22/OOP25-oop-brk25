@@ -2,10 +2,9 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Brick;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LevelManagerImpl implements LevelManager {
 
@@ -15,7 +14,6 @@ public class LevelManagerImpl implements LevelManager {
     private final int brickWidth;
     private final int brickHeight;
     private final double rowSpacing;
-
     private double scrollSpeed;
     private double distanceSinceLastRow;
     private int rowsGenerated;
@@ -80,6 +78,7 @@ public class LevelManagerImpl implements LevelManager {
     /**
      * Updates brick positions and spawns new rows each frame.
      * Moves all bricks down, removes off-screen ones,
+     * removes all the indestructible bricks if a row is all destroyed
      * and increases speed as more rows are generated.
      *
      * @param deltaTime time elapsed since the last frame, in seconds
@@ -87,15 +86,12 @@ public class LevelManagerImpl implements LevelManager {
     @Override
     public void update(double deltaTime) {
         double movement = scrollSpeed * deltaTime;
-
         for (Brick b : activeBricks) {
             b.moveDown(movement);
         }
-
         activeBricks.removeIf(b -> b.getY() > screenHeight);
-
         activeBricks.removeIf(Brick::isDestroyed);
-
+        removeIndestructibleFromClearedRows();
         distanceSinceLastRow += movement;
         if (distanceSinceLastRow >= rowSpacing) {
             generateNewRow(-brickHeight);
@@ -126,9 +122,6 @@ public class LevelManagerImpl implements LevelManager {
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
 
-    /**Keep the current player point
-    */
-
 
     // -------------------------------------------------------------------------
     // Private Methods
@@ -146,14 +139,15 @@ public class LevelManagerImpl implements LevelManager {
         double horizontalOffset = (screenWidth - totalBricksWidth) / 2.0;
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
-
+        int currentRowId     = rowsGenerated;
+        System.out.printf("Row %d → %d bricks at Y=%.1f%n", rowsGenerated, columns, yPosition);
+        System.out.printf("Row %d → %d bricks (panelWidth=%d)%n", rowsGenerated, screenWidth / brickWidth, screenWidth);
         for (int i = 0; i < columns; i++) {
-            double xPosition = i * brickWidth;
+            double xPosition = horizontalOffset + i * brickWidth;
             int type = chooseBrickType(indestructibleCount, maxIndestructible);
             if (type == 3) indestructibleCount++;
-            activeBricks.add(new BrickImpl(xPosition, yPosition, type, brickWidth, brickHeight));
+            activeBricks.add(new BrickImpl(xPosition, yPosition, type, brickWidth, brickHeight, currentRowId));
         }
-
         rowsGenerated++;
     }
 
@@ -173,4 +167,27 @@ public class LevelManagerImpl implements LevelManager {
         if (roll < 35) return 2;
         return 1;
     }
+
+    /**
+     * Removes indestructible bricks from any row that no longer contains
+     * destructible bricks, effectively clearing the entire row once all
+     * hittable bricks have been destroyed.
+     *
+     * <p>Bricks are grouped by their row identifier; if a group contains
+     * no destructible bricks, all remaining bricks in that row
+     * (i.e. indestructible ones) are removed from the active list.
+     */
+    private void removeIndestructibleFromClearedRows() {
+        Map<Integer, List<Brick>> byRow = activeBricks.stream()
+                .collect(Collectors.groupingBy(Brick::getRowId));
+
+        byRow.forEach((rowId, bricks) -> {
+            boolean hasDestructible = bricks.stream().anyMatch(b -> !b.isIndestructible());
+            if (!hasDestructible) {
+                activeBricks.removeAll(bricks);
+            }
+        });
+    }
 }
+
+

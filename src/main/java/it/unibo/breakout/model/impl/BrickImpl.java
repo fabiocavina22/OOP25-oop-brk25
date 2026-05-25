@@ -8,15 +8,16 @@ public class BrickImpl implements Brick {
     private double x, y;
     private int width;
     private int height;
-
+    private final int rowId;
     /**
      * @param x    horizontal position in pixels
      * @param y    vertical position in pixels
      * @param type brick type: 1 = normal, 2 = double-hit, 3 = indestructible
      */
-    public BrickImpl(double x, double y, int type, int width, int height) {
+    public BrickImpl(double x, double y, int type, int width, int height, int rowId) {
         this.x = x;
         this.y = y;
+        this.rowId = rowId;
         if (type == 3) {
             this.indestructible = true;
             this.life = 1;
@@ -27,6 +28,10 @@ public class BrickImpl implements Brick {
         this.width = width;
         this.height = height;
     }
+
+
+    @Override
+    public int getRowId() { return this.rowId; }
 
     /** Moves the brick down by the given amount of pixels. */
     @Override
@@ -75,7 +80,5 @@ public class BrickImpl implements Brick {
     }
 
     @Override
-    public int getLife(){
-        return this.life;
-    }
+    public int getLife(){ return this.life ;}
 }

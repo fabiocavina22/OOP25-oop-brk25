@@ -24,4 +24,7 @@ public interface Brick extends Collidable{
 
     /** Returns the points of life of the brick */
     int getLife();
+
+    /** Returns the specific row of bricks */
+    int getRowId();
 }

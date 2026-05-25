@@ -42,11 +42,13 @@ public class GameMapImpl extends JFrame implements GameMap{
     add(new LeftPanel(), grid);
 
     // CENTER
+    MainPanel mp = new MainPanel(paddle, levelManager, ball);
+    mp.setPreferredSize(new Dimension(600, 1));
     grid.gridx = 1;
-    grid.weightx = 0.4;
-    add(new MainPanel(paddle, levelManager, ball), grid);
+    grid.weightx = 0.0;
+    add(mp, grid);
 
-    // RIGHT
+        // RIGHT
     grid.gridx = 2;
     grid.weightx = 0.3;
     add(new RightPanel(), grid);

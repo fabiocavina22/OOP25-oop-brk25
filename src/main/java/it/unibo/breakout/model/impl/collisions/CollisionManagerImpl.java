@@ -43,12 +43,12 @@ public class CollisionManagerImpl implements CollisionManager {
         return score;
     }
 
-    
+
     public int getlives(){
         return lives;
     }
 
-    
+
     private void loselives(){
         lives--;
         lifeLost = true;
@@ -144,11 +144,24 @@ public class CollisionManagerImpl implements CollisionManager {
 
                 // 3. Se la compenetrazione X è minore, la palla ha colpito un lato (sinistro o destro)
                 if (minOverlapX < minOverlapY) {
-                    ball.setVelocityX(-ball.getVelocityX()); // Rimbalzo orizzontale
+                    if (overlapLeft < overlapRight){
+                        ball.setPosition(brick.getX() - ball.getWidth(), ball.getY()); //bug fix
+                        ball.setVelocityX(-ball.getVelocityX()); // Rimbalzo orizzontale
+                    }
+                    else {
+                        ball.setPosition(brick.getX() + brick.getWidth(), ball.getY());
+                        ball.setVelocityY(-ball.getVelocityY()); // Rimbalzo verticale
+                    }
                 }
-                else {
-                    // Altrimenti ha colpito la parte superiore o inferiore
-                    ball.setVelocityY(-ball.getVelocityY()); // Rimbalzo verticale
+                else{
+                    if (overlapTop < overlapBottom){
+                        ball.setPosition(ball.getX(), brick.getY() - ball.getHeight());
+                        ball.setVelocityY(-Math.abs(ball.getVelocityY()));
+                    }
+                    else {
+                        ball.setPosition(ball.getX(), brick.getY() + brick.getHeight());
+                        ball.setVelocityY(Math.abs(ball.getVelocityY())); // Forza la direzione verso il basso
+                    }
                 }
 
                 // distruzione brick

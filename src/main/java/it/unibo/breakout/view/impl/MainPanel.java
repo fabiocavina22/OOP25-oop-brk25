@@ -88,7 +88,7 @@ public class MainPanel extends JPanel {
                     b.getHeight() - 2,
                     null);
 
-            // Bordo
+            /*
             g.setColor(Color.BLACK);
             g.drawRect(
                     (int) b.getX(),
@@ -96,6 +96,7 @@ public class MainPanel extends JPanel {
                     b.getWidth(),
                     b.getHeight()
             );
+            */
         }
 
             g.setColor(Color.RED);

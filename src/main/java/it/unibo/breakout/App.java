@@ -32,8 +32,8 @@ public final class App {
     }
 
     private static void startGame() {
-        final PaddleImpl paddle = new PaddleImpl(175, 600, 150, 15, 8);
-        final BallImpl ball = new BallImpl(250, 400, 10, 0.0, 8.0);
+        final PaddleImpl paddle = new PaddleImpl(225, 600, 100, 15, 12);
+        final BallImpl ball = new BallImpl(250, 400, 10, 0.0, 12.0);
         final LevelManagerImpl levelManager = new LevelManagerImpl(GAME_WIDTH, 60, 60, GAME_HEIGHT);
         int score = 0;
 

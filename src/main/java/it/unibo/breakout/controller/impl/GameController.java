@@ -148,12 +148,12 @@ public class GameController implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_SPACE && ready){
+        if(e.getKeyCode() == KeyEvent.VK_W && ready || e.getKeyCode() == KeyEvent.VK_UP){
             ready = false;
             ball.setVelocityX(0);
-            ball.setVelocityY(8);
+            ball.setVelocityY(12);
         }
-        if(e.getKeyCode() == KeyEvent.VK_P){
+        if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
         }
     }

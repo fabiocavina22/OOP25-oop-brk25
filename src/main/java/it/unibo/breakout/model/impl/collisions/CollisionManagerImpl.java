@@ -132,35 +132,66 @@ public class CollisionManagerImpl implements CollisionManager {
 
             if (detector.isColliding(ball, brick)) {
 
-                // 1. Calcoliamo di quanti pixel la palla è "entrata" nel blocco da ogni lato
-                double overlapLeft = (ball.getX() + ball.getWidth()) - brick.getX();
-                double overlapRight = (brick.getX() + brick.getWidth()) - ball.getX();
-                double overlapTop = (ball.getY() + ball.getHeight()) - brick.getY();
+                // 1. Ricostruiamo dove si trovava la palla nel frame precedente (prima del movimento)
+                // Usiamo un delta fittizio basato sulle velocità per capire la traiettoria di provenienza
+                double prevBallX = ball.getX() - ball.getVelocityX();
+                double prevBallY = ball.getY() - ball.getVelocityY();
+
+                boolean comingFromLeft = (prevBallX + ball.getWidth() <= brick.getX());
+                boolean comingFromRight   = (prevBallX >= brick.getX() + brick.getWidth());
+                boolean comingFromAbove   = (prevBallY + ball.getHeight() <= brick.getY());
+                boolean comingFromBottom   = (prevBallY >= brick.getY() + brick.getHeight());
+
+                // 2. Calcoliamo gli overlap attuali per il riposizionamento
+                double overlapLeft   = (ball.getX() + ball.getWidth()) - brick.getX();
+                double overlapRight  = (brick.getX() + brick.getWidth()) - ball.getX();
+                double overlapTop    = (ball.getY() + ball.getHeight()) - brick.getY();
                 double overlapBottom = (brick.getY() + brick.getHeight()) - ball.getY();
 
-                // 2. Troviamo la compenetrazione minima per l'asse X e l'asse Y
-                double minOverlapX = Math.min(overlapLeft, overlapRight);
-                double minOverlapY = Math.min(overlapTop, overlapBottom);
+                /*  3. Gestione dei muri perimetrali (sicurezza addizionale)
+                if (brick.getX() <= 2) overlapLeft = Double.MAX_VALUE;
+                if (brick.getX() + brick.getWidth() >= gameWidth - 2) overlapRight = Double.MAX_VALUE;
+                if (brick.getY() <= 2) overlapTop = Double.MAX_VALUE;
+                */
 
-                // 3. Se la compenetrazione X è minore, la palla ha colpito un lato (sinistro o destro)
-                if (minOverlapX < minOverlapY) {
-                    if (overlapLeft < overlapRight){
-                        ball.setPosition(brick.getX() - ball.getWidth(), ball.getY()); //bug fix
-                        ball.setVelocityX(-ball.getVelocityX()); // Rimbalzo orizzontale
-                    }
-                    else {
-                        ball.setPosition(brick.getX() + brick.getWidth(), ball.getY());
-                        ball.setVelocityY(-ball.getVelocityY()); // Rimbalzo verticale
-                    }
+                // 4. Risoluzione tramite cronologia delle posizioni
+                if (comingFromLeft ) {
+                    ball.setPosition(brick.getX() - ball.getWidth(), ball.getY());
+                    ball.setVelocityX(-Math.abs(ball.getVelocityX()));
                 }
-                else{
-                    if (overlapTop < overlapBottom){
-                        ball.setPosition(ball.getX(), brick.getY() - ball.getHeight());
-                        ball.setVelocityY(-Math.abs(ball.getVelocityY()));
-                    }
-                    else {
-                        ball.setPosition(ball.getX(), brick.getY() + brick.getHeight());
-                        ball.setVelocityY(Math.abs(ball.getVelocityY())); // Forza la direzione verso il basso
+                else if (comingFromRight) {
+                    ball.setPosition(brick.getX() + brick.getWidth(), ball.getY());
+                    ball.setVelocityX(Math.abs(ball.getVelocityX()));
+                }
+                else if (comingFromAbove) {
+                    ball.setPosition(ball.getX(), brick.getY() - ball.getHeight());
+                    ball.setVelocityY(-Math.abs(ball.getVelocityY()));
+                }
+                else if (comingFromBottom) {
+                    ball.setPosition(ball.getX(), brick.getY() + brick.getHeight());
+                    ball.setVelocityY(Math.abs(ball.getVelocityY()));
+                }
+                else {
+                    // Fallback geometrico d'emergenza se la palla si è materializzata dentro da un angolo perfetto
+                    double minOverlapX = Math.min(overlapLeft, overlapRight);
+                    double minOverlapY = Math.min(overlapTop, overlapBottom);
+
+                    if (minOverlapX < minOverlapY) {
+                        if (overlapLeft < overlapRight) {
+                            ball.setPosition(brick.getX() - ball.getWidth(), ball.getY());
+                            ball.setVelocityX(-Math.abs(ball.getVelocityX()));
+                        } else {
+                            ball.setPosition(brick.getX() + brick.getWidth(), ball.getY());
+                            ball.setVelocityX(Math.abs(ball.getVelocityX()));
+                        }
+                    } else {
+                        if (overlapTop < overlapBottom) {
+                            ball.setPosition(ball.getX(), brick.getY() - ball.getHeight());
+                            ball.setVelocityY(-Math.abs(ball.getVelocityY()));
+                        } else {
+                            ball.setPosition(ball.getX(), brick.getY() + brick.getHeight());
+                            ball.setVelocityY(Math.abs(ball.getVelocityY()));
+                        }
                     }
                 }
 

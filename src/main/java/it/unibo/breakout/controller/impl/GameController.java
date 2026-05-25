@@ -148,7 +148,7 @@ public class GameController implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_W && ready || e.getKeyCode() == KeyEvent.VK_UP){
+        if(e.getKeyCode() == KeyEvent.VK_W && ready || e.getKeyCode() == KeyEvent.VK_UP && ready){
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(12);

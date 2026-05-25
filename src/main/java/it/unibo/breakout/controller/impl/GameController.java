@@ -40,7 +40,7 @@ public class GameController implements KeyListener {
     private boolean rightPressed = false;
 
     //Variabile per gestire il respawn della pallina e il continuo del gioco
-    private boolean ready = false;
+    private boolean ready = true;
 
     //Variabile per la gestione della pausa
     private boolean pause = false;

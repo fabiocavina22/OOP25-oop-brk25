@@ -1,7 +1,7 @@
 package it.unibo.breakout.controller.impl;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -10,9 +10,9 @@ import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.collisions.CollisionManagerImpl;
-import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
+import it.unibo.breakout.view.impl.GameOverView;
 import it.unibo.breakout.view.impl.MainPanel;
 
 public class GameController implements KeyListener {
@@ -45,10 +45,9 @@ public class GameController implements KeyListener {
     //Variabile per la gestione della pausa
     private boolean pause = false;
 
-    //Variabile per gestire la classifica
-    private final LeaderboardImpl leaderboard = new LeaderboardImpl();
+    private final Runnable onPlayAgain;
 
-    public GameController(Paddle paddle, Ball ball, LevelManager levelManager, GameMapImpl view, int gameAreaWidth, int gameAreaHeight, int score) {
+    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
@@ -56,6 +55,7 @@ public class GameController implements KeyListener {
         this.gameAreaWidth = gameAreaWidth;
         this.gameAreaHeight = gameAreaHeight;
         this.score = score;
+        this.onPlayAgain = onPlayAgain;
 
         // Inizializza il manager delle collisioni (MVC rispettato: passiamo solo le dimensioni)
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score);
@@ -80,17 +80,14 @@ public class GameController implements KeyListener {
         this.timer.start();
     }
 
-       private void gameOver(){
-            timer.stop();
-            int finalScore = collisionManager.getScore();
-            if(leaderboard.isHighScore(finalScore)){
-                String name = JOptionPane.showInputDialog(view, "Inserisci 3 lettere per il tuo nome:");
-                if(name != null && name.length() >= 3){
-                    leaderboard.add(name.substring(0,3), finalScore);
-                    leaderboard.save();
-                }
-            }
-        }
+    private void gameOver() {
+        timer.stop();
+        final int finalScore = collisionManager.getScore();
+        SwingUtilities.invokeLater(() -> {
+            view.dispose();
+            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0)).show();
+        });
+    }
 
     private void update() {
 

@@ -40,7 +40,7 @@ public final class App {
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball);
         view.showWindow();
 
-        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score);
+        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score, App::startGame);
         controller.start();
     }
 }

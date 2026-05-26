@@ -14,6 +14,7 @@ import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.GameOverView;
 import it.unibo.breakout.view.impl.MainPanel;
+import it.unibo.breakout.model.impl.LeaderboardImpl;
 
 public class GameController implements KeyListener {
 
@@ -24,6 +25,8 @@ public class GameController implements KeyListener {
     private final GameMapImpl view;
 
     private int score;
+
+    private final LeaderboardImpl leaderboard = new LeaderboardImpl();
 
     private final Timer timer;
     private static final int DELAY_MS = 16; // ~60 FPS
@@ -85,7 +88,7 @@ public class GameController implements KeyListener {
         final int finalScore = collisionManager.getScore();
         SwingUtilities.invokeLater(() -> {
             view.dispose();
-            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0)).show();
+            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0), leaderboard).show();
         });
     }
 
@@ -107,7 +110,7 @@ public class GameController implements KeyListener {
         paddle.clamp(currentWidth);
 
         if(ready){
-            ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
+            ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0 - ball.getWidth() / 2.0, paddle.getY() - ball.getHeight());
             view.repaint();
             return;
         }

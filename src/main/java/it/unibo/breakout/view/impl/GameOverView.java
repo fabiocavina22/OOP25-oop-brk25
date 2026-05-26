@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -15,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import it.unibo.breakout.model.impl.LeaderboardImpl;
 
 /**
  * Game over screen shown when the player loses all lives or bricks reach the paddle.
@@ -24,6 +26,8 @@ import java.awt.event.MouseEvent;
 public final class GameOverView {
 
     private final JFrame frame;
+    private final LeaderboardImpl leaderboard;
+    private final int finalScore;
 
     /**
      * Constructs the game over window.
@@ -32,7 +36,9 @@ public final class GameOverView {
      * @param onPlayAgain callback invoked when the player clicks "Play Again"
      * @param onQuit      callback invoked when the player clicks "Quit"
      */
-    public GameOverView(final int finalScore, final Runnable onPlayAgain, final Runnable onQuit) {
+    public GameOverView(final int finalScore, final Runnable onPlayAgain, final Runnable onQuit, final LeaderboardImpl leaderboard) {
+        this.finalScore = finalScore;
+        this.leaderboard = leaderboard;
         frame = new JFrame("Dido's Breakout");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -110,5 +116,12 @@ public final class GameOverView {
      */
     public void show() {
         frame.setVisible(true);
+        if(leaderboard.isHighScore(finalScore)){
+            String name = JOptionPane.showInputDialog(frame, "inserisci 3 lettere per il tuo nome");
+            if(name != null && name.length() >= 3){
+                leaderboard.add(name.substring(0, 3), finalScore);
+                leaderboard.save();
+            }
+        }
     }
 }

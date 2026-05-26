@@ -1,5 +1,6 @@
 package it.unibo.breakout.view.impl;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -10,8 +11,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image; // <-- AGGIUNTO
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,13 +42,27 @@ public final class MenuView {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
-        final JPanel rootPanel = new JPanel(new BorderLayout());
-        rootPanel.setBackground(Color.BLACK);
+        final Image background = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/background.jpg")).getImage();
+
+        // --- CREAZIONE ROOT PANEL CON SFONDO PERSONALIZZATO ---
+        final JPanel rootPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    // Disegna l'immagine adattandola alla larghezza e altezza del pannello
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    // Fallback in caso l'immagine non venga trovata
+                    g.setColor(Color.BLACK);
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
 
         // --- centre: title + button ---
         final JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.BLACK);
-
+        panel.setOpaque(false);
         final GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx  = 0;
         gbc.insets = new Insets(20, 0, 20, 0);

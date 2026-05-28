@@ -4,36 +4,205 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import java.awt.*;
+import java.net.URL;
+
 
 public class LeftPanel extends JPanel {
 
-    public LeftPanel() {
+        ImageIcon iconW, iconA, iconS, iconD;
 
-        setBackground(Color.GRAY);
+        ImageIcon iconWPressed, iconAPressed, iconSPressed, iconDPressed;
 
-        // Bordo laterale destro
-        Border rightBorder = BorderFactory.createMatteBorder(
+        ImageIcon iconHeart;
+
+        private final JLabel lblW = new JLabel();
+        private final JLabel lblA = new JLabel();
+        private final JLabel lblS = new JLabel();
+        private final JLabel lblD = new JLabel();
+
+        private final JLabel lblLives = new JLabel("3");
+        private final JLabel lblScore = new JLabel("0");
+
+        public LeftPanel() {
+
+
+                setBackground(Color.WHITE);
+
+                Border RightBorder = BorderFactory.createMatteBorder(
                 0, // top
                 0, // left
                 0, // bottom
                 10, // right
                 Color.BLACK
-        );
+                );
 
-        // Padding interno
-        Border padding = BorderFactory.createEmptyBorder(
+                Border padding = BorderFactory.createEmptyBorder(
                 10,
                 10,
                 10,
                 10
-        );
+                );
 
-        // Combina bordo + padding
-        setBorder(
+                setBorder(
                 BorderFactory.createCompoundBorder(
-                        rightBorder,
+                        RightBorder,
                         padding
                 )
-        );
-    }
+                );
+
+                loadImages();
+
+                lblW.setIcon(iconW);
+                lblA.setIcon(iconA);
+                lblS.setIcon(iconS);
+                lblD.setIcon(iconD);
+
+                Font retroFont = new Font("Courier New", Font.BOLD, 18);
+
+                // Pannellino di supporto per le vite (allinea Numero e Cuore orizzontalmente)
+                JPanel hudContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+                hudContainer.setBackground(Color.WHITE);
+
+                lblLives.setFont(retroFont);
+                JLabel lblHeartImg = new JLabel(iconHeart);
+
+                // Rettangolo del Punteggio (Usiamo una JLabel stilizzata)
+                lblScore.setFont(retroFont);
+                lblScore.setForeground(Color.WHITE);
+                lblScore.setBackground(Color.BLACK); // Sfondo del rettangolo
+                lblScore.setOpaque(true);            // Rende lo sfondo visibile
+                lblScore.setHorizontalAlignment(SwingConstants.CENTER); // Centra il testo
+                lblScore.setPreferredSize(new Dimension(85, 35));       // Dimensione del rettangolo
+                lblScore.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+
+                hudContainer.add(lblLives);
+                hudContainer.add(lblHeartImg);
+                hudContainer.add(Box.createHorizontalStrut(15)); // Crea uno spazio vuoto orizzontale tra vite e punteggio
+                hudContainer.add(lblScore);
+
+                setLayout(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.gridwidth = 3;                  // Occupa lo spazio di 3 colonne
+                gbc.weightx = 1.0;                  // Si espande in larghezza
+                gbc.weighty = 0.0;                  // Non si espande in altezza
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.NORTHWEST; // <--- CALAMITA L'HUD IN ALTO A SINISTRA!
+                gbc.insets = new Insets(10, 5, 20, 5);     // Margine esterno (10px sopra, 20px sotto per staccarsi dai tasti)
+                add(hudContainer, gbc);
+
+                // --- LIVELLO CENTRALE: SPAZIO VUOTO ELASTICO ---
+                // Questo spinge l'HUD verso l'alto e i tasti WASD verso il basso
+                gbc.gridy = 1;
+                gbc.weighty = 1.0;                  // Si prende TUTTO lo spazio verticale rimasto
+                gbc.fill = GridBagConstraints.BOTH;
+                add(Box.createVerticalGlue(), gbc);
+
+                // --- LIVELLO IN BASSO: I TASTI WASD (CENTRATI) ---
+                // Resettiamo i vincoli per evitare che i tasti ereditino le proprietà dell'HUD
+                JPanel keysContainer = new JPanel(new GridBagLayout());
+                keysContainer.setBackground(Color.WHITE);
+
+                GridBagConstraints gbcKeys = new GridBagConstraints();
+
+                // 🌟 IL TRUCCO: Imposta la distanza tra i tasti.
+                // (1, 1, 1, 1) lascia 1 pixel di stacco. Se metti (0, 0, 0, 0) saranno COMPLETAMENTE ATTACCATI.
+                gbcKeys.insets = new Insets(1, 1, 1, 1);
+                gbcKeys.fill = GridBagConstraints.NONE;
+                gbcKeys.weightx = 0.0; // Impedisce ai tasti di allontanarsi tra loro
+                gbcKeys.weighty = 0.0;
+
+                // Disposizione a piramide DENTRO il sotto-pannello
+                // Fila 1: Tasto 'W' (Fila sopra, al centro)
+                gbcKeys.gridx = 1;
+                gbcKeys.gridy = 0;
+                keysContainer.add(lblW, gbcKeys);
+
+                // Fila 2: Tasti 'A', 'S', 'D' (Fila sotto)
+                gbcKeys.gridx = 0; gbcKeys.gridy = 1; keysContainer.add(lblA, gbcKeys);
+                gbcKeys.gridx = 1; gbcKeys.gridy = 1; keysContainer.add(lblS, gbcKeys);
+                gbcKeys.gridx = 2; gbcKeys.gridy = 1; keysContainer.add(lblD, gbcKeys);
+
+                // ORA AGGIUNGIAMO IL BLOCCO COMPATTO AL PANNELLO PRINCIPALE
+                gbc.gridx = 0;
+                gbc.gridy = 3;            // Posizionato sotto la molla elastica
+                gbc.gridwidth = 3;        // Occupa la larghezza totale
+                gbc.weightx = 1.0;
+                gbc.weighty = 0.0;
+                gbc.fill = GridBagConstraints.NONE;
+                gbc.anchor = GridBagConstraints.CENTER; // Centra l'intero blocco WASD nello spazio rimasto
+                gbc.insets = new Insets(5, 5, 15, 5);   // Margine esterno dal fondo dello schermo
+
+                add(keysContainer, gbc);
+        }
+
+        /**
+         * Updates the HUD in real-time
+         */
+        public void updateHUD(int score, int lives) {
+                lblScore.setText(String.valueOf(score));
+                lblLives.setText(String.valueOf(lives));
+        }
+
+
+        /**
+         * safely upload all the requested images
+         */
+        private void loadImages() {
+                iconW = getSafeIcon("/it/unibo/breakout/images/W_key.png");
+                iconA = getSafeIcon("/it/unibo/breakout/images/A_key.png");
+                iconS = getSafeIcon("/it/unibo/breakout/images/S_key.png");
+                iconD = getSafeIcon("/it/unibo/breakout/images/D_key.png");
+
+                iconWPressed = getSafeIcon("/it/unibo/breakout/images/pressed_W_key.png");
+                iconAPressed = getSafeIcon("/it/unibo/breakout/images/pressed_A_key.png");
+                iconSPressed = getSafeIcon("/it/unibo/breakout/images/pressed_S_key.png");
+                iconDPressed = getSafeIcon("/it/unibo/breakout/images/pressed_D_key.png");
+
+                URL heartUrl = getClass().getResource("/it/unibo/breakout/images/iconHeart.png");
+                if (heartUrl != null) {
+                        Image img = new ImageIcon(heartUrl).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+                        iconHeart = new ImageIcon(img);
+                } else {
+                        iconHeart = new ImageIcon();
+                }
+        }
+
+        /**
+         * return a void icon if one misses
+         */
+        private ImageIcon getSafeIcon(String path) {
+                URL url = getClass().getResource(path);
+                return (url != null) ? new ImageIcon(url) : new ImageIcon();
+        }
+
+        // --- PUBLIC METHODS FOR THE GAME LOOP ---
+
+        /**
+         *this method get called if the user press a key
+         * @param key ("W", "A", "S", "D")
+         */
+        public void setKeyPressed(String key) {
+                switch (key.toUpperCase()) {
+                case "W" -> lblW.setIcon(iconWPressed);
+                case "A" -> lblA.setIcon(iconAPressed);
+                case "S" -> lblS.setIcon(iconSPressed);
+                case "D" -> lblD.setIcon(iconDPressed);
+                }
+        }
+
+        /**
+         * this method get called if the user release a key
+         * @param key ("W", "A", "S", "D")
+         */
+        public void setKeyReleased(String key) {
+                switch (key.toUpperCase()) {
+                case "W" -> lblW.setIcon(iconW);
+                case "A" -> lblA.setIcon(iconA);
+                case "S" -> lblS.setIcon(iconS);
+                case "D" -> lblD.setIcon(iconD);
+                }
+        }
 }

@@ -10,7 +10,7 @@ import it.unibo.breakout.model.api.Paddle;
     public class PaddleImpl implements Paddle {
 
         private int x ;
-        private final int y;
+        private int y;
         private int width;
         private final int height;
         private int speed;
@@ -57,5 +57,20 @@ import it.unibo.breakout.model.api.Paddle;
     @Override
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public void updateDimensions( int panelWidth, int panelHeight){
+        // 1. Il pad occupa sempre esattamente il 10% della larghezza del pannello centrale
+        this.width = (int) (panelWidth * 0.25);
+
+        // 2. Il pad si posiziona sempre all'80% dell'altezza (lasciando il 20% di spazio sotto)
+        this.y = (int) (panelHeight * 0.80);
+
+        // 3. Controllo di sicurezza sull'asse X
+        // Se restringendo la finestra il pad finisce fuori dal bordo destro, lo spingiamo dentro
+        if (this.x + this.width > panelWidth) {
+            this.x = panelWidth - this.width;
+        }
     }
 }

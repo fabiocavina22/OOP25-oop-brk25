@@ -54,4 +54,6 @@ public interface LevelManager {
      */
     boolean hasBricksReachedThreshold(double thresholdY);
 
+    void updateDimensions(int newWidth, int newHeight);
+
 }

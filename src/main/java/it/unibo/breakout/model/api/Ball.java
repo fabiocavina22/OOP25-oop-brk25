@@ -87,4 +87,6 @@ public interface Ball extends Collidable {
      * @return {@code true} if the ball is out of bounds below the field
      */
     boolean isOutOfBounds(double fieldHeight);
+
+    void updateDimensions(int panelWidth, int panelHeight, Paddle paddle);
 }

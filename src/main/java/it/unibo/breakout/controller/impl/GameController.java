@@ -14,6 +14,7 @@ import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
 import it.unibo.breakout.view.api.SoundManager;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.GameOverView;
+import it.unibo.breakout.view.impl.LeftPanel;
 import it.unibo.breakout.view.impl.MainPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 
@@ -34,6 +35,8 @@ public class GameController implements KeyListener {
     private static final int DELAY_MS = 16; // ~60 FPS
 
     private JPanel mainPanel;
+
+    private LeftPanel leftPanel;
 
     private final int gameAreaWidth;
     @SuppressWarnings("unused")
@@ -76,7 +79,8 @@ public class GameController implements KeyListener {
         for (java.awt.Component comp : view.getContentPane().getComponents()) {
             if (comp instanceof MainPanel) {
                 this.mainPanel = (JPanel) comp;
-                break;
+            }else if (comp instanceof LeftPanel) {
+                this.leftPanel = (LeftPanel) comp;
             }
         }
     }
@@ -158,6 +162,8 @@ public class GameController implements KeyListener {
         }
 
         view.repaint();
+
+        leftPanel.updateHUD(collisionManager.getScore(), collisionManager.getlives());
     }
 
 
@@ -167,17 +173,34 @@ public class GameController implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
             leftPressed = true;
+            if (leftPanel != null) leftPanel.setKeyPressed("A");
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = true;
+            if (leftPanel != null) leftPanel.setKeyPressed("D");
         }
         if(e.getKeyCode() == KeyEvent.VK_W && ready || e.getKeyCode() == KeyEvent.VK_UP && ready){
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(12);
+            if (leftPanel != null) {
+
+                leftPanel.setKeyPressed("W");
+
+                javax.swing.Timer wTimer = new javax.swing.Timer(500, event -> {
+                        leftPanel.setKeyReleased("W");
+                    });
+                    wTimer.setRepeats(false); // IMPORTANTE: dice al timer di eseguirsi una volta sola e poi distruggersi
+                    wTimer.start();
+            }
         }
         if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
+            if(pause){
+                if (leftPanel != null) leftPanel.setKeyPressed("S");
+            }else{
+                if (leftPanel != null) leftPanel.setKeyReleased("S");
+            }
         }
     }
 
@@ -185,9 +208,11 @@ public class GameController implements KeyListener {
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
             leftPressed = false;
+            if (leftPanel != null) leftPanel.setKeyReleased("A");
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = false;
+            if (leftPanel != null) leftPanel.setKeyReleased("D");
         }
     }
 

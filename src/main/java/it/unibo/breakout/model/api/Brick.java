@@ -30,4 +30,12 @@ public interface Brick extends Collidable{
 
     //**Returns the specific type of the block */
     int getType();
+
+    void setX(double x);
+
+    void setWidth(int width);
+
+    void setY(double y);
+
+    void setHeight(int height);
 }

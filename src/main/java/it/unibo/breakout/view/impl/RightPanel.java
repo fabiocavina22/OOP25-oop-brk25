@@ -9,7 +9,7 @@ public class RightPanel extends JPanel {
 
     public RightPanel() {
 
-         setBackground(Color.GRAY);
+        setBackground(Color.GRAY);
 
         // Bordo laterale destro
         Border leftBorder = BorderFactory.createMatteBorder(

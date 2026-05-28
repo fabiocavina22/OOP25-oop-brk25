@@ -1,6 +1,7 @@
 package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Ball;
+import it.unibo.breakout.model.api.Paddle;
 
 
 public class BallImpl implements Ball {
@@ -105,5 +106,24 @@ public class BallImpl implements Ball {
     @Override
     public int getHeight() {
         return (int) (radius*2);
+    }
+
+    @Override
+    public void updateDimensions(int panelWidth, int panelHeight, Paddle paddle) {
+
+        if (this.velocityX == 0 && this.velocityY == 0) {
+            // Se il gioco non è partito, centra matematicamente la palla sul nuovo pad
+            this.x = paddle.getX() + (paddle.getWidth() / 2) - (this.radius / 2);
+            this.y = paddle.getY() - this.radius;
+        } else {
+            // Se la palla sta volando e la finestra si stringe improvvisamente,
+            // impediamo che la palla esca fuori dai muri di destra o dal fondo
+            if (this.x + this.radius > panelWidth) {
+                this.x = panelWidth - this.radius;
+            }
+            if (this.y + this.radius > panelHeight) {
+                this.y = panelHeight - this.radius;
+            }
+        }
     }
 }

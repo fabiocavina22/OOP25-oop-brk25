@@ -9,14 +9,15 @@ import java.util.stream.Collectors;
 public class LevelManagerImpl implements LevelManager {
 
     private final List<Brick> activeBricks;
-    private final int screenWidth;
-    private final int screenHeight;
+    private int screenWidth;
+    private int screenHeight;
     private final int brickWidth;
     private final int brickHeight;
-    private final double rowSpacing;
+    private double rowSpacing;
     private double scrollSpeed;
     private double distanceSinceLastRow;
     private int rowsGenerated;
+    private boolean isFirstResize = true;
 
     private final Random rng = new Random();
 
@@ -122,6 +123,49 @@ public class LevelManagerImpl implements LevelManager {
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
 
+    @Override
+    public void updateDimensions(int newWidth, int newHeight) {
+        if (newWidth <= 0 || newHeight <= 0) return;
+
+        // Se è il primissimo avvio
+        if (isFirstResize) {
+            this.screenWidth = newWidth;
+            this.screenHeight = newHeight;
+            this.isFirstResize = false;
+
+            activeBricks.clear();
+            rowsGenerated = 0;
+            // Calcoliamo la spaziatura in base alla nuova larghezza (essendo quadrati, baseWidth è la referenza)
+            this.rowSpacing = (newWidth / 10) + ROW_GAP;
+            this.distanceSinceLastRow = this.rowSpacing;
+
+            for (int r = 0; r < INITIAL_ROWS; r++) {
+                generateNewRow(r * this.rowSpacing);
+            }
+            return;
+        }
+
+        if (this.screenWidth == newWidth && this.screenHeight == newHeight) return;
+
+        double scale = (double) newWidth / this.screenWidth;
+
+        this.screenWidth = newWidth;
+        this.screenHeight = newHeight;
+
+        // Scaliamo anche le variabili di sistema per non sballare le nuove righe che nasceranno
+        this.rowSpacing = this.rowSpacing * scale;
+        this.distanceSinceLastRow = this.distanceSinceLastRow * scale;
+
+        // Stringiamo e spostiamo tutti i quadrati in proporzione
+        for (Brick b : activeBricks) {
+            b.setX(b.getX() * scale);
+            b.setY(b.getY() * scale); // Fondamentale per non farli accavallare!
+
+            int newSquareSize = (int) (b.getWidth() * scale);
+            b.setWidth(newSquareSize);
+            b.setHeight(newSquareSize); // Ora rimpiccioliscono anche in altezza
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Private Methods
@@ -134,9 +178,9 @@ public class LevelManagerImpl implements LevelManager {
      * @param yPosition Y coordinate where the row is placed
      */
     private void generateNewRow(double yPosition) {
-        int columns             = screenWidth / brickWidth;
-        int totalBricksWidth = columns * brickWidth;
-        double horizontalOffset = (screenWidth - totalBricksWidth) / 2.0;
+        int columns             = 10;
+        int baseWidth = screenWidth / columns;
+        int r = screenWidth % columns ;
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
         int currentRowId     = rowsGenerated;
@@ -146,12 +190,16 @@ public class LevelManagerImpl implements LevelManager {
         System.out.printf("Row %d → %d bricks at Y=%.1f%n", rowsGenerated, columns, yPosition);
         System.out.printf("Row %d → %d bricks (panelWidth=%d)%n", rowsGenerated, screenWidth / brickWidth, screenWidth);
 
+        double currentX = 0.0;
+
         for (int i = 0; i < columns; i++) {
-            double xPosition = horizontalOffset + i * brickWidth;
+            int currentBrickWidth = baseWidth + (i < r ? 1 : 0);
             int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
             if (type == 3) indestructibleCount++;
             if (type == 4 || type == 5) specialGenerated = true ;
-            activeBricks.add(new BrickImpl(xPosition, yPosition, type, brickWidth, brickHeight, currentRowId));
+            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId));
+
+            currentX += currentBrickWidth;
         }
         rowsGenerated++;
     }

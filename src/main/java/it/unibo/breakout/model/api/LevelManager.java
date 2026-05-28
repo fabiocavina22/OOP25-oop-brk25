@@ -33,6 +33,10 @@ public interface LevelManager {
      */
     void reset();
 
+    /**remove the brick while freeze mode is active
+    */
+    void removeDestroyedBricks();
+
     /**
      * Current scroll speed in pixels per second.
      * Useful for the HUD (e.g. displaying difficulty) or debugging.

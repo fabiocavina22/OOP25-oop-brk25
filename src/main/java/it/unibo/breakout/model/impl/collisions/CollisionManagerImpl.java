@@ -1,12 +1,15 @@
 package it.unibo.breakout.model.impl.collisions;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Brick;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.api.collisions.CollisionDetector;
 import it.unibo.breakout.model.api.collisions.CollisionManager;
+import it.unibo.breakout.model.impl.PowerUpImpl;
 
 
 public class CollisionManagerImpl implements CollisionManager {
@@ -15,6 +18,17 @@ public class CollisionManagerImpl implements CollisionManager {
     private int score;
     private int lives = 3;
     private boolean lifeLost = false;
+    private final List<PowerUpImpl> activePowerUp = new ArrayList<>();
+    private final Random rng = new Random(); 
+    private long doublePointsTimer = 0;
+    private long paddleLargeTimer = 0;
+    private long paddleShortTimer = 0;
+    private long freezeBlocksTimer = 0;
+    private long halfPointsTimer = 0;
+    private long fastBallTimer = 0;
+    private long pauseStart = 0;
+
+    private static final long TIME = 8000;
 
     public CollisionManagerImpl(CollisionDetector detector, int score) {
         this.detector = detector;
@@ -24,7 +38,7 @@ public class CollisionManagerImpl implements CollisionManager {
     @Override
     public void handleCollisions(Ball ball,Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score){
         checkPaddleCollision(ball, paddle);
-        checkBrickCollisions(ball, bricks);
+        checkBrickCollisions(ball, bricks, isFrozen());
         checkBorderCollision(ball, gameWidth, gameHeight, paddle);
     }
 
@@ -71,6 +85,156 @@ public class CollisionManagerImpl implements CollisionManager {
 
     public int getScore(){
         return score;
+    }
+
+    public boolean isFrozen(){
+        return freezeBlocksTimer > 0;
+    }
+
+    public List<PowerUpImpl> getActivePowerUp(){
+        return activePowerUp;
+    }
+
+    public void updateTimer(Paddle paddle, Ball ball){
+        long now = System.currentTimeMillis();
+
+        if(paddleShortTimer > 0 && now > paddleShortTimer){
+            paddle.paddleLarge();
+            paddleShortTimer = 0;
+            System.out.println("effetto pad piccolo terminato");
+        }
+        if(doublePointsTimer > 0 && now > doublePointsTimer){
+            score /= 2;
+            doublePointsTimer = 0;
+            System.out.println("effetto punti doppi terminato");
+        }
+        if(paddleLargeTimer > 0 && now > paddleLargeTimer){
+            paddle.paddleShort();
+            paddleLargeTimer = 0;
+            System.out.println("effetto pad grande terminato");
+        }
+        if(freezeBlocksTimer > 0 && now > freezeBlocksTimer){
+            freezeBlocksTimer = 0;
+            System.out.println("effettp blocchi fermi terminato");
+        }
+        if(halfPointsTimer > 0 && now > halfPointsTimer){
+            score *= 2;
+            halfPointsTimer = 0;
+            System.out.println("effetto punti mezzi terminato");
+        }
+        if(fastBallTimer > 0 && now > fastBallTimer){
+            ball.setVelocityX(ball.getVelocityX() / 1.5);
+            ball.setVelocityY(ball.getVelocityY() / 1.5);
+            fastBallTimer = 0;
+            System.out.println("effetto pallina veloce terminato");
+        }
+    }
+
+    public void pauseTimer(){
+        pauseStart = System.currentTimeMillis();
+    }
+
+    public void resumeTimer(){
+        if(pauseStart == 0){
+            return;
+        }
+        long pauseDuration = System.currentTimeMillis() - pauseStart;
+        if (paddleShortTimer > 0) paddleShortTimer += pauseDuration;
+        if (doublePointsTimer > 0) doublePointsTimer += pauseDuration;
+        if (paddleLargeTimer > 0) paddleLargeTimer += pauseDuration;
+        if (freezeBlocksTimer > 0) freezeBlocksTimer += pauseDuration;
+        if (halfPointsTimer > 0) halfPointsTimer += pauseDuration;
+        if (fastBallTimer > 0) fastBallTimer += pauseDuration;
+        pauseStart = 0;
+    }
+
+    public void updatePowerUp(Paddle paddle, Ball ball, int screenHeight){
+        for(int i = 0; i < activePowerUp.size(); i++){
+            PowerUpImpl powerUp = activePowerUp.get(i);
+            powerUp.fall();
+            if(powerUp.isOutOfBounds(screenHeight)){
+                activePowerUp.remove(i);
+                i--;
+            }
+            else if(powerUp.getX() + 20 > paddle.getX() &&
+            powerUp.getX() < paddle.getX() + paddle.getWidth() &&
+            powerUp.getY() + 10 >  paddle.getY() &&
+            powerUp.getY() < paddle.getY() + paddle.getHeight()){
+                switch(powerUp.getType()){
+                    case 1:
+                        lives++;
+                        System.out.println("vita extra");
+                        break;
+                    case 2:
+                        if(paddleShortTimer > 0){
+                            paddleShortTimer = System.currentTimeMillis() + TIME;
+                        }
+                        else{
+                            if(paddleLargeTimer > 0){
+                                paddle.paddleShort();
+                                paddleLargeTimer = 0;
+                            }
+                            paddle.paddleShort();
+                            paddleShortTimer = System.currentTimeMillis() + TIME;
+                        }
+                        System.out.println("pad piccolo");
+                        break;
+                    case 3:
+                        if(doublePointsTimer > 0){
+                            doublePointsTimer = System.currentTimeMillis() + TIME;
+                        }
+                        else{
+                            if(halfPointsTimer > 0){
+                                score *= 2;
+                                halfPointsTimer = 0;
+                            }
+                            score *= 2;
+                            doublePointsTimer = System.currentTimeMillis() + TIME;
+                        }
+                        System.out.println("punti doppi");
+                        break;
+                    case 4:
+                        if(paddleLargeTimer > 0){
+                            paddleLargeTimer = System.currentTimeMillis() + TIME;
+                        }
+                        else{
+                            if(paddleShortTimer > 0){
+                                paddle.paddleLarge();
+                                paddleShortTimer = 0;
+                            }
+                            paddle.paddleLarge();
+                            paddleLargeTimer = System.currentTimeMillis() + TIME;
+                        }
+                        System.out.println("pad grande");
+                        break;
+                    case 5:
+                        freezeBlocksTimer = System.currentTimeMillis() + TIME;
+                        System.out.println("blocchi fermi");
+                        break;
+                    case 6:
+                        if(halfPointsTimer > 0){
+                            halfPointsTimer = System.currentTimeMillis() + TIME;
+                        }
+                        else{
+                            if(doublePointsTimer > 0){
+                                score /= 2;
+                                doublePointsTimer = 0;
+                            }
+                            score /= 2;
+                            halfPointsTimer = System.currentTimeMillis() + TIME;
+                        }
+                        System.out.println("punti dimezzati");
+                        break;
+                    case 7:
+                        ball.setVelocityX(ball.getVelocityX() * 1.5);
+                        ball.setVelocityY(ball.getVelocityY() * 1.5);
+                        fastBallTimer = System.currentTimeMillis() + TIME;
+                        System.out.println("pallina più veloce");
+                        break;
+                }
+                activePowerUp.remove(i);
+            }
+        }
     }
 
     private void checkPaddleCollision(Ball ball, Paddle paddle){
@@ -126,7 +290,16 @@ public class CollisionManagerImpl implements CollisionManager {
         }
     }
 
-    private void checkBrickCollisions(Ball ball, List<Brick> bricks) {
+    private boolean isAdjacent(Brick brick, Brick adjacentBrick){
+        double dx = Math.abs(brick.getX() - adjacentBrick.getX());
+        double dy = Math.abs(brick.getY() - adjacentBrick.getY());
+        boolean adjacentX = dx < brick.getWidth() * 1.5;
+        boolean adjacentY = dy < brick.getHeight() * 1.5;
+        boolean notSame = dx > 0 || dy > 0;
+        return adjacentX && adjacentY && notSame;
+    }
+
+    private void checkBrickCollisions(Ball ball, List<Brick> bricks, boolean frozen) {
 
         for (Brick brick : bricks) {
 
@@ -196,8 +369,43 @@ public class CollisionManagerImpl implements CollisionManager {
                 }
 
                 // distruzione brick
-                brick.hit();
-                points(brick);
+                    brick.hit();
+                    points(brick);
+
+                    //blocco bomba
+                    if(brick.getType() == 5){
+                        System.out.println("bomba a x=" + brick.getX() + "y=" + brick.getY());
+                        int count = 0;
+                        for(int i = 0; i < bricks.size(); i++){
+                            Brick adjacentBrick = bricks.get(i);
+                            if(adjacentBrick != brick && isAdjacent(brick, adjacentBrick)){
+                                count++;
+                                System.out.println("adiacente a x=" + adjacentBrick.getX() + "y=" + adjacentBrick.getY());
+                                adjacentBrick.hit();
+                                System.out.println("tipo:" + adjacentBrick.getType() + "distrutto" + adjacentBrick.isDestroyed());
+                                points(adjacentBrick);
+                                if(adjacentBrick.isDestroyed() && adjacentBrick.getType() == 4){
+                                    int powerUpType = rng.nextInt(7) + 1;
+                                    activePowerUp.add(new PowerUpImpl(
+                                        adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0,
+                                        adjacentBrick.getY(),
+                                        powerUpType
+                                    ));
+                                }
+                            }
+                        }
+                        System.out.println("numero di blocchi adiacenti: " + count);
+                    }
+
+                    //blocco powerUp
+                    if(brick.isDestroyed() && brick.getType() == 4){
+                        int powerUpType = rng.nextInt(7) + 1;
+                        activePowerUp.add(new PowerUpImpl(
+                            brick.getX() + brick.getWidth() / 2.0,
+                            brick.getY(),
+                            powerUpType
+                        ));
+                    }
 
                 break; // evita multi-collisione nello stesso frame
             }

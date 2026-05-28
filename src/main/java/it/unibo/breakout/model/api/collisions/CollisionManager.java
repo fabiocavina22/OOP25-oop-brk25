@@ -5,6 +5,7 @@ import java.util.List;
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Brick;
 import it.unibo.breakout.model.api.Paddle;
+import it.unibo.breakout.model.impl.PowerUpImpl;
 
 public interface CollisionManager {
 
@@ -14,21 +15,41 @@ public interface CollisionManager {
     */
     int points(Brick brick);
     
-    /**get the player's number of lives 
+    /**Get the player's number of lives 
     */
     int getlives();
     
-    /**manage the game over
+    /**Manage the game over
     */
     boolean isGameOver();
 
-    /**is a "signal" for the life lost
+    /**Is a "signal" for the life lost
     */
     boolean isLifeLost();
 
-    /**manage the score that will appear in the leaderboard
+    /**Manage the score that will appear in the leaderboard
     */
     int getScore();
+
+    /**Uptade the position of the power up
+    */
+    void updatePowerUp(Paddle paddle, Ball ball, int screenHeight);
+
+    /*Update the power up timers
+    */
+   void updateTimer(Paddle paddle, Ball ball);
+
+   /*Stops the power up timer
+   */
+   void pauseTimer();
+
+   /**Resume the power up timer
+   */
+   void resumeTimer();
+
+    /**Return the power up list
+    */
+   List<PowerUpImpl> getActivePowerUp();
 }
 
     

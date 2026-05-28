@@ -110,6 +110,12 @@ public class LevelManagerImpl implements LevelManager {
     }
 
     /**
+    */
+   public void removeDestroyedBricks(){
+        activeBricks.removeIf(Brick::isDestroyed);
+   }
+
+    /**
      * Returns true if any brick's bottom edge has reached or passed thresholdY.
      * Typically used to detect bricks touching the paddle area.
      *
@@ -167,16 +173,11 @@ public class LevelManagerImpl implements LevelManager {
      * @return brick type: 1, 2, or 3
      */
     private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
-        int roll = rng.nextInt(11);
-        if (roll == 3 && currentIndestructible < max) return 3;
-        if (roll <= 2) return 2;
-        if (roll == 4 && !specialGenerated){
-            roll = rng.nextInt(2);
-            if(roll == 1){
-                return 4; //special block
-            }
-            return 5; //explosive block
-        }
+        int roll = rng.nextInt(100); 
+        if (roll < 10 && currentIndestructible < max) return 3;
+        if (roll < 35) return 2;
+        if (roll < 44 && !specialGenerated) return 4;//poweu up
+        if (roll < 50 && !specialGenerated) return 5;//explosive block
         return 1;
     }
 

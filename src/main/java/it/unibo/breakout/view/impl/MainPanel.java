@@ -9,7 +9,9 @@ import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Brick;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
-
+import it.unibo.breakout.model.impl.PowerUpImpl;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class MainPanel extends JPanel {
@@ -17,6 +19,7 @@ public class MainPanel extends JPanel {
     private final Paddle paddle;
     private final Ball ball;
     private final LevelManager levelManager;
+    private List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private Image brickImage1;
     private Image brickImage2;
     private Image brickImage3;
@@ -60,6 +63,10 @@ public class MainPanel extends JPanel {
 
         return getHeight();
 
+    }
+    
+    public void setPowerUp(List<PowerUpImpl> powerUp){
+        this.activePowerUp = powerUp;
     }
 
     @Override
@@ -116,5 +123,17 @@ public class MainPanel extends JPanel {
                 (int) ball.getRadius() * 2,
                 (int) ball.getRadius() * 2
             );
+
+            for(int i = 0; i < activePowerUp.size(); i++){
+                PowerUpImpl p = activePowerUp.get(i);
+                int type = p.getType();
+                if(type ==1 || type == 3 || type == 4 || type == 5){
+                    g.setColor(Color.GREEN);
+                }
+                else{
+                    g.setColor(new Color(128, 0, 128));
+                }
+                g.fillOval((int) p.getX(), (int) p.getY(), 15, 15);
+            }
         }
 }

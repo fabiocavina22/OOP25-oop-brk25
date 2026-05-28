@@ -58,4 +58,18 @@ import it.unibo.breakout.model.api.Paddle;
     public int getHeight() {
         return height;
     }
+
+    @Override
+    public void paddleLarge(){
+        if(this.width < 240){
+            this.width += 30;
+        }
+    }
+
+    @Override
+    public void paddleShort(){
+        if(this.width > 60){
+            this.width -= 30;
+        }
+    }
 }

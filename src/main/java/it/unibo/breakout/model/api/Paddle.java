@@ -7,5 +7,6 @@ public interface Paddle extends Collidable {
     void moveLeft() ;
     void moveRight() ;
     void clamp(int screenWidth) ;
-
+    void paddleLarge();
+    void paddleShort();
 }

@@ -1,6 +1,5 @@
 package it.unibo.breakout.controller.impl;
 
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.event.KeyEvent;
@@ -31,7 +30,7 @@ public class GameController implements KeyListener {
     private final Timer timer;
     private static final int DELAY_MS = 16; // ~60 FPS
 
-    private JPanel mainPanel;
+    private MainPanel mainPanel;
 
     private final int gameAreaWidth;
     @SuppressWarnings("unused")
@@ -73,7 +72,8 @@ public class GameController implements KeyListener {
 
         for (java.awt.Component comp : view.getContentPane().getComponents()) {
             if (comp instanceof MainPanel) {
-                this.mainPanel = (JPanel) comp;
+                //this.mainPanel = (JPanel) comp;
+                this.mainPanel = (MainPanel) comp;
                 break;
             }
         }
@@ -116,12 +116,21 @@ public class GameController implements KeyListener {
         }
 
         ball.move();
-        levelManager.update(DELAY_MS / 1000.0);
+        if(!collisionManager.isFrozen()){
+           levelManager.update(DELAY_MS / 1000.0);
+        }
+        else{
+            levelManager.removeDestroyedBricks();
+        }
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
+        collisionManager.updatePowerUp(paddle, ball, currentHeight);
+        collisionManager.updateTimer(paddle, ball);
+        mainPanel.setPowerUp(collisionManager.getActivePowerUp());
 
         if(collisionManager.isLifeLost()){
             ready = true;
+            collisionManager.pauseTimer();
         }
 
         if(collisionManager.isGameOver()){
@@ -152,9 +161,16 @@ public class GameController implements KeyListener {
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(12);
+            collisionManager.resumeTimer();
         }
         if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
+            if(pause){
+                collisionManager.pauseTimer();
+            }
+            else{
+                collisionManager.resumeTimer();
+            }
         }
     }
 

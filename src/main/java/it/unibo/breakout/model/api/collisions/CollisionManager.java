@@ -10,14 +10,14 @@ public interface CollisionManager {
 
     public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score);
 
-    /**Keep the current player point 
+    /**Keep the current player point
     */
     int points(Brick brick);
-    
-    /**get the player's number of lives 
+
+    /**get the player's number of lives
     */
     int getlives();
-    
+
     /**manage the game over
     */
     boolean isGameOver();
@@ -29,6 +29,24 @@ public interface CollisionManager {
     /**manage the score that will appear in the leaderboard
     */
     int getScore();
+
+    //** */
+    void blockHit(Brick bricks);
+
+    //** */
+    void padHit();
+
+    //** */
+    void borderHit();
+
+    //** */
+    int getBlockHit();
+
+    //** */
+    boolean getBorderHit();
+
+    //** */
+    boolean getPadHit();
+
 }
 
-    

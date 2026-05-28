@@ -11,6 +11,7 @@ import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.collisions.CollisionManagerImpl;
 import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
+import it.unibo.breakout.view.api.SoundManager;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.GameOverView;
 import it.unibo.breakout.view.impl.MainPanel;
@@ -22,6 +23,7 @@ public class GameController implements KeyListener {
     private final Ball ball;
     private final LevelManager levelManager;
     private final CollisionManagerImpl collisionManager;
+    private final SoundManager soundManager;
     private final GameMapImpl view;
 
     private int score;
@@ -50,7 +52,7 @@ public class GameController implements KeyListener {
 
     private final Runnable onPlayAgain;
 
-    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain) {
+    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
@@ -59,7 +61,7 @@ public class GameController implements KeyListener {
         this.gameAreaHeight = gameAreaHeight;
         this.score = score;
         this.onPlayAgain = onPlayAgain;
-
+        this.soundManager = soundManager;
         // Inizializza il manager delle collisioni (MVC rispettato: passiamo solo le dimensioni)
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score);
 
@@ -119,6 +121,27 @@ public class GameController implements KeyListener {
         levelManager.update(DELAY_MS / 1000.0);
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
+
+        if(collisionManager.getBorderHit()){
+            soundManager.playSound("ballHit.wav");
+        }
+
+        if(collisionManager.getPadHit()){
+            soundManager.playSound("ballHit.wav");
+        }
+
+        int hitBlockType = collisionManager.getBlockHit();
+        if(hitBlockType > 0){
+            if (hitBlockType == 5 ){
+                soundManager.playSound("explosion.wav");
+            }
+            else if (hitBlockType == 3){
+                soundManager.playSound("metalHit.wav");
+            }
+            else{
+                soundManager.playSound("brickBreaks.wav");
+            }
+        }
 
         if(collisionManager.isLifeLost()){
             ready = true;

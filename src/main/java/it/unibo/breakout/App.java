@@ -6,6 +6,7 @@ import it.unibo.breakout.model.impl.LevelManagerImpl;
 import it.unibo.breakout.model.impl.PaddleImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.MenuView;
+import it.unibo.breakout.view.impl.SoundManagerImpl;
 
 import javax.swing.SwingUtilities;
 
@@ -35,12 +36,13 @@ public final class App {
         final PaddleImpl paddle = new PaddleImpl(225, 600, 100, 15, 12);
         final BallImpl ball = new BallImpl(250, 400, 10, 0.0, 12.0);
         final LevelManagerImpl levelManager = new LevelManagerImpl(GAME_WIDTH, 60, 60, GAME_HEIGHT);
+        final SoundManagerImpl soundManager = new SoundManagerImpl();
         int score = 0;
 
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball);
         view.showWindow();
 
-        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score, App::startGame);
+        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score, App::startGame, soundManager);
         controller.start();
     }
 }

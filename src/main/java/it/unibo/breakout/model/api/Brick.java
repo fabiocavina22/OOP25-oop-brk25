@@ -38,4 +38,6 @@ public interface Brick extends Collidable{
     void setY(double y);
 
     void setHeight(int height);
+
+    int getColIndex();
 }

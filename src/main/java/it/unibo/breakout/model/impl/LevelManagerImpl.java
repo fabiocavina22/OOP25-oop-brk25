@@ -127,18 +127,16 @@ public class LevelManagerImpl implements LevelManager {
     public void updateDimensions(int newWidth, int newHeight) {
         if (newWidth <= 0 || newHeight <= 0) return;
 
-        // Se è il primissimo avvio
+        final int columns = 10;
+
         if (isFirstResize) {
             this.screenWidth = newWidth;
             this.screenHeight = newHeight;
             this.isFirstResize = false;
-
             activeBricks.clear();
             rowsGenerated = 0;
-            // Calcoliamo la spaziatura in base alla nuova larghezza (essendo quadrati, baseWidth è la referenza)
-            this.rowSpacing = (newWidth / 10) + ROW_GAP;
+            this.rowSpacing = (newWidth / columns) + ROW_GAP;
             this.distanceSinceLastRow = this.rowSpacing;
-
             for (int r = 0; r < INITIAL_ROWS; r++) {
                 generateNewRow(r * this.rowSpacing);
             }
@@ -147,24 +145,32 @@ public class LevelManagerImpl implements LevelManager {
 
         if (this.screenWidth == newWidth && this.screenHeight == newHeight) return;
 
-        double scale = (double) newWidth / this.screenWidth;
+        // Rapporto usato per Y e rowSpacing (larghezza-based perché i brick sono quadrati)
+        final double yScale    = (double) newWidth / this.screenWidth;
+        final int newBrickBase = newWidth / columns;
+        final int remainder    = newWidth % columns;
 
-        this.screenWidth = newWidth;
-        this.screenHeight = newHeight;
+        this.rowSpacing           = this.rowSpacing           * yScale;
+        this.distanceSinceLastRow = this.distanceSinceLastRow * yScale;
 
-        // Scaliamo anche le variabili di sistema per non sballare le nuove righe che nasceranno
-        this.rowSpacing = this.rowSpacing * scale;
-        this.distanceSinceLastRow = this.distanceSinceLastRow * scale;
-
-        // Stringiamo e spostiamo tutti i quadrati in proporzione
         for (Brick b : activeBricks) {
-            b.setX(b.getX() * scale);
-            b.setY(b.getY() * scale); // Fondamentale per non farli accavallare!
+            final int col = b.getColIndex();
 
-            int newSquareSize = (int) (b.getWidth() * scale);
-            b.setWidth(newSquareSize);
-            b.setHeight(newSquareSize); // Ora rimpiccioliscono anche in altezza
+            // X calcolata in assoluto dall'indice colonna: zero errore accumulato
+            double exactX = 0;
+            for (int i = 0; i < col; i++) {
+                exactX += newBrickBase + (i < remainder ? 1 : 0);
+            }
+            final int exactBrickWidth = newBrickBase + (col < remainder ? 1 : 0);
+
+            b.setX(exactX);
+            b.setWidth(exactBrickWidth);
+            b.setHeight(exactBrickWidth);   // quadrato
+            b.setY(b.getY() * yScale);      // Y scalata: si telescopa correttamente anche su chiamate multiple
         }
+
+        this.screenWidth  = newWidth;
+        this.screenHeight = newHeight;
     }
 
     // -------------------------------------------------------------------------
@@ -197,7 +203,7 @@ public class LevelManagerImpl implements LevelManager {
             int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
             if (type == 3) indestructibleCount++;
             if (type == 4 || type == 5) specialGenerated = true ;
-            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId));
+            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId, i));
 
             currentX += currentBrickWidth;
         }

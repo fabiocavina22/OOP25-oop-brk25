@@ -140,12 +140,17 @@ public class LevelManagerImpl implements LevelManager {
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
         int currentRowId     = rowsGenerated;
+
+        boolean specialGenerated = false;
+
         System.out.printf("Row %d → %d bricks at Y=%.1f%n", rowsGenerated, columns, yPosition);
         System.out.printf("Row %d → %d bricks (panelWidth=%d)%n", rowsGenerated, screenWidth / brickWidth, screenWidth);
+
         for (int i = 0; i < columns; i++) {
             double xPosition = horizontalOffset + i * brickWidth;
-            int type = chooseBrickType(indestructibleCount, maxIndestructible);
+            int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
             if (type == 3) indestructibleCount++;
+            if (type == 4 || type == 5) specialGenerated = true ;
             activeBricks.add(new BrickImpl(xPosition, yPosition, type, brickWidth, brickHeight, currentRowId));
         }
         rowsGenerated++;
@@ -161,10 +166,17 @@ public class LevelManagerImpl implements LevelManager {
      * @param max                   maximum allowed indestructible bricks per row
      * @return brick type: 1, 2, or 3
      */
-    private int chooseBrickType(int currentIndestructible, int max) {
-        int roll = rng.nextInt(100);
-        if (roll < 10 && currentIndestructible < max) return 3;
-        if (roll < 35) return 2;
+    private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
+        int roll = rng.nextInt(11);
+        if (roll == 3 && currentIndestructible < max) return 3;
+        if (roll <= 2) return 2;
+        if (roll == 4 && !specialGenerated){
+            roll = rng.nextInt(2);
+            if(roll == 1){
+                return 4; //special block
+            }
+            return 5; //explosive block
+        }
         return 1;
     }
 

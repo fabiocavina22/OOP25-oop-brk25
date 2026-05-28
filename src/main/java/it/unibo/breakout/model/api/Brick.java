@@ -27,4 +27,7 @@ public interface Brick extends Collidable{
 
     /** Returns the specific row of bricks */
     int getRowId();
+
+    //**Returns the specific type of the block */
+    int getType();
 }

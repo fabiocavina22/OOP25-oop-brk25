@@ -20,6 +20,10 @@ public class MainPanel extends JPanel {
     private Image brickImage1;
     private Image brickImage2;
     private Image brickImage3;
+    private Image brickImage4;
+    private Image brickImage5;
+
+
 
     public MainPanel(Paddle paddle, LevelManager levelManager, Ball ball) {
 
@@ -30,6 +34,8 @@ public class MainPanel extends JPanel {
         brickImage1 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick1.jpg")).getImage();
         brickImage2 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick2.jpg")).getImage();
         brickImage3 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick3.jpg")).getImage();
+        brickImage4 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick4.jpg")).getImage();
+        brickImage5 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick5.jpg")).getImage();
 
         setBackground(Color.WHITE);
 
@@ -76,11 +82,13 @@ public class MainPanel extends JPanel {
             Image img;
             if (b.isIndestructible()) {
                 img = brickImage3;
-            } else if (b.getLife() == 2) {
+            } else if (b.getType() == 2) {
                 img = brickImage2;
-            } else {
+            } else if (b.getType() == 1) {
                 img = brickImage1;
-            }
+            } else if (b.getType() == 4) {
+                img = brickImage4;
+            } else img = brickImage5 ;
 
             g.drawImage(img,
                     (int) b.getX() + 1,

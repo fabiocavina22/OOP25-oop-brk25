@@ -9,6 +9,7 @@ public class BrickImpl implements Brick {
     private int width;
     private int height;
     private final int rowId;
+    private int type;
     /**
      * @param x    horizontal position in pixels
      * @param y    vertical position in pixels
@@ -18,12 +19,16 @@ public class BrickImpl implements Brick {
         this.x = x;
         this.y = y;
         this.rowId = rowId;
+        this.type = type ;
         if (type == 3) {
             this.indestructible = true;
             this.life = 1;
         } else {
             this.indestructible = false;
-            this.life = type;
+            if (type == 4 || type == 5){
+                this.life = 1 ;
+            }
+            else this.life = type;
         }
         this.width = width;
         this.height = height;
@@ -43,6 +48,7 @@ public class BrickImpl implements Brick {
     @Override
     public void hit() {
         if (!indestructible) life--;
+        if (type == 2) type = 1 ;
     }
 
     /** Returns true if the brick has no life left and is not indestructible. */
@@ -81,4 +87,7 @@ public class BrickImpl implements Brick {
 
     @Override
     public int getLife(){ return this.life ;}
+
+    @Override
+    public int getType(){return this.type; }
 }

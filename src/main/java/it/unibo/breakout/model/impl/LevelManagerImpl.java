@@ -203,7 +203,7 @@ public class LevelManagerImpl implements LevelManager {
             int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
             if (type == 3) indestructibleCount++;
             if (type == 4 || type == 5) specialGenerated = true ;
-            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId));
+            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId,i));
 
             currentX += currentBrickWidth;
         }
@@ -221,7 +221,7 @@ public class LevelManagerImpl implements LevelManager {
      * @return brick type: 1, 2, or 3
      */
     private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
-        int roll = rng.nextInt(100); 
+        int roll = rng.nextInt(100);
         if (roll < 10 && currentIndestructible < max) return 3;
         if (roll < 35) return 2;
         if (roll < 44 && !specialGenerated) return 4;//poweu up

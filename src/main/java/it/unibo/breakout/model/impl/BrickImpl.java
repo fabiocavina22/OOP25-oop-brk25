@@ -10,12 +10,15 @@ public class BrickImpl implements Brick {
     private int height;
     private final int rowId;
     private int type;
+    private final int colIndex;
+
+
     /**
      * @param x    horizontal position in pixels
      * @param y    vertical position in pixels
      * @param type brick type: 1 = normal, 2 = double-hit, 3 = indestructible
      */
-    public BrickImpl(double x, double y, int type, int width, int height, int rowId) {
+    public BrickImpl(double x, double y, int type, int width, int height, int rowId, int colIndex) {
         this.x = x;
         this.y = y;
         this.rowId = rowId;
@@ -32,6 +35,7 @@ public class BrickImpl implements Brick {
         }
         this.width = width;
         this.height = height;
+        this.colIndex = colIndex;
     }
 
 
@@ -108,6 +112,9 @@ public class BrickImpl implements Brick {
 
     @Override
     public void setHeight(int height){
-
+        this.height = height ;
     }
+
+    @Override
+    public int getColIndex() { return colIndex; }
 }

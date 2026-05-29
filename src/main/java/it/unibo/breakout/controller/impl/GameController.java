@@ -39,7 +39,7 @@ public class GameController implements KeyListener {
     private LeftPanel leftPanel;
 
     private final int gameAreaWidth;
-    @SuppressWarnings("unused")
+
     private final int gameAreaHeight;
 
 
@@ -101,7 +101,7 @@ public class GameController implements KeyListener {
     private void update() {
 
         int currentWidth = mainPanel != null ? mainPanel.getWidth() : gameAreaWidth;
-        int currentHeight = view.getHeight();
+        int currentHeight = mainPanel != null ? mainPanel.getHeight() : gameAreaHeight;
 
         // Se la grafica non è ancora pronta (width=0), salta il frame
         if (currentWidth == 0) return;
@@ -210,7 +210,7 @@ public class GameController implements KeyListener {
                 collisionManager.pauseTimer();
                 if (leftPanel != null) leftPanel.setKeyPressed("S");
             }
-                
+
             }else{
                 if (leftPanel != null) leftPanel.setKeyReleased("S");
                 collisionManager.resumeTimer();

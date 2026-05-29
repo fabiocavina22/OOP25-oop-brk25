@@ -119,14 +119,6 @@ public class GameMapImpl extends JFrame implements GameMap{
         });
     }
 
-
-
-
-
-
-
-
-
     @Override
     public void showWindow(){
         setVisible(true);

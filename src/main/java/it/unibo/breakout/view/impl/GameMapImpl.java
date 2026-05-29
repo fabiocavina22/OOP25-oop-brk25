@@ -101,7 +101,7 @@ public class GameMapImpl extends JFrame implements GameMap{
                 // Leggiamo la NUOVA dimensione del MainPanel in questo esatto millisecondo
                 int newWidth = mp.getWidth();
                 int newHeight = mp.getHeight();
-
+            
                 // 1. Aggiorniamo il LevelManager (il metodo che abbiamo creato prima)
                 if (levelManager != null) {
                     levelManager.updateDimensions(newWidth, newHeight);

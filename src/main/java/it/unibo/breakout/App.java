@@ -46,7 +46,7 @@ public final class App {
         int paddleX = (mainPanelWidth - paddleWidth) / 2;
         int paddleY = (int) (mainPanelHeight * 0.80);
         int brickSide = mainPanelWidth /10;
-        int ballDiameter = 20; // Diametro della palla (es. 20 pixel)
+        int ballDiameter = 11; // Diametro della palla (es. 20 pixel)
 
         // Formula per centrarla matematicamente sulla X del paddle
         int ballX = paddleX + (paddleWidth / 2) - (ballDiameter / 2);

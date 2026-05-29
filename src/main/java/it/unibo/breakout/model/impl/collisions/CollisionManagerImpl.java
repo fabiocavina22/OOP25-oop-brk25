@@ -447,8 +447,7 @@ public class CollisionManagerImpl implements CollisionManager {
                         ));
                     }
                 blockHit(brick);
-                brick.hit();
-                points(brick);
+
 
                 break; // evita multi-collisione nello stesso frame
             }

@@ -6,6 +6,7 @@ import it.unibo.breakout.model.impl.LevelManagerImpl;
 import it.unibo.breakout.model.impl.PaddleImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.MenuView;
+import it.unibo.breakout.view.impl.SoundManagerImpl;
 
 import javax.swing.SwingUtilities;
 
@@ -16,9 +17,6 @@ import javax.swing.SwingUtilities;
  * are created and the game window is opened.
  */
 public final class App {
-
-    private static final int GAME_WIDTH  = 600;
-    private static final int GAME_HEIGHT = 700;
 
     private App() { }
 
@@ -32,15 +30,40 @@ public final class App {
     }
 
     private static void startGame() {
-        final PaddleImpl paddle = new PaddleImpl(225, 600, 100, 15, 12);
-        final BallImpl ball = new BallImpl(250, 400, 10, 0.0, 12.0);
-        final LevelManagerImpl levelManager = new LevelManagerImpl(GAME_WIDTH, 60, 60, GAME_HEIGHT);
+
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        // Il MainPanel occupa esattamente il 40% della larghezza
+        int mainPanelWidth = (int) (screenWidth * 0.40);
+        int mainPanelHeight = screenHeight; // Occupa il 100% dell'altezza
+
+        int paddleWidth = (int) (screenWidth * 0.10);
+        int paddleHeight = 20; // Un'altezza fissa va benissimo (es. 20 pixel)
+
+        // Posizione iniziale: centrato in X, al 20% dal fondo in Y
+        int paddleX = (mainPanelWidth - paddleWidth) / 2;
+        int paddleY = (int) (mainPanelHeight * 0.80);
+        int brickSide = mainPanelWidth /10;
+        int ballDiameter = 20; // Diametro della palla (es. 20 pixel)
+
+        // Formula per centrarla matematicamente sulla X del paddle
+        int ballX = paddleX + (paddleWidth / 2) - (ballDiameter / 2);
+
+        // La Y deve essere sopra il pad (Y del pad meno il diametro della palla)
+        int ballY = paddleY - ballDiameter;
+
+        final PaddleImpl paddle = new PaddleImpl(paddleX, paddleY, paddleWidth, paddleHeight, 12);
+        final BallImpl ball = new BallImpl(ballX, ballY, ballDiameter, 0.0, 12.0);
+        final LevelManagerImpl levelManager = new LevelManagerImpl(mainPanelWidth, brickSide, brickSide, mainPanelHeight);
+        final SoundManagerImpl soundManager = new SoundManagerImpl();
         int score = 0;
 
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball);
         view.showWindow();
 
-        final GameController controller = new GameController(paddle, ball, levelManager, view, GAME_WIDTH, GAME_HEIGHT, score, App::startGame);
+        final GameController controller = new GameController(paddle, ball, levelManager, view, screenWidth, screenHeight, score, App::startGame, soundManager);
         controller.start();
     }
 }

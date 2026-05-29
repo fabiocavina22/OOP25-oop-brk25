@@ -1,5 +1,6 @@
 package it.unibo.breakout.controller.impl;
 
+//import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.event.KeyEvent;
@@ -10,8 +11,10 @@ import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.collisions.CollisionManagerImpl;
 import it.unibo.breakout.model.impl.collisions.CollisionDetectorImpl;
+import it.unibo.breakout.view.api.SoundManager;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.GameOverView;
+import it.unibo.breakout.view.impl.LeftPanel;
 import it.unibo.breakout.view.impl.MainPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 
@@ -21,6 +24,7 @@ public class GameController implements KeyListener {
     private final Ball ball;
     private final LevelManager levelManager;
     private final CollisionManagerImpl collisionManager;
+    private final SoundManager soundManager;
     private final GameMapImpl view;
 
     private int score;
@@ -31,6 +35,8 @@ public class GameController implements KeyListener {
     private static final int DELAY_MS = 16; // ~60 FPS
 
     private MainPanel mainPanel;
+
+    private LeftPanel leftPanel;
 
     private final int gameAreaWidth;
     @SuppressWarnings("unused")
@@ -49,7 +55,7 @@ public class GameController implements KeyListener {
 
     private final Runnable onPlayAgain;
 
-    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain) {
+    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
@@ -58,7 +64,7 @@ public class GameController implements KeyListener {
         this.gameAreaHeight = gameAreaHeight;
         this.score = score;
         this.onPlayAgain = onPlayAgain;
-
+        this.soundManager = soundManager;
         // Inizializza il manager delle collisioni (MVC rispettato: passiamo solo le dimensioni)
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score);
 
@@ -72,9 +78,9 @@ public class GameController implements KeyListener {
 
         for (java.awt.Component comp : view.getContentPane().getComponents()) {
             if (comp instanceof MainPanel) {
-                //this.mainPanel = (JPanel) comp;
                 this.mainPanel = (MainPanel) comp;
-                break;
+            }else if (comp instanceof LeftPanel) {
+                this.leftPanel = (LeftPanel) comp;
             }
         }
     }
@@ -128,6 +134,27 @@ public class GameController implements KeyListener {
         collisionManager.updateTimer(paddle, ball);
         mainPanel.setPowerUp(collisionManager.getActivePowerUp());
 
+        if(collisionManager.getBorderHit()){
+            soundManager.playSound("ballHit.wav");
+        }
+
+        if(collisionManager.getPadHit()){
+            soundManager.playSound("ballHit.wav");
+        }
+
+        int hitBlockType = collisionManager.getBlockHit();
+        if(hitBlockType > 0){
+            if (hitBlockType == 5 ){
+                soundManager.playSound("explosion.wav");
+            }
+            else if (hitBlockType == 3){
+                soundManager.playSound("metalHit.wav");
+            }
+            else{
+                soundManager.playSound("brickBreaks.wav");
+            }
+        }
+
         if(collisionManager.isLifeLost()){
             ready = true;
             collisionManager.pauseTimer();
@@ -144,6 +171,8 @@ public class GameController implements KeyListener {
         }
 
         view.repaint();
+
+        leftPanel.updateHUD(collisionManager.getScore(), collisionManager.getlives());
     }
 
 
@@ -153,34 +182,50 @@ public class GameController implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
             leftPressed = true;
+            if (leftPanel != null) leftPanel.setKeyPressed("A");
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = true;
+            if (leftPanel != null) leftPanel.setKeyPressed("D");
         }
         if(e.getKeyCode() == KeyEvent.VK_W && ready || e.getKeyCode() == KeyEvent.VK_UP && ready){
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(12);
             collisionManager.resumeTimer();
+            if (leftPanel != null) {
+
+                leftPanel.setKeyPressed("W");
+
+                javax.swing.Timer wTimer = new javax.swing.Timer(500, event -> {
+                        leftPanel.setKeyReleased("W");
+                    });
+                    wTimer.setRepeats(false); // IMPORTANTE: dice al timer di eseguirsi una volta sola e poi distruggersi
+                    wTimer.start();
+            }
         }
         if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
             if(pause){
                 collisionManager.pauseTimer();
+                if (leftPanel != null) leftPanel.setKeyPressed("S");
             }
-            else{
+                
+            }else{
+                if (leftPanel != null) leftPanel.setKeyReleased("S");
                 collisionManager.resumeTimer();
             }
-        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
             leftPressed = false;
+            if (leftPanel != null) leftPanel.setKeyReleased("A");
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             rightPressed = false;
+            if (leftPanel != null) leftPanel.setKeyReleased("D");
         }
     }
 

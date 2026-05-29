@@ -29,6 +29,9 @@ public class CollisionManagerImpl implements CollisionManager {
     private long pauseStart = 0;
 
     private static final long TIME = 8000;
+    private int blockHit;
+    private boolean padHit;
+    private boolean borderHit;
 
     public CollisionManagerImpl(CollisionDetector detector, int score) {
         this.detector = detector;
@@ -57,7 +60,7 @@ public class CollisionManagerImpl implements CollisionManager {
         return score;
     }
 
-
+    @Override
     public int getlives(){
         return lives;
     }
@@ -68,12 +71,14 @@ public class CollisionManagerImpl implements CollisionManager {
         lifeLost = true;
     }
 
+    @Override
     public boolean isLifeLost(){
         boolean result = lifeLost;
         lifeLost = false;
         return result;
     }
 
+    @Override
     public boolean isGameOver(){
         if(lives <= 0){
             return true;
@@ -83,6 +88,7 @@ public class CollisionManagerImpl implements CollisionManager {
         }
     }
 
+    @Override
     public int getScore(){
         return score;
     }
@@ -236,6 +242,41 @@ public class CollisionManagerImpl implements CollisionManager {
             }
         }
     }
+    @Override
+    public void blockHit(Brick bricks){
+        this.blockHit = bricks.getType();
+    }
+
+    @Override
+    public void padHit(){
+        this.padHit = true ;
+    }
+
+    @Override
+    public void borderHit(){
+        this.borderHit = true ;
+    }
+
+    @Override
+    public int getBlockHit() {
+        int result = this.blockHit;
+        this.blockHit = 0;
+        return result;
+    }
+
+    @Override
+    public boolean getPadHit() {
+        boolean result = this.padHit;
+        this.padHit = false; // Resetta a false dopo la lettura
+        return result;
+    }
+
+    @Override
+    public boolean getBorderHit() {
+        boolean result = this.borderHit;
+        this.borderHit = false; // Resetta a false dopo la lettura
+        return result;
+    }
 
     private void checkPaddleCollision(Ball ball, Paddle paddle){
 
@@ -259,6 +300,8 @@ public class CollisionManagerImpl implements CollisionManager {
             double newVelocityX = speed * Math.sin(bounceAngle);
             double newVelocityY = -speed * Math.cos(bounceAngle);
 
+            padHit();
+
             ball.setVelocityX(newVelocityX);
             ball.setVelocityY(newVelocityY);
         }
@@ -268,16 +311,19 @@ public class CollisionManagerImpl implements CollisionManager {
     private void checkBorderCollision(Ball ball, int gameWidth, int gameHeight, Paddle paddle) {
 
         if (ball.getX() <= 0) { //SX
+            borderHit();
             ball.setPosition(0, ball.getY());
             ball.setVelocityX(Math.abs(ball.getVelocityX()));
         }
 
         else if (ball.getX() + ball.getWidth() >= gameWidth ) { //DX
+            borderHit();
             ball.setPosition(gameWidth - ball.getWidth(), ball.getY());
             ball.setVelocityX(-Math.abs(ball.getVelocityX()));
         }
 
         if (ball.getY() <= 0) { //SUP
+            borderHit();
             ball.setPosition(ball.getX(), 0);
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
         }
@@ -320,12 +366,6 @@ public class CollisionManagerImpl implements CollisionManager {
                 double overlapRight  = (brick.getX() + brick.getWidth()) - ball.getX();
                 double overlapTop    = (ball.getY() + ball.getHeight()) - brick.getY();
                 double overlapBottom = (brick.getY() + brick.getHeight()) - ball.getY();
-
-                /*  3. Gestione dei muri perimetrali (sicurezza addizionale)
-                if (brick.getX() <= 2) overlapLeft = Double.MAX_VALUE;
-                if (brick.getX() + brick.getWidth() >= gameWidth - 2) overlapRight = Double.MAX_VALUE;
-                if (brick.getY() <= 2) overlapTop = Double.MAX_VALUE;
-                */
 
                 // 4. Risoluzione tramite cronologia delle posizioni
                 if (comingFromLeft ) {
@@ -406,6 +446,9 @@ public class CollisionManagerImpl implements CollisionManager {
                             powerUpType
                         ));
                     }
+                blockHit(brick);
+                brick.hit();
+                points(brick);
 
                 break; // evita multi-collisione nello stesso frame
             }

@@ -25,6 +25,7 @@ public class MainPanel extends JPanel {
     private Image brickImage3;
     private Image brickImage4;
     private Image brickImage5;
+    private Image gameBackground;
 
 
 
@@ -40,7 +41,7 @@ public class MainPanel extends JPanel {
         brickImage4 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick4.jpg")).getImage();
         brickImage5 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick5.jpg")).getImage();
 
-        setBackground(Color.WHITE);
+        gameBackground = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/gameBackground.jpg")).getImage();
 
         Border rightBorder = BorderFactory.createMatteBorder(
                 10, 0, 10, 0, Color.BLACK
@@ -52,6 +53,9 @@ public class MainPanel extends JPanel {
 
         setBorder(BorderFactory.createCompoundBorder(rightBorder, padding));
     }
+
+    // --- CREAZIONE ROOT PANEL CON SFONDO PERSONALIZZATO ---
+
 
     public int getGameWidth() {
 
@@ -73,6 +77,13 @@ public class MainPanel extends JPanel {
     protected void paintComponent(Graphics g) {
 
         super.paintComponent(g);
+
+        if (gameBackground != null) {
+           g.drawImage(gameBackground, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
 
         g.setColor(Color.BLACK);
 

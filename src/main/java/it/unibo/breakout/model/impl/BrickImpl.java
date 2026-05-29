@@ -90,4 +90,24 @@ public class BrickImpl implements Brick {
 
     @Override
     public int getType(){return this.type; }
+
+    @Override
+    public void setX(double x){
+        this.x = x ;
+    }
+
+    @Override
+    public void setWidth(int width){
+        this.width = width;
+    }
+
+    @Override
+    public void setY(double y){
+        this.y = y ;
+    }
+
+    @Override
+    public void setHeight(int height){
+
+    }
 }

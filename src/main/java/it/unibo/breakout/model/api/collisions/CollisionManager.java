@@ -11,15 +11,15 @@ public interface CollisionManager {
 
     public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score);
 
-    /**Keep the current player point 
+    /**Keep the current player point
     */
     int points(Brick brick);
     
     /**Get the player's number of lives 
     */
     int getlives();
-    
-    /**Manage the game over
+
+    /**manage the game over
     */
     boolean isGameOver();
 
@@ -50,6 +50,23 @@ public interface CollisionManager {
     /**Return the power up list
     */
    List<PowerUpImpl> getActivePowerUp();
+    //** */
+    void blockHit(Brick bricks);
+
+    //** */
+    void padHit();
+
+    //** */
+    void borderHit();
+
+    //** */
+    int getBlockHit();
+
+    //** */
+    boolean getBorderHit();
+
+    //** */
+    boolean getPadHit();
+
 }
 
-    

@@ -111,6 +111,7 @@ public class LevelManagerImpl implements LevelManager {
     }
 
     /**
+     * Removes the list of bricks if all of them are destroyed
     */
    public void removeDestroyedBricks(){
         activeBricks.removeIf(Brick::isDestroyed);
@@ -128,6 +129,7 @@ public class LevelManagerImpl implements LevelManager {
         return activeBricks.stream()
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
+
 
     @Override
     public void updateDimensions(int newWidth, int newHeight) {
@@ -190,12 +192,7 @@ public class LevelManagerImpl implements LevelManager {
         int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
         int currentRowId     = rowsGenerated;
-
         boolean specialGenerated = false;
-
-        System.out.printf("Row %d → %d bricks at Y=%.1f%n", rowsGenerated, columns, yPosition);
-        System.out.printf("Row %d → %d bricks (panelWidth=%d)%n", rowsGenerated, screenWidth / brickWidth, screenWidth);
-
         double currentX = 0.0;
 
         for (int i = 0; i < columns; i++) {
@@ -214,17 +211,19 @@ public class LevelManagerImpl implements LevelManager {
      * Picks a brick type using weighted random selection:
      * 10% indestructible (type 3, capped at max),
      * 25% double-hit (type 2),
-     * 65% normal (type 1).
+     * 9% special power up brick (type 4)
+     * 6% special tnt brick (type 5)
+     * 50%  normal classic 1 hit brick (type 1)
      *
      * @param currentIndestructible indestructible bricks already placed in this row
      * @param max                   maximum allowed indestructible bricks per row
-     * @return brick type: 1, 2, or 3
+     * @return brick type: 1, 2, 3, 4 or 5
      */
     private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
         int roll = rng.nextInt(100);
         if (roll < 10 && currentIndestructible < max) return 3;
         if (roll < 35) return 2;
-        if (roll < 44 && !specialGenerated) return 4;//poweu up
+        if (roll < 44 && !specialGenerated) return 4;//power up
         if (roll < 50 && !specialGenerated) return 5;//explosive block
         return 1;
     }

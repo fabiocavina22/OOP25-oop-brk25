@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
+import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.view.api.GameMap;
 
 public class GameMapImpl extends JFrame implements GameMap{
@@ -27,7 +28,7 @@ public class GameMapImpl extends JFrame implements GameMap{
         private final Ball ball;
 
 
-        public GameMapImpl(Paddle paddle, LevelManager levelManager, Ball ball){
+        public GameMapImpl(Paddle paddle, LevelManager levelManager, Ball ball, LeaderboardImpl leaderboard){
 
             this.paddle = paddle;
             this.levelManager = levelManager;
@@ -59,7 +60,7 @@ public class GameMapImpl extends JFrame implements GameMap{
             grid.weightx = 0.4;
             this.getContentPane().add(mp, grid);
 
-            RightPanel rp = new RightPanel();
+            RightPanel rp = new RightPanel(leaderboard);
             rp.setPreferredSize(fluidSize);
             grid.gridx = 2;
             grid.weightx = 0.3;

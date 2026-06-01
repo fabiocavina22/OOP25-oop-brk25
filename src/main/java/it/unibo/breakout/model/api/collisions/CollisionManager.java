@@ -31,6 +31,13 @@ public interface CollisionManager {
     */
     int getScore();
 
+    long getDoublePointsTimer();
+    long getPaddleLargeTimer();
+    long getPaddleShortTimer();
+    long getFreezeBlocksTimer();
+    long getHalfPointsTimer();
+    long getFastBallTimer();
+
     /**Uptade the position of the power up
     */
     void updatePowerUp(Paddle paddle, Ball ball, int screenHeight);

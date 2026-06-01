@@ -117,6 +117,9 @@ public class GameController implements KeyListener {
 
         if(ready){
             ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0 - ball.getWidth() / 2.0, paddle.getY() - ball.getHeight());
+            if(leftPanel != null){
+                leftPanel.updateEffects();
+            }
             view.repaint();
             return;
         }
@@ -130,8 +133,21 @@ public class GameController implements KeyListener {
         }
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
-        collisionManager.updatePowerUp(paddle, ball, currentHeight);
         collisionManager.updateTimer(paddle, ball);
+        collisionManager.updatePowerUp(paddle, ball, currentHeight);
+
+        if(leftPanel != null){
+            long now = System.currentTimeMillis();
+            if (collisionManager.getDoublePointsTimer() > now) leftPanel.addEffect(3, collisionManager.getDoublePointsTimer());
+            if (collisionManager.getPaddleLargeTimer() > now) leftPanel.addEffect(4, collisionManager.getPaddleLargeTimer());
+            if (collisionManager.getPaddleShortTimer() > now) leftPanel.addEffect(2, collisionManager.getPaddleShortTimer());
+            if (collisionManager.getFreezeBlocksTimer() > now) leftPanel.addEffect(5, collisionManager.getFreezeBlocksTimer());
+            if (collisionManager.getHalfPointsTimer() > now) leftPanel.addEffect(6, collisionManager.getHalfPointsTimer());
+            if (collisionManager.getFastBallTimer() > now) leftPanel.addEffect(7, collisionManager.getFastBallTimer());
+            System.out.println("doublepointstimer: " + collisionManager.getDoublePointsTimer() + "now: " + now);
+            leftPanel.updateEffects();
+        }
+
         mainPanel.setPowerUp(collisionManager.getActivePowerUp());
 
         if(collisionManager.getBorderHit()){
@@ -208,6 +224,7 @@ public class GameController implements KeyListener {
             pause = !pause;
             if(pause){
                 collisionManager.pauseTimer();
+                leftPanel.pauseEffects();
                 if (leftPanel != null) leftPanel.setKeyPressed("S");
             }
 

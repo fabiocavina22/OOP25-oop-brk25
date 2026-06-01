@@ -6,7 +6,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.net.URL;
 
-
 public class LeftPanel extends JPanel {
 
         ImageIcon iconW, iconA, iconS, iconD;
@@ -22,6 +21,15 @@ public class LeftPanel extends JPanel {
 
         private final JLabel lblLives = new JLabel("3");
         private final JLabel lblScore = new JLabel("0");
+
+        private final int[] effectTypes = new int[7];
+        private final long[] effectExpires = new long[7];
+        private final JLabel[] effectLabels = new JLabel[7];
+        private int effectCount = 0;
+        private JPanel effectsPanel;
+
+        private long effectPauseStart = 0;
+        private final ImageIcon[] effectIcons = new ImageIcon[8];
 
         public LeftPanel() {
 
@@ -51,6 +59,9 @@ public class LeftPanel extends JPanel {
                 );
 
                 loadImages();
+
+                effectsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+                effectsPanel.setBackground(Color.WHITE);
 
                 lblW.setIcon(iconW);
                 lblA.setIcon(iconA);
@@ -93,9 +104,19 @@ public class LeftPanel extends JPanel {
                 gbc.insets = new Insets(10, 5, 20, 5);     // Margine esterno (10px sopra, 20px sotto per staccarsi dai tasti)
                 add(hudContainer, gbc);
 
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                gbc.gridwidth = 3;
+                gbc.weightx = 1.0;
+                gbc.weighty = 0.0;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.CENTER;
+                gbc.insets = new Insets(150, 5, 5, 5);
+                add(effectsPanel, gbc);
+
                 // --- LIVELLO CENTRALE: SPAZIO VUOTO ELASTICO ---
                 // Questo spinge l'HUD verso l'alto e i tasti WASD verso il basso
-                gbc.gridy = 1;
+                gbc.gridy = 2;
                 gbc.weighty = 1.0;                  // Si prende TUTTO lo spazio verticale rimasto
                 gbc.fill = GridBagConstraints.BOTH;
                 add(Box.createVerticalGlue(), gbc);
@@ -146,6 +167,52 @@ public class LeftPanel extends JPanel {
                 lblLives.setText(String.valueOf(lives));
         }
 
+        public void addEffect(int type, long expiresTime){
+                if(type == 1) return;
+                for(int i = 0; i < effectCount; i++){
+                        if(effectTypes[i] == type){
+                                effectExpires[i] = expiresTime;
+                                return;
+                        }
+                }
+                effectTypes[effectCount] = type;
+                effectExpires[effectCount] = expiresTime;
+                JLabel lbl = new JLabel(effectIcons[type]);
+                effectLabels[effectCount] = lbl;
+                effectsPanel.add(lbl);
+                effectsPanel.revalidate();
+                effectsPanel.repaint();
+                effectCount++;
+        }
+
+        public void updateEffects(){
+                long now = System.currentTimeMillis();
+                for(int i = 0; i < effectCount; i++){
+                        if(now > effectExpires[i]){
+                                effectsPanel.remove(effectLabels[i]);
+                                effectTypes[i] = effectTypes[effectCount - 1];
+                                effectExpires[i] = effectExpires[effectCount - 1];
+                                effectLabels[i] = effectLabels[effectCount - 1];
+                                effectCount--;
+                                i--;
+                                effectsPanel.revalidate();
+                                effectsPanel.repaint();
+                        }
+                }
+        }
+
+        public void pauseEffects(){
+                effectPauseStart = System.currentTimeMillis();
+        }
+
+        public void resumeEffects(){
+                if(effectPauseStart == 0) return;
+                long pauseDuration = System.currentTimeMillis() - effectPauseStart;
+                for(int i = 0; i < effectCount; i++){
+                        effectExpires[i] += pauseDuration;
+                }
+                effectPauseStart = 0;
+        }
 
         /**
          * safely upload all the requested images
@@ -167,6 +234,27 @@ public class LeftPanel extends JPanel {
                         iconHeart = new ImageIcon(img);
                 } else {
                         iconHeart = new ImageIcon();
+                }
+                loadEffectIcons();
+        }
+
+        private void loadEffectIcons(){
+                String[] paths = {
+                        null,                                                  // 0 non esiste
+                        "/it/unibo/breakout/images/lifebonus.png",             // 1 vita extra
+                        "/it/unibo/breakout/images/paddleshort.png",           // 2 pad piccolo
+                        "/it/unibo/breakout/images/doublepoints.png",          // 3 punti doppi
+                        "/it/unibo/breakout/images/paddlelarge.png",           // 4 pad grande
+                        "/it/unibo/breakout/images/frozenblocks.png",          // 5 blocchi fermi
+                        "/it/unibo/breakout/images/halfpoints.png",            // 6 punti mezzi
+                        "/it/unibo/breakout/images/fastball.png",              // 7 palla veloce
+                };
+                for(int i = 1; i < paths.length; i++){
+                        URL url = getClass().getResource(paths[i]);
+                        if(url != null){
+                                Image img = new ImageIcon(url).getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                                effectIcons[i] = new ImageIcon(img);
+                        }
                 }
         }
 

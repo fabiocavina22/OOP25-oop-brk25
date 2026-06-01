@@ -61,7 +61,7 @@ public class RightPanel extends JPanel {
         List<Integer> scores = leaderboard.getScores();
 
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setFont(new Font("Arial", Font.BOLD, 20));
         fm = g.getFontMetrics();
         int startY = titleY + 60;
         int colLeft = panelWidth / 4;

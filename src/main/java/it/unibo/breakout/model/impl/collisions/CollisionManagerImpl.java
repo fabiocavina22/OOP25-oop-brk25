@@ -93,6 +93,13 @@ public class CollisionManagerImpl implements CollisionManager {
         return score;
     }
 
+    public long getDoublePointsTimer() { return doublePointsTimer; }
+    public long getPaddleLargeTimer() { return paddleLargeTimer; }
+    public long getPaddleShortTimer() { return paddleShortTimer; }
+    public long getFreezeBlocksTimer() { return freezeBlocksTimer; }
+    public long getHalfPointsTimer() { return halfPointsTimer; }
+    public long getFastBallTimer() { return fastBallTimer; }
+
     public boolean isFrozen(){
         return freezeBlocksTimer > 0;
     }
@@ -137,7 +144,9 @@ public class CollisionManagerImpl implements CollisionManager {
     }
 
     public void pauseTimer(){
+        if(pauseStart != 0) return;
         pauseStart = System.currentTimeMillis();
+        System.out.println("pausa: pausestart= " + pauseStart + "doublepointstimer=" + doublePointsTimer);
     }
 
     public void resumeTimer(){
@@ -145,8 +154,10 @@ public class CollisionManagerImpl implements CollisionManager {
             return;
         }
         long pauseDuration = System.currentTimeMillis() - pauseStart;
+        System.out.println("RESUME: pauseDuration=" + pauseDuration + " doublePointsTimer prima=" + doublePointsTimer);
         if (paddleShortTimer > 0) paddleShortTimer += pauseDuration;
         if (doublePointsTimer > 0) doublePointsTimer += pauseDuration;
+        System.out.println("RESUME: doublePointsTimer dopo=" + doublePointsTimer);
         if (paddleLargeTimer > 0) paddleLargeTimer += pauseDuration;
         if (freezeBlocksTimer > 0) freezeBlocksTimer += pauseDuration;
         if (halfPointsTimer > 0) halfPointsTimer += pauseDuration;
@@ -197,6 +208,8 @@ public class CollisionManagerImpl implements CollisionManager {
                             score *= 2;
                             doublePointsTimer = System.currentTimeMillis() + TIME;
                         }
+                        System.out.println("BONUS PRESO: doublePointsTimer=" + doublePointsTimer);
+                        System.out.println("BONUS PRESO: now=" + System.currentTimeMillis());
                         System.out.println("punti doppi");
                         break;
                     case 4:

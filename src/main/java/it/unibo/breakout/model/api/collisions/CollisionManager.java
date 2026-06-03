@@ -46,14 +46,6 @@ public interface CollisionManager {
     */
    void updateTimer(Paddle paddle, Ball ball);
 
-   /*Stops the power up timer
-   */
-   void pauseTimer();
-
-   /**Resume the power up timer
-   */
-   void resumeTimer();
-
     /**Return the power up list
     */
    List<PowerUpImpl> getActivePowerUp();
@@ -75,5 +67,8 @@ public interface CollisionManager {
     //** */
     boolean getPadHit();
 
+    /**
+    */
+    boolean isLifeGained();
 }
 

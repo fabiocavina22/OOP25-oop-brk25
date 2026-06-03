@@ -26,10 +26,12 @@ public class LeftPanel extends JPanel {
         private final long[] effectExpires = new long[7];
         private final JLabel[] effectLabels = new JLabel[7];
         private int effectCount = 0;
+        private int lifeBonus = 0;
         private JPanel effectsPanel;
 
         private long effectPauseStart = 0;
         private final ImageIcon[] effectIcons = new ImageIcon[8];
+        private static final int LIFE_BONUS_FRAMES = 120;
 
         public LeftPanel() {
 
@@ -168,8 +170,21 @@ public class LeftPanel extends JPanel {
         }
 
         public void addEffect(int type, long frames){
-                if(type == 1) return;
-                for(int i = 0; i < effectCount; i++){
+                if(type == 1){
+                        lifeBonus = LIFE_BONUS_FRAMES;
+                        for(int i = 0; i < effectCount; i++){
+                                if(effectTypes[i] == 1) return;
+                        }
+                        effectTypes[effectCount] = 1;
+                        effectExpires[effectCount] = LIFE_BONUS_FRAMES;
+                        JLabel lbl = new JLabel(effectIcons[1]);
+                        effectLabels[effectCount] = lbl;
+                        effectsPanel.add(lbl);
+                        effectsPanel.repaint();
+                        effectCount++;
+                        return;
+                }
+                        for(int i = 0; i < effectCount; i++){
                         if(effectTypes[i] == type){
                                 effectExpires[i] = frames;
                                 return;
@@ -186,6 +201,12 @@ public class LeftPanel extends JPanel {
         }
 
         public void updateEffects(){
+                if(lifeBonus > 0){
+                        lifeBonus--;
+                        if(lifeBonus == 0){
+                                removeEffect(1);
+                        }
+                }
                 for(int i = 0; i < effectCount; i++){
                         if(effectExpires[i] <= 0){
                                 effectsPanel.remove(effectLabels[i]);

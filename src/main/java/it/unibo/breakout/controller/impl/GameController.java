@@ -137,7 +137,7 @@ public class GameController implements KeyListener {
         collisionManager.updatePowerUp(paddle, ball, currentHeight);
 
         if(leftPanel != null){
-            long now = System.currentTimeMillis();
+            if(collisionManager.isLifeGained()) leftPanel.addEffect(1, 0);
             if (collisionManager.getDoublePointsTimer() > 0) leftPanel.addEffect(3, collisionManager.getDoublePointsTimer());
             else leftPanel.removeEffect(3);
             if (collisionManager.getPaddleLargeTimer() > 0) leftPanel.addEffect(4, collisionManager.getPaddleLargeTimer());
@@ -150,7 +150,6 @@ public class GameController implements KeyListener {
             else leftPanel.removeEffect(6);
             if (collisionManager.getFastBallTimer() > 0) leftPanel.addEffect(7, collisionManager.getFastBallTimer());
             else leftPanel.removeEffect(7);
-            System.out.println("doublepointstimer: " + collisionManager.getDoublePointsTimer() + "now: " + now);
             leftPanel.updateEffects();
         }
 
@@ -179,7 +178,6 @@ public class GameController implements KeyListener {
 
         if(collisionManager.isLifeLost()){
             ready = true;
-            collisionManager.pauseTimer();
         }
 
         if(collisionManager.isGameOver()){
@@ -214,7 +212,6 @@ public class GameController implements KeyListener {
             ready = false;
             ball.setVelocityX(0);
             ball.setVelocityY(12);
-            collisionManager.resumeTimer();
             if (leftPanel != null) {
 
                 leftPanel.setKeyPressed("W");
@@ -229,14 +226,12 @@ public class GameController implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
             if(pause){
-                collisionManager.pauseTimer();
                 leftPanel.pauseEffects();
                 if (leftPanel != null) leftPanel.setKeyPressed("S");
             }
 
             }else{
                 if (leftPanel != null) leftPanel.setKeyReleased("S");
-                collisionManager.resumeTimer();
             }
     }
 

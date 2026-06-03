@@ -18,6 +18,7 @@ public class CollisionManagerImpl implements CollisionManager {
     private int score;
     private int lives = 3;
     private boolean lifeLost = false;
+    private boolean lifeGained = false;
     private final List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private final Random rng = new Random(); 
     private int doublePointsFrames = 0;
@@ -26,8 +27,8 @@ public class CollisionManagerImpl implements CollisionManager {
     private int freezeBlocksFrames = 0;
     private int halfPointsFrames = 0;
     private int fastBallFrames = 0;
+    private double scoreMultiplier = 1.0;
 
-    //private static final long TIME = 8000;
     private static final int EFFECT_FRAMES = 500;
     private int blockHit;
     private boolean padHit;
@@ -51,10 +52,10 @@ public class CollisionManagerImpl implements CollisionManager {
             return score;
         }
         if(brick.isDestroyed()){
-            score += 300;
+            score += (int)(300 * scoreMultiplier);
         }
         else{
-            score += 150;
+            score += (int)(150 * scoreMultiplier);
         }
         System.out.println(score);
         return score;
@@ -112,7 +113,7 @@ public class CollisionManagerImpl implements CollisionManager {
         if(doublePointsFrames > 0){
             doublePointsFrames--;
             if(doublePointsFrames == 0){
-                score /= 2;
+                scoreMultiplier = 1.0;
                 System.out.println("effetto pad piccolo terminato");
             }
         }
@@ -139,7 +140,7 @@ public class CollisionManagerImpl implements CollisionManager {
         if(halfPointsFrames > 0){
             halfPointsFrames--;
             if(halfPointsFrames == 0){
-                score *= 2;
+                scoreMultiplier = 1.0;
                 System.out.println("effetto punti mezzi terminato");
             }
         }
@@ -153,10 +154,11 @@ public class CollisionManagerImpl implements CollisionManager {
         }
     }
 
-    public void pauseTimer(){
-    }
-
-    public void resumeTimer(){
+    public boolean isLifeGained(){
+        boolean result = lifeGained;
+        System.out.println("isLifeGained: " + result);
+        lifeGained = false;
+        return result;
     }
 
     public void updatePowerUp(Paddle paddle, Ball ball, int screenHeight){
@@ -174,6 +176,7 @@ public class CollisionManagerImpl implements CollisionManager {
                 switch(powerUp.getType()){
                     case 1:
                         lives++;
+                        lifeGained = true;
                         System.out.println("vita extra");
                         break;
                     case 2:
@@ -196,10 +199,10 @@ public class CollisionManagerImpl implements CollisionManager {
                         }
                         else{
                             if(halfPointsFrames > 0){
-                                score *= 2;
+                                scoreMultiplier = 1.0;
                                 halfPointsFrames = 0;
                             }
-                            score *= 2;
+                            scoreMultiplier = 2.0;
                             doublePointsFrames = EFFECT_FRAMES;
                         }
                         System.out.println("punti doppi");
@@ -228,10 +231,10 @@ public class CollisionManagerImpl implements CollisionManager {
                         }
                         else{
                             if(doublePointsFrames > 0){
-                                score /= 2;
+                                scoreMultiplier = 1.0;
                                 doublePointsFrames = 0;
                             }
-                            score /= 2;
+                            scoreMultiplier = 0.5;
                             halfPointsFrames = EFFECT_FRAMES;
                         }
                         System.out.println("punti dimezzati");
@@ -335,6 +338,11 @@ public class CollisionManagerImpl implements CollisionManager {
 
         if(ball.getY() > paddle.getY() + paddle.getHeight() + 22 && !lifeLost){
             loselives();
+            if(fastBallFrames > 0){
+                ball.setVelocityX(ball.getVelocityX() / 1.5);
+                ball.setVelocityY(ball.getVelocityY() / 1.5);
+                fastBallFrames = 0;
+            }
             ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
             ball.setVelocityX(0);
             ball.setVelocityY(0);

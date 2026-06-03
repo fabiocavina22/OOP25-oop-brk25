@@ -20,15 +20,15 @@ public class CollisionManagerImpl implements CollisionManager {
     private boolean lifeLost = false;
     private final List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private final Random rng = new Random(); 
-    private long doublePointsTimer = 0;
-    private long paddleLargeTimer = 0;
-    private long paddleShortTimer = 0;
-    private long freezeBlocksTimer = 0;
-    private long halfPointsTimer = 0;
-    private long fastBallTimer = 0;
-    private long pauseStart = 0;
+    private int doublePointsFrames = 0;
+    private int paddleLargeFrames = 0;
+    private int paddleShortFrames = 0;
+    private int freezeBlocksFrames = 0;
+    private int halfPointsFrames = 0;
+    private int fastBallFrames = 0;
 
-    private static final long TIME = 8000;
+    //private static final long TIME = 8000;
+    private static final int EFFECT_FRAMES = 500;
     private int blockHit;
     private boolean padHit;
     private boolean borderHit;
@@ -93,15 +93,15 @@ public class CollisionManagerImpl implements CollisionManager {
         return score;
     }
 
-    public long getDoublePointsTimer() { return doublePointsTimer; }
-    public long getPaddleLargeTimer() { return paddleLargeTimer; }
-    public long getPaddleShortTimer() { return paddleShortTimer; }
-    public long getFreezeBlocksTimer() { return freezeBlocksTimer; }
-    public long getHalfPointsTimer() { return halfPointsTimer; }
-    public long getFastBallTimer() { return fastBallTimer; }
+    public long getDoublePointsTimer() { return doublePointsFrames; }
+    public long getPaddleLargeTimer() { return paddleLargeFrames; }
+    public long getPaddleShortTimer() { return paddleShortFrames; }
+    public long getFreezeBlocksTimer() { return freezeBlocksFrames; }
+    public long getHalfPointsTimer() { return halfPointsFrames; }
+    public long getFastBallTimer() { return fastBallFrames; }
 
     public boolean isFrozen(){
-        return freezeBlocksTimer > 0;
+        return freezeBlocksFrames > 0;
     }
 
     public List<PowerUpImpl> getActivePowerUp(){
@@ -109,60 +109,54 @@ public class CollisionManagerImpl implements CollisionManager {
     }
 
     public void updateTimer(Paddle paddle, Ball ball){
-        long now = System.currentTimeMillis();
-
-        if(paddleShortTimer > 0 && now > paddleShortTimer){
-            paddle.paddleLarge();
-            paddleShortTimer = 0;
-            System.out.println("effetto pad piccolo terminato");
+        if(doublePointsFrames > 0){
+            doublePointsFrames--;
+            if(doublePointsFrames == 0){
+                score /= 2;
+                System.out.println("effetto pad piccolo terminato");
+            }
         }
-        if(doublePointsTimer > 0 && now > doublePointsTimer){
-            score /= 2;
-            doublePointsTimer = 0;
-            System.out.println("effetto punti doppi terminato");
+        if(paddleShortFrames > 0){
+            paddleShortFrames--;
+            if(paddleShortFrames == 0){
+                paddle.paddleLarge();
+                System.out.println("effetto punti doppi terminato");
+            }
         }
-        if(paddleLargeTimer > 0 && now > paddleLargeTimer){
-            paddle.paddleShort();
-            paddleLargeTimer = 0;
-            System.out.println("effetto pad grande terminato");
+        if(paddleLargeFrames > 0){
+            paddleLargeFrames--;
+            if(paddleLargeFrames == 0){
+                paddle.paddleShort();
+                System.out.println("effetto pad grande terminato");
+            }
         }
-        if(freezeBlocksTimer > 0 && now > freezeBlocksTimer){
-            freezeBlocksTimer = 0;
-            System.out.println("effettp blocchi fermi terminato");
+        if(freezeBlocksFrames > 0){
+            freezeBlocksFrames--;
+            if(freezeBlocksFrames == 0){
+                System.out.println("effettp blocchi fermi terminato");
+            } 
         }
-        if(halfPointsTimer > 0 && now > halfPointsTimer){
-            score *= 2;
-            halfPointsTimer = 0;
-            System.out.println("effetto punti mezzi terminato");
+        if(halfPointsFrames > 0){
+            halfPointsFrames--;
+            if(halfPointsFrames == 0){
+                score *= 2;
+                System.out.println("effetto punti mezzi terminato");
+            }
         }
-        if(fastBallTimer > 0 && now > fastBallTimer){
-            ball.setVelocityX(ball.getVelocityX() / 1.5);
-            ball.setVelocityY(ball.getVelocityY() / 1.5);
-            fastBallTimer = 0;
-            System.out.println("effetto pallina veloce terminato");
+        if(fastBallFrames > 0){
+            fastBallFrames--;
+            if(fastBallFrames == 0){
+                ball.setVelocityX(ball.getVelocityX() / 1.5);
+                ball.setVelocityY(ball.getVelocityY() / 1.5);
+                System.out.println("effetto pallina veloce terminato");
+            }
         }
     }
 
     public void pauseTimer(){
-        if(pauseStart != 0) return;
-        pauseStart = System.currentTimeMillis();
-        System.out.println("pausa: pausestart= " + pauseStart + "doublepointstimer=" + doublePointsTimer);
     }
 
     public void resumeTimer(){
-        if(pauseStart == 0){
-            return;
-        }
-        long pauseDuration = System.currentTimeMillis() - pauseStart;
-        System.out.println("RESUME: pauseDuration=" + pauseDuration + " doublePointsTimer prima=" + doublePointsTimer);
-        if (paddleShortTimer > 0) paddleShortTimer += pauseDuration;
-        if (doublePointsTimer > 0) doublePointsTimer += pauseDuration;
-        System.out.println("RESUME: doublePointsTimer dopo=" + doublePointsTimer);
-        if (paddleLargeTimer > 0) paddleLargeTimer += pauseDuration;
-        if (freezeBlocksTimer > 0) freezeBlocksTimer += pauseDuration;
-        if (halfPointsTimer > 0) halfPointsTimer += pauseDuration;
-        if (fastBallTimer > 0) fastBallTimer += pauseDuration;
-        pauseStart = 0;
     }
 
     public void updatePowerUp(Paddle paddle, Ball ball, int screenHeight){
@@ -183,71 +177,69 @@ public class CollisionManagerImpl implements CollisionManager {
                         System.out.println("vita extra");
                         break;
                     case 2:
-                        if(paddleShortTimer > 0){
-                            paddleShortTimer = System.currentTimeMillis() + TIME;
+                        if(paddleShortFrames > 0){
+                            paddleShortFrames = EFFECT_FRAMES;
                         }
                         else{
-                            if(paddleLargeTimer > 0){
+                            if(paddleLargeFrames > 0){
                                 paddle.paddleShort();
-                                paddleLargeTimer = 0;
+                                paddleLargeFrames = 0;
                             }
                             paddle.paddleShort();
-                            paddleShortTimer = System.currentTimeMillis() + TIME;
+                            paddleShortFrames = EFFECT_FRAMES;
                         }
                         System.out.println("pad piccolo");
                         break;
                     case 3:
-                        if(doublePointsTimer > 0){
-                            doublePointsTimer = System.currentTimeMillis() + TIME;
+                        if(doublePointsFrames > 0){
+                            doublePointsFrames = EFFECT_FRAMES;
                         }
                         else{
-                            if(halfPointsTimer > 0){
+                            if(halfPointsFrames > 0){
                                 score *= 2;
-                                halfPointsTimer = 0;
+                                halfPointsFrames = 0;
                             }
                             score *= 2;
-                            doublePointsTimer = System.currentTimeMillis() + TIME;
+                            doublePointsFrames = EFFECT_FRAMES;
                         }
-                        System.out.println("BONUS PRESO: doublePointsTimer=" + doublePointsTimer);
-                        System.out.println("BONUS PRESO: now=" + System.currentTimeMillis());
                         System.out.println("punti doppi");
                         break;
                     case 4:
-                        if(paddleLargeTimer > 0){
-                            paddleLargeTimer = System.currentTimeMillis() + TIME;
+                        if(paddleLargeFrames > 0){
+                            paddleLargeFrames = EFFECT_FRAMES;
                         }
                         else{
-                            if(paddleShortTimer > 0){
+                            if(paddleShortFrames > 0){
                                 paddle.paddleLarge();
-                                paddleShortTimer = 0;
+                                paddleShortFrames = 0;
                             }
                             paddle.paddleLarge();
-                            paddleLargeTimer = System.currentTimeMillis() + TIME;
+                            paddleLargeFrames = EFFECT_FRAMES;
                         }
                         System.out.println("pad grande");
                         break;
                     case 5:
-                        freezeBlocksTimer = System.currentTimeMillis() + TIME;
+                        freezeBlocksFrames = EFFECT_FRAMES;
                         System.out.println("blocchi fermi");
                         break;
                     case 6:
-                        if(halfPointsTimer > 0){
-                            halfPointsTimer = System.currentTimeMillis() + TIME;
+                        if(halfPointsFrames > 0){
+                            halfPointsFrames = EFFECT_FRAMES;
                         }
                         else{
-                            if(doublePointsTimer > 0){
+                            if(doublePointsFrames > 0){
                                 score /= 2;
-                                doublePointsTimer = 0;
+                                doublePointsFrames = 0;
                             }
                             score /= 2;
-                            halfPointsTimer = System.currentTimeMillis() + TIME;
+                            halfPointsFrames = EFFECT_FRAMES;
                         }
                         System.out.println("punti dimezzati");
                         break;
                     case 7:
                         ball.setVelocityX(ball.getVelocityX() * 1.5);
                         ball.setVelocityY(ball.getVelocityY() * 1.5);
-                        fastBallTimer = System.currentTimeMillis() + TIME;
+                        fastBallFrames = EFFECT_FRAMES;
                         System.out.println("pallina più veloce");
                         break;
                 }

@@ -138,12 +138,18 @@ public class GameController implements KeyListener {
 
         if(leftPanel != null){
             long now = System.currentTimeMillis();
-            if (collisionManager.getDoublePointsTimer() > now) leftPanel.addEffect(3, collisionManager.getDoublePointsTimer());
-            if (collisionManager.getPaddleLargeTimer() > now) leftPanel.addEffect(4, collisionManager.getPaddleLargeTimer());
-            if (collisionManager.getPaddleShortTimer() > now) leftPanel.addEffect(2, collisionManager.getPaddleShortTimer());
-            if (collisionManager.getFreezeBlocksTimer() > now) leftPanel.addEffect(5, collisionManager.getFreezeBlocksTimer());
-            if (collisionManager.getHalfPointsTimer() > now) leftPanel.addEffect(6, collisionManager.getHalfPointsTimer());
-            if (collisionManager.getFastBallTimer() > now) leftPanel.addEffect(7, collisionManager.getFastBallTimer());
+            if (collisionManager.getDoublePointsTimer() > 0) leftPanel.addEffect(3, collisionManager.getDoublePointsTimer());
+            else leftPanel.removeEffect(3);
+            if (collisionManager.getPaddleLargeTimer() > 0) leftPanel.addEffect(4, collisionManager.getPaddleLargeTimer());
+            else leftPanel.removeEffect(4);
+            if (collisionManager.getPaddleShortTimer() > 0) leftPanel.addEffect(2, collisionManager.getPaddleShortTimer());
+            else leftPanel.removeEffect(2);
+            if (collisionManager.getFreezeBlocksTimer() > 0) leftPanel.addEffect(5, collisionManager.getFreezeBlocksTimer());
+            else leftPanel.removeEffect(5);
+            if (collisionManager.getHalfPointsTimer() > 0) leftPanel.addEffect(6, collisionManager.getHalfPointsTimer());
+            else leftPanel.removeEffect(6);
+            if (collisionManager.getFastBallTimer() > 0) leftPanel.addEffect(7, collisionManager.getFastBallTimer());
+            else leftPanel.removeEffect(7);
             System.out.println("doublepointstimer: " + collisionManager.getDoublePointsTimer() + "now: " + now);
             leftPanel.updateEffects();
         }

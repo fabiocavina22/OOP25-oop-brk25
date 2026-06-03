@@ -167,16 +167,16 @@ public class LeftPanel extends JPanel {
                 lblLives.setText(String.valueOf(lives));
         }
 
-        public void addEffect(int type, long expiresTime){
+        public void addEffect(int type, long frames){
                 if(type == 1) return;
                 for(int i = 0; i < effectCount; i++){
                         if(effectTypes[i] == type){
-                                effectExpires[i] = expiresTime;
+                                effectExpires[i] = frames;
                                 return;
                         }
                 }
                 effectTypes[effectCount] = type;
-                effectExpires[effectCount] = expiresTime;
+                effectExpires[effectCount] = frames;
                 JLabel lbl = new JLabel(effectIcons[type]);
                 effectLabels[effectCount] = lbl;
                 effectsPanel.add(lbl);
@@ -186,9 +186,8 @@ public class LeftPanel extends JPanel {
         }
 
         public void updateEffects(){
-                long now = System.currentTimeMillis();
                 for(int i = 0; i < effectCount; i++){
-                        if(now > effectExpires[i]){
+                        if(effectExpires[i] <= 0){
                                 effectsPanel.remove(effectLabels[i]);
                                 effectTypes[i] = effectTypes[effectCount - 1];
                                 effectExpires[i] = effectExpires[effectCount - 1];
@@ -197,6 +196,21 @@ public class LeftPanel extends JPanel {
                                 i--;
                                 effectsPanel.revalidate();
                                 effectsPanel.repaint();
+                        }
+                }
+        }
+
+        public void removeEffect(int type){
+                for(int i = 0; i < effectCount; i++){
+                        if(effectTypes[i] == type){
+                                effectsPanel.remove(effectLabels[i]);
+                                effectTypes[i] = effectTypes[effectCount - 1];
+                                effectExpires[i] = effectExpires[effectCount - 1];
+                                effectLabels[i] = effectLabels[effectCount - 1];
+                                effectCount--;
+                                effectsPanel.revalidate();
+                                effectsPanel.repaint();
+                                return;
                         }
                 }
         }

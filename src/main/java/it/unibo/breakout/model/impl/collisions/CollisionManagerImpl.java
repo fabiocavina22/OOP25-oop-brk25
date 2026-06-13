@@ -48,7 +48,6 @@ public class CollisionManagerImpl implements CollisionManager {
         else{
             score += (int)(150 * powerUpManager.getScoreMultiplier());
         }
-        System.out.println(score);
         return score;
     }
 
@@ -245,7 +244,6 @@ public class CollisionManagerImpl implements CollisionManager {
 
                     /* bomb brick */
                     if(brick.getType() == 5){
-                        System.out.println("bomba a x=" + brick.getX() + "y=" + brick.getY());
                         int count = 0;
                         for(int i = 0; i < bricks.size(); i++){
                             Brick adjacentBrick = bricks.get(i);

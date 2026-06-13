@@ -62,39 +62,38 @@ public class PowerUpManagerImpl implements PowerUpManager{
         activePowerUp.add(new PowerUpImpl(x, y, powerUpType));
     }
 
+    public void setLivesManager(LivesManager livesManager){
+        this.livesManager = livesManager;
+    }
+
     public void updateTimer(Paddle paddle, Ball ball){
         if(doublePointsFrames > 0){
             doublePointsFrames--;
             if(doublePointsFrames == 0){
                 scoreMultiplier = 1.0;
-                System.out.println("effetto pad piccolo terminato");
             }
         }
         if(paddleShortFrames > 0){
             paddleShortFrames--;
             if(paddleShortFrames == 0){
                 paddle.paddleLarge();
-                System.out.println("effetto punti doppi terminato");
             }
         }
         if(paddleLargeFrames > 0){
             paddleLargeFrames--;
             if(paddleLargeFrames == 0){
                 paddle.paddleShort();
-                System.out.println("effetto pad grande terminato");
             }
         }
         if(freezeBlocksFrames > 0){
             freezeBlocksFrames--;
             if(freezeBlocksFrames == 0){
-                System.out.println("effetto blocchi fermi terminato");
             }
         }
         if(halfPointsFrames > 0){
             halfPointsFrames--;
             if(halfPointsFrames == 0){
                 scoreMultiplier = 1.0;
-                System.out.println("effetto punti mezzi terminato");
             }
         }
         if(fastBallFrames > 0){
@@ -102,7 +101,6 @@ public class PowerUpManagerImpl implements PowerUpManager{
             if(fastBallFrames == 0){
                 ball.setVelocityX(ball.getVelocityX() / 1.5);
                 ball.setVelocityY(ball.getVelocityY() / 1.5);
-                System.out.println("effetto pallina veloce terminato");
             }
         }
     }
@@ -122,7 +120,6 @@ public class PowerUpManagerImpl implements PowerUpManager{
                 switch(powerUp.getType()){
                     case 1:
                         livesManager.addLife() ;
-                        System.out.println("vita extra");
                         break;
                     case 2:
                         if(paddleShortFrames > 0){
@@ -136,7 +133,6 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             paddle.paddleShort();
                             paddleShortFrames = EFFECT_FRAMES;
                         }
-                        System.out.println("pad piccolo");
                         break;
                     case 3:
                         if(doublePointsFrames > 0){
@@ -150,7 +146,6 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             scoreMultiplier = 2.0;
                             doublePointsFrames = EFFECT_FRAMES;
                         }
-                        System.out.println("punti doppi");
                         break;
                     case 4:
                         if(paddleLargeFrames > 0){
@@ -164,11 +159,9 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             paddle.paddleLarge();
                             paddleLargeFrames = EFFECT_FRAMES;
                         }
-                        System.out.println("pad grande");
                         break;
                     case 5:
                         freezeBlocksFrames = EFFECT_FRAMES;
-                        System.out.println("blocchi fermi");
                         break;
                     case 6:
                         if(halfPointsFrames > 0){
@@ -182,13 +175,11 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             scoreMultiplier = 0.5;
                             halfPointsFrames = EFFECT_FRAMES;
                         }
-                        System.out.println("punti dimezzati");
                         break;
                     case 7:
                         ball.setVelocityX(ball.getVelocityX() * 1.5);
                         ball.setVelocityY(ball.getVelocityY() * 1.5);
                         fastBallFrames = EFFECT_FRAMES;
-                        System.out.println("pallina più veloce");
                         break;
                 }
                 activePowerUp.remove(i);

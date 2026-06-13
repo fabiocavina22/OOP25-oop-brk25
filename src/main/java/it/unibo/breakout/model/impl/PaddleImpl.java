@@ -69,13 +69,19 @@ import it.unibo.breakout.model.api.Paddle;
     }
 
     public void updateDimensions( int panelWidth, int panelHeight){
-        /* the pad occupies excactly the 10% of the central panel */
+        /*
+        *the pad occupies excactly the 10% of the central panel
+        **/
         this.width = (int) (panelWidth * 0.25);
 
-        /* the pad gets positioned at the 80% of the height leaving the 20% below  */
+        /*
+        * the pad gets positioned at the 80% of the height leaving the 20% below
+        **/
         this.y = (int) (panelHeight * 0.80);
 
-        /* fallback in case the pad went out of borders */
+        /*
+        * fallback in case the pad went out of borders
+        */
         if (this.x + this.width > panelWidth) {
             this.x = panelWidth - this.width;
         }

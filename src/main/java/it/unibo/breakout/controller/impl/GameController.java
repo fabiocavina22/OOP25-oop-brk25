@@ -59,7 +59,7 @@ public class GameController implements KeyListener {
 
     private final Runnable onPlayAgain;
 
-    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager, LivesManagerImpl livesManager, PowerUpManagerImpl powerUpManager) {
+    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
@@ -69,9 +69,9 @@ public class GameController implements KeyListener {
         this.score = score;
         this.onPlayAgain = onPlayAgain;
         this.soundManager = soundManager;
-        this.livesManager = livesManager;
-        this.powerUpManager = powerUpManager;
 
+        this.livesManager = new LivesManagerImpl(3);
+        this.powerUpManager = new PowerUpManagerImpl();
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager, livesManager);
 
         /* view listeners */

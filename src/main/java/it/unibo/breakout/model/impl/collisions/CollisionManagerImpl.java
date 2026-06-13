@@ -82,17 +82,22 @@ public class CollisionManagerImpl implements CollisionManager {
     @Override
     public boolean getPadHit() {
         boolean result = this.padHit;
-        this.padHit = false; // Resetta a false dopo la lettura
+        this.padHit = false;
         return result;
     }
 
     @Override
     public boolean getBorderHit() {
         boolean result = this.borderHit;
-        this.borderHit = false; // Resetta a false dopo la lettura
+        this.borderHit = false;
         return result;
     }
 
+    /**
+     * Checks if a collision happens between the ball and the paddle
+     * @param ball
+     * @param paddle
+     */
     private void checkPaddleCollision(Ball ball, Paddle paddle){
 
         if(detector.isColliding(ball, paddle)){
@@ -102,16 +107,24 @@ public class CollisionManagerImpl implements CollisionManager {
 
             double offset = (ballCenter - paddleCenter) / (paddle.getWidth() / 2.0);
 
-            //* total current speed */
+            /**
+             * total current speed
+             */
             double speed = Math.sqrt( ball.getVelocityX() * ball.getVelocityX() + ball.getVelocityY() * ball.getVelocityY() );
 
-            //* new direction */
+            /**
+             * new direction
+             */
             double maxBounceAngle = Math.toRadians(60);
 
-            //* final angle */
+            /**
+             * final angle
+             */
             double bounceAngle = offset * maxBounceAngle;
 
-            //* new speed */
+            /**
+             * new speed
+             */
             double newVelocityX = speed * Math.sin(bounceAngle);
             double newVelocityY = -speed * Math.cos(bounceAngle);
 
@@ -122,22 +135,29 @@ public class CollisionManagerImpl implements CollisionManager {
         }
 
     }
-
+    /**
+     * Checks if the ball hit the borders or goes under the paddle
+     * manages the logic of the life loss
+     * @param ball
+     * @param gameWidth
+     * @param gameHeight
+     * @param paddle
+     */
     private void checkBorderCollision(Ball ball, int gameWidth, int gameHeight, Paddle paddle) {
 
-        if (ball.getX() <= 0) { //SX
+        if (ball.getX() <= 0) {
             borderHit();
             ball.setPosition(0, ball.getY());
             ball.setVelocityX(Math.abs(ball.getVelocityX()));
         }
 
-        else if (ball.getX() + ball.getWidth() >= gameWidth ) { //DX
+        else if (ball.getX() + ball.getWidth() >= gameWidth ) {
             borderHit();
             ball.setPosition(gameWidth - ball.getWidth(), ball.getY());
             ball.setVelocityX(-Math.abs(ball.getVelocityX()));
         }
 
-        if (ball.getY() <= 0) { //SUP
+        if (ball.getY() <= 0) {
             borderHit();
             ball.setPosition(ball.getX(), 0);
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
@@ -165,6 +185,13 @@ public class CollisionManagerImpl implements CollisionManager {
         return adjacentX && adjacentY && notSame;
     }
 
+    /**
+     * Checks if a collision happens between any block and the ball
+     * Manages the brick destruction, power ups releas
+     * @param ball
+     * @param bricks
+     * @param frozen
+     */
     private void checkBrickCollisions(Ball ball, List<Brick> bricks, boolean frozen) {
 
         for (Brick brick : bricks) {
@@ -177,7 +204,7 @@ public class CollisionManagerImpl implements CollisionManager {
                 double prevBallX = ball.getX() - ball.getVelocityX();
                 double prevBallY = ball.getY() - ball.getVelocityY();
 
-                /*
+                /**
                 * checks where the ball is coming from
                 */
                 boolean comingFromLeft = (prevBallX + ball.getWidth() <= brick.getX());
@@ -239,26 +266,21 @@ public class CollisionManagerImpl implements CollisionManager {
                 }
 
                 /*brick's destruction*/
-                    brick.hit();
-                    points(brick);
+                brick.hit();
+                points(brick);
 
-                    /* bomb brick */
-                    if(brick.getType() == 5){
-                        int count = 0;
-                        for(int i = 0; i < bricks.size(); i++){
-                            Brick adjacentBrick = bricks.get(i);
-                            if(adjacentBrick != brick && isAdjacent(brick, adjacentBrick)){
-                                count++;
-                                System.out.println("adiacente a x=" + adjacentBrick.getX() + "y=" + adjacentBrick.getY());
-                                adjacentBrick.hit();
-                                System.out.println("tipo:" + adjacentBrick.getType() + "distrutto" + adjacentBrick.isDestroyed());
-                                points(adjacentBrick);
-                                if(adjacentBrick.isDestroyed() && adjacentBrick.getType() == 4){
-                                    powerUpManager.spawnPowerUp(adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0, adjacentBrick.getY());
+                /* bomb brick */
+                if(brick.getType() == 5){
+                    for(int i = 0; i < bricks.size(); i++){
+                        Brick adjacentBrick = bricks.get(i);
+                        if(adjacentBrick != brick && isAdjacent(brick, adjacentBrick)){
+                            adjacentBrick.hit();
+                            points(adjacentBrick);
+                            if(adjacentBrick.isDestroyed() && adjacentBrick.getType() == 4){
+                                powerUpManager.spawnPowerUp(adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0, adjacentBrick.getY());
                                 }
                             }
                         }
-                        System.out.println("numero di blocchi adiacenti: " + count);
                     }
 
                     /* power up block */

@@ -5,7 +5,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-//import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -79,7 +78,7 @@ public class GameMapImpl extends JFrame implements GameMap{
                 boolean isFullScreen = false;
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    dispose(); // Rimuove temporaneamente la finestra per cambiare lo stato
+                    dispose();
 
                     if (!isFullScreen) {
                         /* if it's not Full screen goes to full screen */
@@ -87,7 +86,11 @@ public class GameMapImpl extends JFrame implements GameMap{
                         setExtendedState(JFrame.MAXIMIZED_BOTH);
                         isFullScreen = true;
                     } else {
-                        /* goes back to the window dimension */
+
+                        /*
+                        * goes back to the window dimension
+                        **/
+
                         setUndecorated(false);
                         setExtendedState(JFrame.NORMAL);
                         setSize(1200, 700);
@@ -95,18 +98,22 @@ public class GameMapImpl extends JFrame implements GameMap{
                         isFullScreen = false;
                     }
 
-                    setVisible(true); // re-disign the window
+                    setVisible(true);
                 }
             });
 
             mp.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                /* gets the dimension of the main panel in this precise moment */
+                /*
+                * gets the dimension of the main panel in this precise moment
+                **/
                 int newWidth = mp.getWidth();
                 int newHeight = mp.getHeight();
 
-                /* updates the level manager, paddle and ball */
+                /*
+                * updates the level manager, paddle and ball
+                **/
                 if (levelManager != null) {
                     levelManager.updateDimensions(newWidth, newHeight);
                 }

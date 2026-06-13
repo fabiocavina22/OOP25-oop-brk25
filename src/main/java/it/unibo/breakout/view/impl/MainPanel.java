@@ -78,7 +78,9 @@ public class MainPanel extends JPanel {
 
         super.paintComponent(g);
 
-        /* Background */
+        /*
+        * Background
+        **/
         if (gameBackground != null) {
            g.drawImage(gameBackground, 0, 0, getWidth(), getHeight(), this);
         } else {
@@ -96,7 +98,9 @@ public class MainPanel extends JPanel {
                 paddle.getHeight()
         );
 
-        /* Bricks */
+        /*
+        * Bricks
+        **/
         for (Brick b : levelManager.getActiveBricks()) {
 
             Image img;
@@ -118,7 +122,9 @@ public class MainPanel extends JPanel {
                     null);
 
         }
-            /* Ball */
+            /*
+            * Ball
+            **/
             g.setColor(Color.RED);
 
             g.fillOval(
@@ -128,7 +134,9 @@ public class MainPanel extends JPanel {
                 (int) ball.getRadius() * 2
             );
 
-            /* Power Up */
+            /*
+            *Power Up
+            **/
             for(int i = 0; i < activePowerUp.size(); i++){
                 PowerUpImpl p = activePowerUp.get(i);
                 int type = p.getType();

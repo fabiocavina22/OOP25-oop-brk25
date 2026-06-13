@@ -27,22 +27,37 @@ public interface CollisionManager {
     */
     int getScore();
 
-    //** verifies if the ball hit the pad in this frame */
+    /**
+     * sets blockHit to true
+     */
     void blockHit(Brick bricks);
 
-    //** verifies if the ball hit the pad in this frame */
+    /**
+     * sets padHit to true
+     */
     void padHit();
 
-    //** verifies if the ball hit the border in this frame */
+    /**
+     * sets border hit to true
+     */
     void borderHit();
 
-    //** Return the type of block that got hit or 0*/
+    /**
+     * return if the ball hit a block and then sets the value to fals
+     * @return BlockHit
+     */
     int getBlockHit();
 
-    //** Return true if the ball hit the border */
+    /**
+     * return if the ball hit a border and then sets the value to fals
+     * @return BorderHit
+     */
     boolean getBorderHit();
 
-    //** Return true if the ball hit the border */
+    /**
+     * return if the ball hit the pad and then sets the value to fals
+     * @return PadHit
+     */
     boolean getPadHit();
 
 }

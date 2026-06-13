@@ -12,14 +12,16 @@ public class SoundManagerImpl implements SoundManager {
     @Override
     public void playSound (final String fileName){
         try {
-            // Cerca il file audio nella cartella delle risorse
-            final URL soundURL = SoundManager.class.getResource("/it/unibo/breakout/sounds/" + fileName);
+
+           final URL soundURL = SoundManager.class.getResource("/it/unibo/breakout/sounds/" + fileName);
 
             if (soundURL != null) {
-                // Carica il flusso audio
+
                 final AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
 
-                // Crea una "Clip" (un lettore audio per file brevi) e la avvia
+                /*
+                * create a clip
+                **/
                 final Clip clip = AudioSystem.getClip();
                 clip.addLineListener(event -> {
                     if (event.getType() == javax.sound.sampled.LineEvent.Type.STOP) {
@@ -27,7 +29,7 @@ public class SoundManagerImpl implements SoundManager {
                         try {
                             audioIn.close();
                         } catch (Exception e) {
-                            // Ignoriamo eventuali errori di chiusura del file
+
                         }
                     }
                 });

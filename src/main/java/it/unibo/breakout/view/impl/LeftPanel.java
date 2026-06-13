@@ -39,10 +39,10 @@ public class LeftPanel extends JPanel {
                 setBackground(Color.WHITE);
 
                 Border RightBorder = BorderFactory.createMatteBorder(
-                0, // top
-                0, // left
-                0, // bottom
-                10, // right
+                0,
+                0,
+                0,
+                10,
                 Color.BLACK
                 );
 
@@ -116,7 +116,9 @@ public class LeftPanel extends JPanel {
                 add(effectsPanel, gbc);
 
                 // --- CENTRAL LEVEL ---
-                /* force the HUD in the top and the keys in the bottom */
+                /*
+                * force the HUD in the top and the keys in the bottom
+                **/
                 gbc.gridy = 2;
                 gbc.weighty = 1.0;
                 gbc.fill = GridBagConstraints.BOTH;
@@ -141,7 +143,9 @@ public class LeftPanel extends JPanel {
                 gbcKeys.gridy = 0;
                 keysContainer.add(lblW, gbcKeys);
 
-                /* second row: A,S,D Key */
+                /*
+                * second row: A,S,D Key
+                **/
                 gbcKeys.gridx = 0; gbcKeys.gridy = 1; keysContainer.add(lblA, gbcKeys);
                 gbcKeys.gridx = 1; gbcKeys.gridy = 1; keysContainer.add(lblS, gbcKeys);
                 gbcKeys.gridx = 2; gbcKeys.gridy = 1; keysContainer.add(lblD, gbcKeys);

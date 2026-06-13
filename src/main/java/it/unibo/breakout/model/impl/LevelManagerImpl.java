@@ -11,6 +11,7 @@ public class LevelManagerImpl implements LevelManager {
     private final List<Brick> activeBricks;
     private int screenWidth;
     private int screenHeight;
+    @SuppressWarnings("unused")
     private final int brickWidth;
     private final int brickHeight;
     private double rowSpacing;

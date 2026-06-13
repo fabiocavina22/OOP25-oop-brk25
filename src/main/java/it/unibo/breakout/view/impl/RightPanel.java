@@ -16,7 +16,6 @@ public class RightPanel extends JPanel {
 
         setBackground(Color.WHITE);
 
-        // Bordo laterale destro
         Border leftBorder = BorderFactory.createMatteBorder(
                 0, // top
                 10, // left
@@ -25,7 +24,6 @@ public class RightPanel extends JPanel {
                 Color.BLACK
         );
 
-        // Padding interno
         Border padding = BorderFactory.createEmptyBorder(
                 10,
                 10,
@@ -33,7 +31,6 @@ public class RightPanel extends JPanel {
                 10
         );
 
-        // Combina bordo + padding
         setBorder(
                 BorderFactory.createCompoundBorder(
                         leftBorder,
@@ -56,7 +53,7 @@ public class RightPanel extends JPanel {
         int titleX = (panelWidth - fm.stringWidth(title)) / 2;
         int titleY = panelHeight / 4;
         g.drawString(title, titleX, titleY);
-        
+
         List<String> names = leaderboard.getNames();
         List<Integer> scores = leaderboard.getScores();
 

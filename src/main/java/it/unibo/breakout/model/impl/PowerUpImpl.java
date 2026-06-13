@@ -1,6 +1,6 @@
 package it.unibo.breakout.model.impl;
 
-import it.unibo.breakout.model.api.PowerUp; 
+import it.unibo.breakout.model.api.PowerUp;
 
 public class PowerUpImpl implements PowerUp {
     private double x;
@@ -38,4 +38,6 @@ public class PowerUpImpl implements PowerUp {
     public void fall(){
         this.y += FALL_SPEED;
     }
+
+
 }

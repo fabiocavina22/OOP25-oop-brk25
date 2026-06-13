@@ -46,14 +46,14 @@ public class GameMapImpl extends JFrame implements GameMap{
 
             Dimension fluidSize = new Dimension(0, 0);
 
-            // LEFT 30%
+            /* Left panel 30% */
             LeftPanel lp = new LeftPanel();
             lp.setPreferredSize(fluidSize);
             grid.gridx = 0;
             grid.weightx = 0.3;
             this.getContentPane().add(lp, grid);
 
-            // CENTER
+            /* Main Panel = 40% */
             MainPanel mp = new MainPanel(paddle, levelManager, ball);
             mp.setPreferredSize(fluidSize);
             grid.gridx = 1;
@@ -66,25 +66,28 @@ public class GameMapImpl extends JFrame implements GameMap{
             grid.weightx = 0.3;
             this.getContentPane().add(rp, grid);
 
+            /* screen dimension */
             setSize(1200, 700);
             setLocationRelativeTo(null);
             setResizable(true);
 
+            /* screen resize */
             KeyStroke f11 = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0);
             this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(f11, "toggleFullscreen");
             this.getRootPane().getActionMap().put("toggleFullscreen", new AbstractAction() {
+
                 boolean isFullScreen = false;
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     dispose(); // Rimuove temporaneamente la finestra per cambiare lo stato
 
                     if (!isFullScreen) {
-                        // Passa a Schermo Intero Assoluto
+                        /* if it's not Full screen goes to full screen */
                         setUndecorated(true);
                         setExtendedState(JFrame.MAXIMIZED_BOTH);
                         isFullScreen = true;
                     } else {
-                        // Torna alla finestra 1200x700
+                        /* goes back to the window dimension */
                         setUndecorated(false);
                         setExtendedState(JFrame.NORMAL);
                         setSize(1200, 700);
@@ -92,18 +95,18 @@ public class GameMapImpl extends JFrame implements GameMap{
                         isFullScreen = false;
                     }
 
-                    setVisible(true); // Ridisegna la finestra
+                    setVisible(true); // re-disign the window
                 }
             });
 
             mp.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                // Leggiamo la NUOVA dimensione del MainPanel in questo esatto millisecondo
+                /* gets the dimension of the main panel in this precise moment */
                 int newWidth = mp.getWidth();
                 int newHeight = mp.getHeight();
-            
-                // 1. Aggiorniamo il LevelManager (il metodo che abbiamo creato prima)
+
+                /* updates the level manager, paddle and ball */
                 if (levelManager != null) {
                     levelManager.updateDimensions(newWidth, newHeight);
                 }
@@ -112,7 +115,6 @@ public class GameMapImpl extends JFrame implements GameMap{
                     paddle.updateDimensions(newWidth, newHeight);
                 }
 
-                // 3. Aggiorniamo la Palla
                 if (ball != null && paddle != null) {
                     ball.updateDimensions(newWidth, newHeight, paddle);
                 }

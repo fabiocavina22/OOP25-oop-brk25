@@ -31,14 +31,19 @@ public interface Brick extends Collidable{
     //**Returns the specific type of the block */
     int getType();
 
+    //* Sets the x position of the block */
     void setX(double x);
 
+    //* Sets the width of the block */
     void setWidth(int width);
 
+    //* Sets the y position of the block */
     void setY(double y);
 
+    //* Sets the height of the block */
     void setHeight(int height);
 
+    //* Returns the column index */
     int getColIndex();
 
 }

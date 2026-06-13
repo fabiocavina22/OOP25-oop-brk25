@@ -35,6 +35,7 @@ public class MainPanel extends JPanel {
         this.ball = ball;
         this.levelManager = levelManager;
 
+        /* images loaders */
         brickImage1 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick1.jpg")).getImage();
         brickImage2 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick2.jpg")).getImage();
         brickImage3 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick3.jpg")).getImage();
@@ -54,8 +55,7 @@ public class MainPanel extends JPanel {
         setBorder(BorderFactory.createCompoundBorder(rightBorder, padding));
     }
 
-    // --- CREAZIONE ROOT PANEL CON SFONDO PERSONALIZZATO ---
-
+    // --- CUSTOM BACKGROUND ---
 
     public int getGameWidth() {
 
@@ -68,7 +68,7 @@ public class MainPanel extends JPanel {
         return getHeight();
 
     }
-    
+
     public void setPowerUp(List<PowerUpImpl> powerUp){
         this.activePowerUp = powerUp;
     }
@@ -78,6 +78,7 @@ public class MainPanel extends JPanel {
 
         super.paintComponent(g);
 
+        /* Background */
         if (gameBackground != null) {
            g.drawImage(gameBackground, 0, 0, getWidth(), getHeight(), this);
         } else {
@@ -85,6 +86,7 @@ public class MainPanel extends JPanel {
             g.fillRect(0, 0, getWidth(), getHeight());
         }
 
+        /* Paddle */
         g.setColor(Color.BLACK);
 
         g.fillRect(
@@ -94,7 +96,7 @@ public class MainPanel extends JPanel {
                 paddle.getHeight()
         );
 
-        // MATTONI (DAL LEVEL MANAGER)
+        /* Bricks */
         for (Brick b : levelManager.getActiveBricks()) {
 
             Image img;
@@ -115,17 +117,8 @@ public class MainPanel extends JPanel {
                     b.getHeight() - 2,
                     null);
 
-            /*
-            g.setColor(Color.BLACK);
-            g.drawRect(
-                    (int) b.getX(),
-                    (int) b.getY(),
-                    b.getWidth(),
-                    b.getHeight()
-            );
-            */
         }
-
+            /* Ball */
             g.setColor(Color.RED);
 
             g.fillOval(
@@ -135,6 +128,7 @@ public class MainPanel extends JPanel {
                 (int) ball.getRadius() * 2
             );
 
+            /* Power Up */
             for(int i = 0; i < activePowerUp.size(); i++){
                 PowerUpImpl p = activePowerUp.get(i);
                 int type = p.getType();

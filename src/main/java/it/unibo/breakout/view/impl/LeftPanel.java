@@ -72,25 +72,24 @@ public class LeftPanel extends JPanel {
 
                 Font retroFont = new Font("Courier New", Font.BOLD, 18);
 
-                // Pannellino di supporto per le vite (allinea Numero e Cuore orizzontalmente)
                 JPanel hudContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 hudContainer.setBackground(Color.WHITE);
 
                 lblLives.setFont(retroFont);
                 JLabel lblHeartImg = new JLabel(iconHeart);
 
-                // Rettangolo del Punteggio (Usiamo una JLabel stilizzata)
+                /* Score's rectangle */
                 lblScore.setFont(retroFont);
                 lblScore.setForeground(Color.WHITE);
-                lblScore.setBackground(Color.BLACK); // Sfondo del rettangolo
-                lblScore.setOpaque(true);            // Rende lo sfondo visibile
-                lblScore.setHorizontalAlignment(SwingConstants.CENTER); // Centra il testo
-                lblScore.setPreferredSize(new Dimension(85, 35));       // Dimensione del rettangolo
+                lblScore.setBackground(Color.BLACK);
+                lblScore.setOpaque(true);
+                lblScore.setHorizontalAlignment(SwingConstants.CENTER);
+                lblScore.setPreferredSize(new Dimension(85, 35));
                 lblScore.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
 
                 hudContainer.add(lblLives);
                 hudContainer.add(lblHeartImg);
-                hudContainer.add(Box.createHorizontalStrut(15)); // Crea uno spazio vuoto orizzontale tra vite e punteggio
+                hudContainer.add(Box.createHorizontalStrut(15)); // create an empty space for the HUD
                 hudContainer.add(lblScore);
 
                 setLayout(new GridBagLayout());
@@ -98,12 +97,12 @@ public class LeftPanel extends JPanel {
 
                 gbc.gridx = 0;
                 gbc.gridy = 0;
-                gbc.gridwidth = 3;                  // Occupa lo spazio di 3 colonne
-                gbc.weightx = 1.0;                  // Si espande in larghezza
-                gbc.weighty = 0.0;                  // Non si espande in altezza
+                gbc.gridwidth = 3;
+                gbc.weightx = 1.0;
+                gbc.weighty = 0.0;
                 gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.anchor = GridBagConstraints.NORTHWEST; // <--- CALAMITA L'HUD IN ALTO A SINISTRA!
-                gbc.insets = new Insets(10, 5, 20, 5);     // Margine esterno (10px sopra, 20px sotto per staccarsi dai tasti)
+                gbc.anchor = GridBagConstraints.NORTHWEST; /* Forces the HUD on the left */
+                gbc.insets = new Insets(10, 5, 20, 5);     /* extern margin */
                 add(hudContainer, gbc);
 
                 gbc.gridx = 0;
@@ -116,47 +115,46 @@ public class LeftPanel extends JPanel {
                 gbc.insets = new Insets(150, 5, 5, 5);
                 add(effectsPanel, gbc);
 
-                // --- LIVELLO CENTRALE: SPAZIO VUOTO ELASTICO ---
-                // Questo spinge l'HUD verso l'alto e i tasti WASD verso il basso
+                // --- CENTRAL LEVEL ---
+                /* force the HUD in the top and the keys in the bottom */
                 gbc.gridy = 2;
-                gbc.weighty = 1.0;                  // Si prende TUTTO lo spazio verticale rimasto
+                gbc.weighty = 1.0;
                 gbc.fill = GridBagConstraints.BOTH;
                 add(Box.createVerticalGlue(), gbc);
 
-                // --- LIVELLO IN BASSO: I TASTI WASD (CENTRATI) ---
-                // Resettiamo i vincoli per evitare che i tasti ereditino le proprietà dell'HUD
+                // --- LOWER LEVEL : WASD KEYS ---
+                /* reset the constrain to avoid that the keys get the HUD's proprieties */
                 JPanel keysContainer = new JPanel(new GridBagLayout());
                 keysContainer.setBackground(Color.WHITE);
 
                 GridBagConstraints gbcKeys = new GridBagConstraints();
 
-                // 🌟 IL TRUCCO: Imposta la distanza tra i tasti.
-                // (1, 1, 1, 1) lascia 1 pixel di stacco. Se metti (0, 0, 0, 0) saranno COMPLETAMENTE ATTACCATI.
+
+
                 gbcKeys.insets = new Insets(1, 1, 1, 1);
                 gbcKeys.fill = GridBagConstraints.NONE;
-                gbcKeys.weightx = 0.0; // Impedisce ai tasti di allontanarsi tra loro
+                gbcKeys.weightx = 0.0;
                 gbcKeys.weighty = 0.0;
 
-                // Disposizione a piramide DENTRO il sotto-pannello
-                // Fila 1: Tasto 'W' (Fila sopra, al centro)
+                /* first row: W key */
                 gbcKeys.gridx = 1;
                 gbcKeys.gridy = 0;
                 keysContainer.add(lblW, gbcKeys);
 
-                // Fila 2: Tasti 'A', 'S', 'D' (Fila sotto)
+                /* second row: A,S,D Key */
                 gbcKeys.gridx = 0; gbcKeys.gridy = 1; keysContainer.add(lblA, gbcKeys);
                 gbcKeys.gridx = 1; gbcKeys.gridy = 1; keysContainer.add(lblS, gbcKeys);
                 gbcKeys.gridx = 2; gbcKeys.gridy = 1; keysContainer.add(lblD, gbcKeys);
 
-                // ORA AGGIUNGIAMO IL BLOCCO COMPATTO AL PANNELLO PRINCIPALE
+
                 gbc.gridx = 0;
-                gbc.gridy = 3;            // Posizionato sotto la molla elastica
-                gbc.gridwidth = 3;        // Occupa la larghezza totale
+                gbc.gridy = 3;
+                gbc.gridwidth = 3;
                 gbc.weightx = 1.0;
                 gbc.weighty = 0.0;
                 gbc.fill = GridBagConstraints.NONE;
-                gbc.anchor = GridBagConstraints.CENTER; // Centra l'intero blocco WASD nello spazio rimasto
-                gbc.insets = new Insets(5, 5, 15, 5);   // Margine esterno dal fondo dello schermo
+                gbc.anchor = GridBagConstraints.CENTER;
+                gbc.insets = new Insets(5, 5, 15, 5);
 
                 add(keysContainer, gbc);
         }
@@ -250,7 +248,7 @@ public class LeftPanel extends JPanel {
         }
 
         /**
-         * safely upload all the requested images
+         * safely upload all the requested images (keys, pressed and non-pressed)
          */
         private void loadImages() {
                 iconW = getSafeIcon("/it/unibo/breakout/images/W_key.png");

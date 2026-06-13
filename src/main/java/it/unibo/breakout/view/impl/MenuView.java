@@ -44,16 +44,16 @@ public final class MenuView {
 
         final Image background = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/background.jpg")).getImage();
 
-        // --- CREAZIONE ROOT PANEL CON SFONDO PERSONALIZZATO ---
+        // --- CUSTOM BACKGROUND ---
         final JPanel rootPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (background != null) {
-                    // Disegna l'immagine adattandola alla larghezza e altezza del pannello
+                    /* adapt the image to the panel's dimensions */
                     g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
                 } else {
-                    // Fallback in caso l'immagine non venga trovata
+                    /* in case the image can't be found */
                     g.setColor(Color.BLACK);
                     g.fillRect(0, 0, getWidth(), getHeight());
                 }

@@ -17,6 +17,8 @@ import it.unibo.breakout.view.impl.GameOverView;
 import it.unibo.breakout.view.impl.LeftPanel;
 import it.unibo.breakout.view.impl.MainPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
+import it.unibo.breakout.model.impl.LivesManagerImpl;
+import it.unibo.breakout.model.impl.PowerUpManagerImpl;
 
 public class GameController implements KeyListener {
 
@@ -26,6 +28,8 @@ public class GameController implements KeyListener {
     private final CollisionManagerImpl collisionManager;
     private final SoundManager soundManager;
     private final GameMapImpl view;
+    private final LivesManagerImpl livesManager;
+    private final PowerUpManagerImpl powerUpManager;
 
     private int score;
 
@@ -55,7 +59,7 @@ public class GameController implements KeyListener {
 
     private final Runnable onPlayAgain;
 
-    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager) {
+    public GameController(final Paddle paddle, final Ball ball, final LevelManager levelManager, final GameMapImpl view, final int gameAreaWidth, final int gameAreaHeight, final int score, final Runnable onPlayAgain, SoundManager soundManager, LivesManagerImpl livesManager, PowerUpManagerImpl powerUpManager) {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
@@ -65,10 +69,12 @@ public class GameController implements KeyListener {
         this.score = score;
         this.onPlayAgain = onPlayAgain;
         this.soundManager = soundManager;
-        // Inizializza il manager delle collisioni (MVC rispettato: passiamo solo le dimensioni)
-        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score);
+        this.livesManager = livesManager;
+        this.powerUpManager = powerUpManager;
 
-        // Aggiungiamo l'ascoltatore della tastiera alla View
+        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager, livesManager);
+
+        /* view listeners */
         this.view.addKeyListener(this);
         this.view.setFocusable(true);
         this.view.requestFocusInWindow();
@@ -125,7 +131,7 @@ public class GameController implements KeyListener {
         }
 
         ball.move();
-        if(!collisionManager.isFrozen()){
+        if(!powerUpManager.isFrozen()){
            levelManager.update(DELAY_MS / 1000.0);
         }
         else{
@@ -133,27 +139,27 @@ public class GameController implements KeyListener {
         }
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
-        collisionManager.updateTimer(paddle, ball);
-        collisionManager.updatePowerUp(paddle, ball, currentHeight);
+        powerUpManager.updateTimer(paddle, ball);
+        powerUpManager.updatePowerUp(paddle, ball, currentHeight);
 
         if(leftPanel != null){
-            if(collisionManager.isLifeGained()) leftPanel.addEffect(1, 0);
-            if (collisionManager.getDoublePointsTimer() > 0) leftPanel.addEffect(3, collisionManager.getDoublePointsTimer());
+            if(livesManager.isLifeGained()) leftPanel.addEffect(1, 0);
+            if (powerUpManager.getDoublePointsTimer() > 0) leftPanel.addEffect(3, powerUpManager.getDoublePointsTimer());
             else leftPanel.removeEffect(3);
-            if (collisionManager.getPaddleLargeTimer() > 0) leftPanel.addEffect(4, collisionManager.getPaddleLargeTimer());
+            if (powerUpManager.getPaddleLargeTimer() > 0) leftPanel.addEffect(4, powerUpManager.getPaddleLargeTimer());
             else leftPanel.removeEffect(4);
-            if (collisionManager.getPaddleShortTimer() > 0) leftPanel.addEffect(2, collisionManager.getPaddleShortTimer());
+            if (powerUpManager.getPaddleShortTimer() > 0) leftPanel.addEffect(2, powerUpManager.getPaddleShortTimer());
             else leftPanel.removeEffect(2);
-            if (collisionManager.getFreezeBlocksTimer() > 0) leftPanel.addEffect(5, collisionManager.getFreezeBlocksTimer());
+            if (powerUpManager.getFreezeBlocksTimer() > 0) leftPanel.addEffect(5, powerUpManager.getFreezeBlocksTimer());
             else leftPanel.removeEffect(5);
-            if (collisionManager.getHalfPointsTimer() > 0) leftPanel.addEffect(6, collisionManager.getHalfPointsTimer());
+            if (powerUpManager.getHalfPointsTimer() > 0) leftPanel.addEffect(6, powerUpManager.getHalfPointsTimer());
             else leftPanel.removeEffect(6);
-            if (collisionManager.getFastBallTimer() > 0) leftPanel.addEffect(7, collisionManager.getFastBallTimer());
+            if (powerUpManager.getFastBallTimer() > 0) leftPanel.addEffect(7, powerUpManager.getFastBallTimer());
             else leftPanel.removeEffect(7);
             leftPanel.updateEffects();
         }
 
-        mainPanel.setPowerUp(collisionManager.getActivePowerUp());
+        mainPanel.setPowerUp(powerUpManager.getActivePowerUp());
 
         if(collisionManager.getBorderHit()){
             soundManager.playSound("ballHit.wav");
@@ -176,11 +182,11 @@ public class GameController implements KeyListener {
             }
         }
 
-        if(collisionManager.isLifeLost()){
+        if(livesManager.isLifeLost()){
             ready = true;
         }
 
-        if(collisionManager.isGameOver()){
+        if(livesManager.isGameOver()){
             gameOver();;
             return;
         }
@@ -192,7 +198,7 @@ public class GameController implements KeyListener {
 
         view.repaint();
 
-        leftPanel.updateHUD(collisionManager.getScore(), collisionManager.getlives());
+        leftPanel.updateHUD(collisionManager.getScore(), livesManager.getlives());
     }
 
 

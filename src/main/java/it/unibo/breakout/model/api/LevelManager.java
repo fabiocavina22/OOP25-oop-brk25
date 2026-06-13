@@ -58,6 +58,12 @@ public interface LevelManager {
      */
     boolean hasBricksReachedThreshold(double thresholdY);
 
+    /**
+     * Updates the dimension of the screen
+     *
+     * @param newWidth
+     * @param newHeight
+     */
     void updateDimensions(int newWidth, int newHeight);
 
 }

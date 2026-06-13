@@ -1,9 +1,10 @@
 package it.unibo.breakout.model.api;
 
+
 public interface PowerUp {
 
-    
-    
+
+
     /**Return the X position of the bonus/malus capsule
     */
     double getX();
@@ -20,7 +21,8 @@ public interface PowerUp {
     */
     int getType();
 
-    /**manage the disappearance of the capsule 
+    /**manage the disappearance of the capsule
     */
     boolean isOutOfBounds(double screenHeight);
+
     }

@@ -1,18 +1,17 @@
 package it.unibo.breakout.model.impl;
 
-import it.unibo.breakout.model.api.LevelManager;
-import it.unibo.breakout.model.api.Brick;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import it.unibo.breakout.model.api.LevelManager;
+import it.unibo.breakout.model.api.Brick;
 
 public class LevelManagerImpl implements LevelManager {
 
     private final List<Brick> activeBricks;
     private int screenWidth;
     private int screenHeight;
-    @SuppressWarnings("unused")
-    private final int brickWidth;
+    final int brickWidth;
     private final int brickHeight;
     private double rowSpacing;
     private double scrollSpeed;
@@ -79,7 +78,7 @@ public class LevelManagerImpl implements LevelManager {
 
     /**
      * Updates brick positions and spawns new rows each frame.
-     * Moves all bricks down, removes off-screen ones,
+     * Moves all bricks down, removes off-screen and destroyed ones,
      * removes all the indestructible bricks if a row is all destroyed
      * and increases speed as more rows are generated.
      *
@@ -105,6 +104,8 @@ public class LevelManagerImpl implements LevelManager {
     /**
      * Removes a brick from the active list.
      * Call this when the ball destroys a brick.
+     *
+     * @param brick the brick to be removed.
      */
     @Override
     public void removeBrick(Brick brick) {
@@ -131,12 +132,17 @@ public class LevelManagerImpl implements LevelManager {
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
 
-
+    /**
+     * Proportionally resizes the positions, dimensions, and spacing of all active bricks
+     * based on the new dimensions of the game window.
+     *
+     * @param newWidth  the new width of the screen in pixels.
+     * @param newHeight the new height of the screen in pixels.
+     */
     @Override
     public void updateDimensions(int newWidth, int newHeight) {
         if (newWidth <= 0 || newHeight <= 0) return;
 
-        // Se è il primissimo avvio
         if (isFirstResize) {
             this.screenWidth = newWidth;
             this.screenHeight = newHeight;
@@ -144,8 +150,7 @@ public class LevelManagerImpl implements LevelManager {
 
             activeBricks.clear();
             rowsGenerated = 0;
-            // Calcoliamo la spaziatura in base alla nuova larghezza (essendo quadrati, baseWidth è la referenza)
-            this.rowSpacing = (newWidth / 10) + ROW_GAP;
+            this.rowSpacing = (newWidth / 10.0) + ROW_GAP;
             this.distanceSinceLastRow = this.rowSpacing;
 
             for (int r = 0; r < INITIAL_ROWS; r++) {
@@ -161,18 +166,16 @@ public class LevelManagerImpl implements LevelManager {
         this.screenWidth = newWidth;
         this.screenHeight = newHeight;
 
-        // Scaliamo anche le variabili di sistema per non sballare le nuove righe che nasceranno
         this.rowSpacing = this.rowSpacing * scale;
         this.distanceSinceLastRow = this.distanceSinceLastRow * scale;
 
-        // Stringiamo e spostiamo tutti i quadrati in proporzione
         for (Brick b : activeBricks) {
             b.setX(b.getX() * scale);
-            b.setY(b.getY() * scale); // Fondamentale per non farli accavallare!
+            b.setY(b.getY() * scale);
 
             int newSquareSize = (int) (b.getWidth() * scale);
             b.setWidth(newSquareSize);
-            b.setHeight(newSquareSize); // Ora rimpiccioliscono anche in altezza
+            b.setHeight(newSquareSize);
         }
     }
 

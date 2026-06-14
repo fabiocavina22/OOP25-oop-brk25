@@ -25,6 +25,16 @@ import it.unibo.breakout.model.impl.LeaderboardImpl;
  */
 public final class GameOverView {
 
+    private static final int FRAME_WIDTH      = 800;
+    private static final int FRAME_HEIGHT     = 600;
+    private static final int GBC_INSET        = 18;
+    private static final int TITLE_FONT_SIZE  = 56;
+    private static final int TITLE_RED        = 220;
+    private static final int TITLE_DIM        = 50;
+    private static final int BUTTON_GAP       = 30;
+    private static final int BUTTON_FONT_SIZE = 26;
+    private static final int BUTTON_DARK      = 30;
+
     private final JFrame frame;
     private final LeaderboardImpl leaderboard;
     private final int finalScore;
@@ -35,13 +45,15 @@ public final class GameOverView {
      * @param finalScore  the score achieved during the game session
      * @param onPlayAgain callback invoked when the player clicks "Play Again"
      * @param onQuit      callback invoked when the player clicks "Quit"
+     * @param leaderboard the leaderboard used to check and save high scores
      */
-    public GameOverView(final int finalScore, final Runnable onPlayAgain, final Runnable onQuit, final LeaderboardImpl leaderboard) {
+    public GameOverView(final int finalScore, final Runnable onPlayAgain,
+            final Runnable onQuit, final LeaderboardImpl leaderboard) {
         this.finalScore = finalScore;
         this.leaderboard = leaderboard;
         frame = new JFrame("Dido's Breakout");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
@@ -54,11 +66,11 @@ public final class GameOverView {
 
         final GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx  = 0;
-        gbc.insets = new Insets(18, 0, 18, 0);
+        gbc.insets = new Insets(GBC_INSET, 0, GBC_INSET, 0);
 
         final JLabel titleLabel = new JLabel("GAME OVER", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 56));
-        titleLabel.setForeground(new Color(220, 50, 50));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
+        titleLabel.setForeground(new Color(TITLE_RED, TITLE_DIM, TITLE_DIM));
         gbc.gridy = 0;
         centerPanel.add(titleLabel, gbc);
 
@@ -68,13 +80,13 @@ public final class GameOverView {
         gbc.gridy = 1;
         centerPanel.add(scoreLabel, gbc);
 
-        final JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
+        final JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, BUTTON_GAP, 0));
         buttonsPanel.setBackground(Color.BLACK);
-        buttonsPanel.add(buildButton("Play Again", new Color(220, 100, 0), () -> {
+        buttonsPanel.add(buildButton("Play Again", new Color(TITLE_RED, 100, 0), () -> {
             frame.dispose();
             onPlayAgain.run();
         }));
-        buttonsPanel.add(buildButton("Quit", new Color(180, 30, 30), () -> {
+        buttonsPanel.add(buildButton("Quit", new Color(180, BUTTON_DARK, BUTTON_DARK), () -> {
             frame.dispose();
             onQuit.run();
         }));
@@ -87,9 +99,9 @@ public final class GameOverView {
     }
 
     private JButton buildButton(final String text, final Color hoverColor, final Runnable action) {
-        final Color normalColor = new Color(30, 30, 30);
+        final Color normalColor = new Color(BUTTON_DARK, BUTTON_DARK, BUTTON_DARK);
         final JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.BOLD, 26));
+        btn.setFont(new Font("Arial", Font.BOLD, BUTTON_FONT_SIZE));
         btn.setBackground(normalColor);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
@@ -116,9 +128,9 @@ public final class GameOverView {
      */
     public void show() {
         frame.setVisible(true);
-        if(leaderboard.isHighScore(finalScore)){
+        if (leaderboard.isHighScore(finalScore)) {
             final String name = JOptionPane.showInputDialog(frame, "inserisci 3 lettere per il tuo nome");
-            if(name != null && name.length() >= 3){
+            if (name != null && name.length() >= 3) {
                 leaderboard.add(name.substring(0, 3), finalScore);
                 leaderboard.save();
             }

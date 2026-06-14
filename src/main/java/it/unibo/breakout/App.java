@@ -19,6 +19,14 @@ import javax.swing.SwingUtilities;
  */
 public final class App {
 
+    private static final double MAIN_PANEL_RATIO  = 0.40;
+    private static final double PADDLE_WIDTH_RATIO = 0.10;
+    private static final int    PADDLE_HEIGHT_PX   = 20;
+    private static final double PADDLE_Y_RATIO     = 0.80;
+    private static final int    BALL_DIAMETER_PX   = 15;
+    private static final int    PADDLE_SPEED_PX    = 12;
+    private static final double BALL_INIT_VY       = 12.0;
+
     private App() { }
 
     /**
@@ -36,23 +44,23 @@ public final class App {
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
 
-        int mainPanelWidth = (int) (screenWidth * 0.40);
-        int mainPanelHeight = screenHeight; // Occupa il 100% dell'altezza
+        int mainPanelWidth = (int) (screenWidth * MAIN_PANEL_RATIO);
+        int mainPanelHeight = screenHeight;
 
-        int paddleWidth = (int) (screenWidth * 0.10);
-        int paddleHeight = 20; // Un'altezza fissa va benissimo (es. 20 pixel)
+        int paddleWidth = (int) (screenWidth * PADDLE_WIDTH_RATIO);
+        int paddleHeight = PADDLE_HEIGHT_PX;
 
         int paddleX = (mainPanelWidth - paddleWidth) / 2;
-        int paddleY = (int) (mainPanelHeight * 0.80);
-        int brickSide = mainPanelWidth /10;
-        int ballDiameter = 15; // Diametro della palla (es. 20 pixel)
+        int paddleY = (int) (mainPanelHeight * PADDLE_Y_RATIO);
+        int brickSide = mainPanelWidth / 10;
+        int ballDiameter = BALL_DIAMETER_PX;
 
         int ballX = paddleX + (paddleWidth / 2) - (ballDiameter / 2);
 
         int ballY = paddleY - ballDiameter;
 
-        final PaddleImpl paddle = new PaddleImpl(paddleX, paddleY, paddleWidth, paddleHeight, 12);
-        final BallImpl ball = new BallImpl(ballX, ballY, ballDiameter, 0.0, 12.0);
+        final PaddleImpl paddle = new PaddleImpl(paddleX, paddleY, paddleWidth, paddleHeight, PADDLE_SPEED_PX);
+        final BallImpl ball = new BallImpl(ballX, ballY, ballDiameter, 0.0, BALL_INIT_VY);
         final LevelManagerImpl levelManager = new LevelManagerImpl(mainPanelWidth, brickSide, brickSide, mainPanelHeight);
         final LeaderboardImpl leaderboard = new LeaderboardImpl();
         final SoundManagerImpl soundManager = new SoundManagerImpl();
@@ -62,7 +70,9 @@ public final class App {
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball, leaderboard);
         view.showWindow();
 
-        final GameController controller = new GameController(paddle, ball, levelManager, view, screenWidth, screenHeight, score, App::startGame, soundManager);
+        final GameController controller = new GameController(
+                paddle, ball, levelManager, view,
+                screenWidth, screenHeight, score, App::startGame, soundManager);
         controller.start();
     }
 }

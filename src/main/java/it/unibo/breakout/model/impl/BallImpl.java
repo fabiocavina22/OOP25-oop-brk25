@@ -3,8 +3,10 @@ package it.unibo.breakout.model.impl;
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Paddle;
 
-
-public class BallImpl implements Ball {
+/**
+ * Concrete implementation of the ball entity.
+ */
+public final class BallImpl implements Ball {
 
 
     private double x;
@@ -100,16 +102,16 @@ public class BallImpl implements Ball {
 
     @Override
     public int getWidth() {
-       return (int) (radius*2);
+       return (int) (radius * 2);
     }
 
     @Override
     public int getHeight() {
-        return (int) (radius*2);
+        return (int) (radius * 2);
     }
 
     @Override
-    public void updateDimensions(int panelWidth, int panelHeight, Paddle paddle) {
+    public void updateDimensions(final int panelWidth, final int panelHeight, final Paddle paddle) {
 
         if (this.velocityX == 0 && this.velocityY == 0) {
             // Se il gioco non è partito, centra matematicamente la palla sul nuovo pad

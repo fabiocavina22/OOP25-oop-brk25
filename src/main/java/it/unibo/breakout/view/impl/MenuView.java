@@ -28,6 +28,17 @@ import java.awt.event.MouseEvent;
  */
 public final class MenuView {
 
+    private static final int FRAME_WIDTH      = 800;
+    private static final int FRAME_HEIGHT     = 600;
+    private static final int GBC_INSET        = 20;
+    private static final int TITLE_FONT_SIZE  = 46;
+    private static final int BUTTON_FONT_SIZE = 28;
+    private static final int CREDITS_FONT    = 12;
+    private static final int CREDITS_COLOR   = 150;
+    private static final int DARK_COLOR      = 30;
+    private static final int HOVER_RED       = 220;
+    private static final int CREDITS_H_GAP  = 14;
+
     private final JFrame frame;
 
     /**
@@ -38,7 +49,7 @@ public final class MenuView {
     public MenuView(final Runnable onStart) {
         frame = new JFrame("Dido's Breakout");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
@@ -47,7 +58,7 @@ public final class MenuView {
         // --- CUSTOM BACKGROUND ---
         final JPanel rootPanel = new JPanel(new BorderLayout()) {
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(final Graphics g) {
                 super.paintComponent(g);
                 if (background != null) {
                     /* adapt the image to the panel's dimensions */
@@ -65,19 +76,19 @@ public final class MenuView {
         panel.setOpaque(false);
         final GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx  = 0;
-        gbc.insets = new Insets(20, 0, 20, 0);
+        gbc.insets = new Insets(GBC_INSET, 0, GBC_INSET, 0);
 
         final JLabel title = new JLabel("DIDO'S BREAKOUT", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 46));
+        title.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
         title.setForeground(Color.WHITE);
         gbc.gridy = 0;
         panel.add(title, gbc);
 
-        final Color normalColor = new Color(30, 30, 30);
-        final Color hoverColor  = new Color(220, 100, 0);
+        final Color normalColor = new Color(DARK_COLOR, DARK_COLOR, DARK_COLOR);
+        final Color hoverColor  = new Color(HOVER_RED, 100, 0);
 
         final JButton startBtn = new JButton("Start");
-        startBtn.setFont(new Font("Arial", Font.BOLD, 28));
+        startBtn.setFont(new Font("Arial", Font.BOLD, BUTTON_FONT_SIZE));
         startBtn.setBackground(normalColor);
         startBtn.setForeground(Color.WHITE);
         startBtn.setFocusPainted(false);
@@ -105,14 +116,14 @@ public final class MenuView {
         rootPanel.add(panel, BorderLayout.CENTER);
 
         // --- bottom-left: credits ---
-        final JPanel creditsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 14, 10));
+        final JPanel creditsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, CREDITS_H_GAP, 10));
         creditsPanel.setBackground(Color.BLACK);
 
         final JLabel creditsLabel = new JLabel(
             "Developed by:  Fabio Cavina  ·  Riccardo Frega  ·  Achille Montefiori  ·  Lorenzo Di Domenico"
         );
-        creditsLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        creditsLabel.setForeground(new Color(150, 150, 150));
+        creditsLabel.setFont(new Font("Arial", Font.ITALIC, CREDITS_FONT));
+        creditsLabel.setForeground(new Color(CREDITS_COLOR, CREDITS_COLOR, CREDITS_COLOR));
         creditsPanel.add(creditsLabel);
 
         rootPanel.add(creditsPanel, BorderLayout.SOUTH);

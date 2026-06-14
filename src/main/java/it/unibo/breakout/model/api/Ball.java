@@ -88,5 +88,12 @@ public interface Ball extends Collidable {
      */
     boolean isOutOfBounds(double fieldHeight);
 
+    /**
+     * Repositions or clamps the ball when the game panel is resized.
+     *
+     * @param panelWidth  the new width of the game panel in pixels
+     * @param panelHeight the new height of the game panel in pixels
+     * @param paddle      the paddle used to re-centre the ball when stationary
+     */
     void updateDimensions(int panelWidth, int panelHeight, Paddle paddle);
 }

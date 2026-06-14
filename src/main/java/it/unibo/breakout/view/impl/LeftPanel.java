@@ -258,7 +258,7 @@ public class LeftPanel extends JPanel {
                 iconD = getSafeIcon("/it/unibo/breakout/images/D_key.png");
 
                 iconWPressed = getSafeIcon("/it/unibo/breakout/images/pressed_W_key.png");
-                iconAPressed = getSafeIcon("/it/unibo/breakout/images/pressed_A_key.png");
+                iconAPressed = getSafeIcon("/it/unibo/breakout/images/pressed_A_Key.png");
                 iconSPressed = getSafeIcon("/it/unibo/breakout/images/pressed_S_key.png");
                 iconDPressed = getSafeIcon("/it/unibo/breakout/images/pressed_D_key.png");
 

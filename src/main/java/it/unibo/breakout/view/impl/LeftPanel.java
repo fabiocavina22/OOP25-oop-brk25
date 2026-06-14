@@ -6,7 +6,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.net.URL;
 
-public class LeftPanel extends JPanel {
+public final class LeftPanel extends JPanel {
 
         ImageIcon iconW, iconA, iconS, iconD;
 
@@ -25,9 +25,9 @@ public class LeftPanel extends JPanel {
         private final int[] effectTypes = new int[7];
         private final long[] effectExpires = new long[7];
         private final JLabel[] effectLabels = new JLabel[7];
-        private int effectCount = 0;
-        private int lifeBonus = 0;
-        private JPanel effectsPanel;
+        private int effectCount;
+        private int lifeBonus;
+        private final JPanel effectsPanel;
 
         private final ImageIcon[] effectIcons = new ImageIcon[8];
         private static final int LIFE_BONUS_FRAMES = 120;
@@ -37,7 +37,7 @@ public class LeftPanel extends JPanel {
 
                 setBackground(Color.WHITE);
 
-                Border RightBorder = BorderFactory.createMatteBorder(
+                final Border rightBorder = BorderFactory.createMatteBorder(
                 0,
                 0,
                 0,
@@ -45,7 +45,7 @@ public class LeftPanel extends JPanel {
                 Color.BLACK
                 );
 
-                Border padding = BorderFactory.createEmptyBorder(
+                final Border padding = BorderFactory.createEmptyBorder(
                 10,
                 10,
                 10,
@@ -54,7 +54,7 @@ public class LeftPanel extends JPanel {
 
                 setBorder(
                 BorderFactory.createCompoundBorder(
-                        RightBorder,
+                        rightBorder,
                         padding
                 )
                 );
@@ -69,13 +69,13 @@ public class LeftPanel extends JPanel {
                 lblS.setIcon(iconS);
                 lblD.setIcon(iconD);
 
-                Font retroFont = new Font("Courier New", Font.BOLD, 18);
+                final Font retroFont = new Font("Courier New", Font.BOLD, 18);
 
-                JPanel hudContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+                final JPanel hudContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 hudContainer.setBackground(Color.WHITE);
 
                 lblLives.setFont(retroFont);
-                JLabel lblHeartImg = new JLabel(iconHeart);
+                final JLabel lblHeartImg = new JLabel(iconHeart);
 
                 /* Score's rectangle */
                 lblScore.setFont(retroFont);
@@ -92,7 +92,7 @@ public class LeftPanel extends JPanel {
                 hudContainer.add(lblScore);
 
                 setLayout(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
+                final GridBagConstraints gbc = new GridBagConstraints();
 
                 gbc.gridx = 0;
                 gbc.gridy = 0;
@@ -124,11 +124,11 @@ public class LeftPanel extends JPanel {
                 add(Box.createVerticalGlue(), gbc);
 
                 // --- LOWER LEVEL : WASD KEYS ---
-                /* reset the constrain to avoid that the keys get the HUD's proprieties */
-                JPanel keysContainer = new JPanel(new GridBagLayout());
+                /** reset the constrain to avoid that the keys get the HUD's proprieties */
+                final JPanel keysContainer = new JPanel(new GridBagLayout());
                 keysContainer.setBackground(Color.WHITE);
 
-                GridBagConstraints gbcKeys = new GridBagConstraints();
+                final GridBagConstraints gbcKeys = new GridBagConstraints();
 
 
 
@@ -165,7 +165,7 @@ public class LeftPanel extends JPanel {
         /**
          * Updates the HUD in real-time
          */
-        public void updateHUD(int score, int lives) {
+        public void updateHUD(final int score, final int lives) {
                 lblScore.setText(String.valueOf(score));
                 lblLives.setText(String.valueOf(lives));
         }
@@ -174,7 +174,7 @@ public class LeftPanel extends JPanel {
          * Adds or refreshes the icon of an active effect, extra life is shown for a determined duration
          * @param frames
         */
-        public void addEffect(int type, long frames){
+        public void addEffect(final int type, final long frames){
                 if(type == 1){
                         lifeBonus = LIFE_BONUS_FRAMES;
                         for(int i = 0; i < effectCount; i++){
@@ -182,7 +182,7 @@ public class LeftPanel extends JPanel {
                         }
                         effectTypes[effectCount] = 1;
                         effectExpires[effectCount] = LIFE_BONUS_FRAMES;
-                        JLabel lbl = new JLabel(effectIcons[1]);
+                        final JLabel lbl = new JLabel(effectIcons[1]);
                         effectLabels[effectCount] = lbl;
                         effectsPanel.add(lbl);
                         effectsPanel.repaint();
@@ -197,7 +197,7 @@ public class LeftPanel extends JPanel {
                 }
                 effectTypes[effectCount] = type;
                 effectExpires[effectCount] = frames;
-                JLabel lbl = new JLabel(effectIcons[type]);
+                final JLabel lbl = new JLabel(effectIcons[type]);
                 effectLabels[effectCount] = lbl;
                 effectsPanel.add(lbl);
                 effectsPanel.revalidate();
@@ -233,7 +233,7 @@ public class LeftPanel extends JPanel {
          * Removes the icon of the given effect type from the panel
          * @param type
          */
-        public void removeEffect(int type){
+        public void removeEffect(final int type){
                 for(int i = 0; i < effectCount; i++){
                         if(effectTypes[i] == type){
                                 effectsPanel.remove(effectLabels[i]);
@@ -258,13 +258,13 @@ public class LeftPanel extends JPanel {
                 iconD = getSafeIcon("/it/unibo/breakout/images/D_key.png");
 
                 iconWPressed = getSafeIcon("/it/unibo/breakout/images/pressed_W_key.png");
-                iconAPressed = getSafeIcon("/it/unibo/breakout/images/pressed_A_key.png");
+                iconAPressed = getSafeIcon("/it/unibo/breakout/images/pressed_A_Key.png");
                 iconSPressed = getSafeIcon("/it/unibo/breakout/images/pressed_S_key.png");
                 iconDPressed = getSafeIcon("/it/unibo/breakout/images/pressed_D_key.png");
 
-                URL heartUrl = getClass().getResource("/it/unibo/breakout/images/iconHeart.png");
+                final  URL heartUrl = getClass().getResource("/it/unibo/breakout/images/iconHeart.png");
                 if (heartUrl != null) {
-                        Image img = new ImageIcon(heartUrl).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+                        final Image img = new ImageIcon(heartUrl).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                         iconHeart = new ImageIcon(img);
                 } else {
                         iconHeart = new ImageIcon();
@@ -276,7 +276,7 @@ public class LeftPanel extends JPanel {
          *loads and scales to 80x80 the effect icons
          */
         private void loadEffectIcons(){
-                String[] paths = {
+                final String[] paths = {
                         null,                                                  // 0 non esiste
                         "/it/unibo/breakout/images/lifebonus.png",             // 1 vita extra
                         "/it/unibo/breakout/images/paddleshort.png",           // 2 pad piccolo
@@ -287,9 +287,9 @@ public class LeftPanel extends JPanel {
                         "/it/unibo/breakout/images/fastball.png",              // 7 palla veloce
                 };
                 for(int i = 1; i < paths.length; i++){
-                        URL url = getClass().getResource(paths[i]);
+                        final URL url = getClass().getResource(paths[i]);
                         if(url != null){
-                                Image img = new ImageIcon(url).getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                                final Image img = new ImageIcon(url).getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
                                 effectIcons[i] = new ImageIcon(img);
                         }
                 }
@@ -298,8 +298,8 @@ public class LeftPanel extends JPanel {
         /**
          * return a void icon if one misses
          */
-        private ImageIcon getSafeIcon(String path) {
-                URL url = getClass().getResource(path);
+        private ImageIcon getSafeIcon(final String path) {
+                final URL url = getClass().getResource(path);
                 return (url != null) ? new ImageIcon(url) : new ImageIcon();
         }
 
@@ -309,7 +309,7 @@ public class LeftPanel extends JPanel {
          *this method get called if the user press a key
          * @param key ("W", "A", "S", "D")
          */
-        public void setKeyPressed(String key) {
+        public void setKeyPressed(final String key) {
                 switch (key.toUpperCase()) {
                 case "W" -> lblW.setIcon(iconWPressed);
                 case "A" -> lblA.setIcon(iconAPressed);
@@ -322,7 +322,7 @@ public class LeftPanel extends JPanel {
          * this method get called if the user release a key
          * @param key ("W", "A", "S", "D")
          */
-        public void setKeyReleased(String key) {
+        public void setKeyReleased(final String key) {
                 switch (key.toUpperCase()) {
                 case "W" -> lblW.setIcon(iconW);
                 case "A" -> lblA.setIcon(iconA);

@@ -1,11 +1,13 @@
 package it.unibo.breakout.view.impl;
-
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -17,100 +19,103 @@ import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.view.api.GameMap;
 
-public class GameMapImpl extends JFrame implements GameMap{
+public final class GameMapImpl extends JFrame implements GameMap{
 
-        @SuppressWarnings("unused")
-        private final Paddle paddle;
-        @SuppressWarnings("unused")
-        private final LevelManager levelManager;
-        @SuppressWarnings("unused")
-        private final Ball ball;
+    @SuppressWarnings("unused")
+    private final Paddle paddle;
+    @SuppressWarnings("unused")
+    private final LevelManager levelManager;
+    @SuppressWarnings("unused")
+    private final Ball ball;
+
+    private boolean fullScreen;
+
+    private final double SIDEDIMENSION = 0.3;
+    private final double CENTRALDIMENSION = 0.4;
+
+    private final int SCREENWIDTH = 1200;
+    private final int SCREENHEIGHT = 700;
+
+    public GameMapImpl(final Paddle paddle, final LevelManager levelManager, final Ball ball, final LeaderboardImpl leaderboard) {
+
+        this.paddle = paddle;
+        this.levelManager = levelManager;
+        this.ball = ball;
 
 
-        public GameMapImpl(Paddle paddle, LevelManager levelManager, Ball ball, LeaderboardImpl leaderboard){
+        setTitle("DiDo's Breakout");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setExtendedState(MAXIMIZED_BOTH);
 
-            this.paddle = paddle;
-            this.levelManager = levelManager;
-            this.ball = ball;
+        this.getContentPane().setLayout(new GridBagLayout());
+        final GridBagConstraints grid = new GridBagConstraints();
 
-            setTitle("DiDo's Breakout");
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        grid.fill = GridBagConstraints.BOTH;
+        grid.weighty = 1.0;
 
-            this.getContentPane().setLayout(new GridBagLayout());
-            GridBagConstraints grid = new GridBagConstraints();
+        final Dimension fluidSize = new Dimension(0, 0);
 
-            grid.fill = GridBagConstraints.BOTH;
-            grid.weighty = 1.0;
+        /* Left panel 30% */
+        final LeftPanel lp = new LeftPanel();
+        lp.setPreferredSize(fluidSize);
+        grid.gridx = 0;
+        grid.weightx = SIDEDIMENSION;
+        this.getContentPane().add(lp, grid);
 
-            Dimension fluidSize = new Dimension(0, 0);
+        /* Main Panel = 40% */
+        final MainPanel mp = new MainPanel(paddle, levelManager, ball);
+        mp.setPreferredSize(fluidSize);
+        grid.gridx = 1;
+        grid.weightx = CENTRALDIMENSION;
+        this.getContentPane().add(mp, grid);
+        final RightPanel rp = new RightPanel(leaderboard);
+        rp.setPreferredSize(fluidSize);
+        grid.gridx = 2;
+        grid.weightx = SIDEDIMENSION;
+        this.getContentPane().add(rp, grid);
 
-            /* Left panel 30% */
-            LeftPanel lp = new LeftPanel();
-            lp.setPreferredSize(fluidSize);
-            grid.gridx = 0;
-            grid.weightx = 0.3;
-            this.getContentPane().add(lp, grid);
+        /* screen dimension */
+        setSize(SCREENWIDTH, SCREENHEIGHT);
+        setLocationRelativeTo(null);
+        setResizable(true);
 
-            /* Main Panel = 40% */
-            MainPanel mp = new MainPanel(paddle, levelManager, ball);
-            mp.setPreferredSize(fluidSize);
-            grid.gridx = 1;
-            grid.weightx = 0.4;
-            this.getContentPane().add(mp, grid);
+        /* screen resize */
+        final KeyStroke f11 = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0);
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(f11, "toggleFullscreen");
+        this.getRootPane().getActionMap().put("toggleFullscreen", new AbstractAction() {
 
-            RightPanel rp = new RightPanel(leaderboard);
-            rp.setPreferredSize(fluidSize);
-            grid.gridx = 2;
-            grid.weightx = 0.3;
-            this.getContentPane().add(rp, grid);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
 
-            /* screen dimension */
-            setSize(1200, 700);
-            setLocationRelativeTo(null);
-            setResizable(true);
-
-            /* screen resize */
-            KeyStroke f11 = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0);
-            this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(f11, "toggleFullscreen");
-            this.getRootPane().getActionMap().put("toggleFullscreen", new AbstractAction() {
-
-                boolean isFullScreen = false;
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dispose();
-
-                    if (!isFullScreen) {
-                        /* if it's not Full screen goes to full screen */
-                        setUndecorated(true);
-                        setExtendedState(JFrame.MAXIMIZED_BOTH);
-                        isFullScreen = true;
-                    } else {
-
-                        /*
-                        * goes back to the window dimension
-                        **/
-
-                        setUndecorated(false);
-                        setExtendedState(JFrame.NORMAL);
-                        setSize(1200, 700);
-                        setLocationRelativeTo(null);
-                        isFullScreen = false;
+                if (!isFullScreen()) {
+                    /* if it's not Full screen goes to full screen */
+                    setUndecorated(true);
+                    setExtendedState(MAXIMIZED_BOTH);
+                    fullScreen = true;
+                } else {
+                    /**
+                    * goes back to the window dimension
+                    **/
+                    setUndecorated(false);
+                    setExtendedState(NORMAL);
+                    setSize(1200, 700);
+                    setLocationRelativeTo(null);
+                    fullScreen = false;
                     }
 
-                    setVisible(true);
-                }
-            });
+                setVisible(true);
+            }
+        });
 
-            mp.addComponentListener(new ComponentAdapter() {
+        mp.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 /*
                 * gets the dimension of the main panel in this precise moment
                 **/
-                int newWidth = mp.getWidth();
-                int newHeight = mp.getHeight();
-
+                final int newWidth = mp.getWidth();
+                final int newHeight = mp.getHeight();
                 /*
                 * updates the level manager, paddle and ball
                 **/
@@ -129,12 +134,10 @@ public class GameMapImpl extends JFrame implements GameMap{
         });
     }
 
-
-
-
-
-
-
+    @Override
+    public boolean isFullScreen(){
+        return this.fullScreen;
+    }
 
 
     @Override

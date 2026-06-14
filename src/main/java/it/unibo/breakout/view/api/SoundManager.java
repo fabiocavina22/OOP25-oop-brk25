@@ -8,6 +8,6 @@ public interface SoundManager {
      *
      * @param fileName
      */
-    void playSound(final String fileName) ;
+    void playSound(String fileName) ;
 
 }

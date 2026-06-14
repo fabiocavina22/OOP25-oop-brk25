@@ -117,7 +117,7 @@ public final class GameOverView {
     public void show() {
         frame.setVisible(true);
         if(leaderboard.isHighScore(finalScore)){
-            String name = JOptionPane.showInputDialog(frame, "inserisci 3 lettere per il tuo nome");
+            final String name = JOptionPane.showInputDialog(frame, "inserisci 3 lettere per il tuo nome");
             if(name != null && name.length() >= 3){
                 leaderboard.add(name.substring(0, 3), finalScore);
                 leaderboard.save();

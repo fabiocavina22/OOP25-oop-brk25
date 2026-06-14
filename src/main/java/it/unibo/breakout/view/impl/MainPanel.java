@@ -14,22 +14,22 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class MainPanel extends JPanel {
+public final class MainPanel extends JPanel {
 
     private final Paddle paddle;
     private final Ball ball;
     private final LevelManager levelManager;
     private List<PowerUpImpl> activePowerUp = new ArrayList<>();
-    private Image brickImage1;
-    private Image brickImage2;
-    private Image brickImage3;
-    private Image brickImage4;
-    private Image brickImage5;
-    private Image gameBackground;
+    final private Image brickImage1;
+    final private Image brickImage2;
+    final private Image brickImage3;
+    final private Image brickImage4;
+    final private Image brickImage5;
+    final private Image gameBackground;
 
 
 
-    public MainPanel(Paddle paddle, LevelManager levelManager, Ball ball) {
+    public MainPanel(final Paddle paddle, final LevelManager levelManager, final  Ball ball) {
 
         this.paddle = paddle;
         this.ball = ball;
@@ -44,11 +44,11 @@ public class MainPanel extends JPanel {
 
         gameBackground = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/gameBackground.jpg")).getImage();
 
-        Border rightBorder = BorderFactory.createMatteBorder(
+        final Border rightBorder = BorderFactory.createMatteBorder(
                 10, 0, 10, 0, Color.BLACK
         );
 
-        Border padding = BorderFactory.createEmptyBorder(
+        final Border padding = BorderFactory.createEmptyBorder(
                 10, 10, 10, 10
         );
 
@@ -69,12 +69,12 @@ public class MainPanel extends JPanel {
 
     }
 
-    public void setPowerUp(List<PowerUpImpl> powerUp){
+    public void setPowerUp(final List<PowerUpImpl> powerUp){
         this.activePowerUp = powerUp;
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
 
         super.paintComponent(g);
 
@@ -101,9 +101,9 @@ public class MainPanel extends JPanel {
         /*
         * Bricks
         **/
-        for (Brick b : levelManager.getActiveBricks()) {
+        for (final Brick b : levelManager.getActiveBricks()) {
 
-            Image img;
+            final Image img;
             if (b.isIndestructible()) {
                 img = brickImage3;
             } else if (b.getType() == 2) {
@@ -112,7 +112,9 @@ public class MainPanel extends JPanel {
                 img = brickImage1;
             } else if (b.getType() == 4) {
                 img = brickImage4;
-            } else img = brickImage5 ;
+            } else {
+                img = brickImage5 ;
+            }
 
             g.drawImage(img,
                     (int) b.getX() + 1,
@@ -138,8 +140,8 @@ public class MainPanel extends JPanel {
             *Power Up
             **/
             for(int i = 0; i < activePowerUp.size(); i++){
-                PowerUpImpl p = activePowerUp.get(i);
-                int type = p.getType();
+                final PowerUpImpl p = activePowerUp.get(i);
+                final int type = p.getType();
                 if(type ==1 || type == 3 || type == 4 || type == 5){
                     g.setColor(Color.GREEN);
                 }

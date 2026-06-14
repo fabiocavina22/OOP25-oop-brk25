@@ -15,9 +15,16 @@ public class BrickImpl implements Brick {
 
 
     /**
-     * @param x    horizontal position in pixels
-     * @param y    vertical position in pixels
-     * @param type brick type: 1 = normal, 2 = double-hit, 3 = indestructible
+     * Constructs a brick with the given properties.
+     *
+     * @param x        horizontal position in pixels
+     * @param y        vertical position in pixels
+     * @param type     brick type: 1 = normal (1 hit), 2 = resistant (2 hits),
+     *                 3 = indestructible, 4 or 5 = special (1 hit)
+     * @param width    width in pixels
+     * @param height   height in pixels
+     * @param rowId    identifier of the row this brick belongs to
+     * @param colIndex index of the column this brick belongs to
      */
     public BrickImpl(double x, double y, int type, int width, int height, int rowId, int colIndex) {
         this.x = x;
@@ -39,7 +46,7 @@ public class BrickImpl implements Brick {
         this.colIndex = colIndex;
     }
 
-
+    /** Returns the identifier of the row this brick belongs to. */
     @Override
     public int getRowId() { return this.rowId; }
 
@@ -80,42 +87,51 @@ public class BrickImpl implements Brick {
         return this.indestructible;
     }
 
+    /** Returns the width of the brick in pixels. */
     @Override
     public int getWidth(){
         return this.width;
     }
 
+    /** Returns the height of the brick in pixels. */
     @Override
     public int getHeight(){
         return this.height;
     }
 
+    /** Returns the current life of the brick (remaining hits before destruction). */
     @Override
     public int getLife(){ return this.life ;}
 
+    /** Returns the current type of the brick. */
     @Override
     public int getType(){return this.type; }
 
+    /** Sets the horizontal position (X) of the brick in pixels. */
     @Override
     public void setX(double x){
         this.x = x ;
     }
 
+    /** Sets the width of the brick in pixels. */
     @Override
     public void setWidth(int width){
         this.width = width;
     }
 
+    /** Sets the vertical position (Y) of the brick in pixels. */
     @Override
     public void setY(double y){
         this.y = y ;
     }
 
+    /** Sets the height of the brick in pixels. */
     @Override
     public void setHeight(int height){
         this.height = height ;
     }
 
+    /** Returns the column index this brick belongs to. */
     @Override
     public int getColIndex() { return colIndex; }
 }

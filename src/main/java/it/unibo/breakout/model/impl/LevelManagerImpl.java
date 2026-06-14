@@ -202,10 +202,9 @@ public class LevelManagerImpl implements LevelManager {
         for (int i = 0; i < columns; i++) {
             int currentBrickWidth = baseWidth + (i < r ? 1 : 0);
             int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
-            if (type == 3) indestructibleCount++;
-            if (type == 4 || type == 5) specialGenerated = true ;
-            activeBricks.add(new BrickImpl(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId,i));
-
+            if (type == BrickFactory.TYPE_INDESTRUCTIBLE) indestructibleCount++;
+            if (type == BrickFactory.TYPE_BONUS_MALUS || type == BrickFactory.TYPE_TNT) specialGenerated = true;
+            activeBricks.add(BrickFactory.create(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId, i)); //The bricks are squared
             currentX += currentBrickWidth;
         }
         rowsGenerated++;
@@ -225,11 +224,11 @@ public class LevelManagerImpl implements LevelManager {
      */
     private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
         int roll = rng.nextInt(100);
-        if (roll < 10 && currentIndestructible < max) return 3;
-        if (roll < 35) return 2;
-        if (roll < 44 && !specialGenerated) return 4;//power up
-        if (roll < 50 && !specialGenerated) return 5;//explosive block
-        return 1;
+        if (roll < 10 && currentIndestructible < max) return BrickFactory.TYPE_INDESTRUCTIBLE;
+        if (roll < 35) return BrickFactory.TYPE_DOUBLE;
+        if (roll < 44 && !specialGenerated) return BrickFactory.TYPE_BONUS_MALUS;//power up
+        if (roll < 50 && !specialGenerated) return BrickFactory.TYPE_TNT;//explosive block
+        return BrickFactory.TYPE_NORMAL;
     }
 
     /**

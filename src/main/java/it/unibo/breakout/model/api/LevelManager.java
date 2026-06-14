@@ -11,6 +11,8 @@ public interface LevelManager {
     /**
      * Returns the list of currently active bricks on screen.
      * The list is unmodifiable; use {@link #removeBrick(Brick)} to remove entries.
+     *
+     * @return the list of active bricks
      */
     List<Brick> getActiveBricks();
 
@@ -24,6 +26,8 @@ public interface LevelManager {
     /**
      * Removes a brick from the active list.
      * Call this when the ball hits and destroys a brick.
+     *
+     * @param brick the brick to be removed
      */
     void removeBrick(Brick brick);
 
@@ -33,19 +37,24 @@ public interface LevelManager {
      */
     void reset();
 
-    /**remove the brick while freeze mode is active
-    */
+    /**
+     * Removes the brick while freeze mode is active.
+     */
     void removeDestroyedBricks();
 
     /**
      * Current scroll speed in pixels per second.
      * Useful for the HUD (e.g. displaying difficulty) or debugging.
+     *
+     * @return the current scroll speed
      */
     double getScrollSpeed();
 
     /**
      * Total number of rows generated since the start of the game.
      * Increases monotonically and drives difficulty progression.
+     *
+     * @return the total number of rows generated
      */
     int getRowsGenerated();
 
@@ -59,10 +68,10 @@ public interface LevelManager {
     boolean hasBricksReachedThreshold(double thresholdY);
 
     /**
-     * Updates the dimension of the screen
+     * Updates the dimensions of the screen.
      *
-     * @param newWidth
-     * @param newHeight
+     * @param newWidth  the new width of the screen in pixels
+     * @param newHeight the new height of the screen in pixels
      */
     void updateDimensions(int newWidth, int newHeight);
 

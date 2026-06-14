@@ -32,7 +32,7 @@ public class LevelManagerImpl implements LevelManager {
      * @param brickHeight  height of a single brick in pixels
      * @param screenHeight height of the game screen in pixels
      */
-    public LevelManagerImpl(int screenWidth, int brickWidth, int brickHeight, int screenHeight) {
+    public LevelManagerImpl(final int screenWidth, final int brickWidth, final int brickHeight, final int screenHeight) {
         this.activeBricks = new ArrayList<>();
         this.screenWidth  = screenWidth;
         this.screenHeight = screenHeight;
@@ -48,7 +48,7 @@ public class LevelManagerImpl implements LevelManager {
      * and pre-generates the first rows on screen.
      */
     @Override
-    public void reset() {
+    public final void reset() {
         activeBricks.clear();
         scrollSpeed          = BASE_SPEED;
         distanceSinceLastRow = rowSpacing;
@@ -85,9 +85,9 @@ public class LevelManagerImpl implements LevelManager {
      * @param deltaTime time elapsed since the last frame, in seconds
      */
     @Override
-    public void update(double deltaTime) {
-        double movement = scrollSpeed * deltaTime;
-        for (Brick b : activeBricks) {
+    public void update(final double deltaTime) {
+        final double movement = scrollSpeed * deltaTime;
+        for (final Brick b : activeBricks) {
             b.moveDown(movement);
         }
         activeBricks.removeIf(b -> b.getY() > screenHeight);
@@ -108,16 +108,17 @@ public class LevelManagerImpl implements LevelManager {
      * @param brick the brick to be removed.
      */
     @Override
-    public void removeBrick(Brick brick) {
+    public void removeBrick(final Brick brick) {
         activeBricks.remove(brick);
     }
 
     /**
-     * Removes the list of bricks if all of them are destroyed
-    */
-   public void removeDestroyedBricks(){
+     * Removes the list of bricks if all of them are destroyed.
+     */
+    @Override
+    public void removeDestroyedBricks() {
         activeBricks.removeIf(Brick::isDestroyed);
-   }
+    }
 
     /**
      * Returns true if any brick's bottom edge has reached or passed thresholdY.
@@ -127,7 +128,7 @@ public class LevelManagerImpl implements LevelManager {
      * @return true if at least one brick has crossed the threshold
      */
     @Override
-    public boolean hasBricksReachedThreshold(double thresholdY) {
+    public boolean hasBricksReachedThreshold(final double thresholdY) {
         return activeBricks.stream()
                 .anyMatch(b -> b.getY() + brickHeight >= thresholdY);
     }
@@ -140,8 +141,10 @@ public class LevelManagerImpl implements LevelManager {
      * @param newHeight the new height of the screen in pixels.
      */
     @Override
-    public void updateDimensions(int newWidth, int newHeight) {
-        if (newWidth <= 0 || newHeight <= 0) return;
+    public void updateDimensions(final int newWidth, final int newHeight) {
+        if (newWidth <= 0 || newHeight <= 0) {
+            return;
+        }
 
         if (isFirstResize) {
             this.screenWidth = newWidth;
@@ -159,9 +162,11 @@ public class LevelManagerImpl implements LevelManager {
             return;
         }
 
-        if (this.screenWidth == newWidth && this.screenHeight == newHeight) return;
+        if (this.screenWidth == newWidth && this.screenHeight == newHeight) {
+            return;
+        }
 
-        double scale = (double) newWidth / this.screenWidth;
+        final double scale = (double) newWidth / this.screenWidth;
 
         this.screenWidth = newWidth;
         this.screenHeight = newHeight;
@@ -169,11 +174,11 @@ public class LevelManagerImpl implements LevelManager {
         this.rowSpacing = this.rowSpacing * scale;
         this.distanceSinceLastRow = this.distanceSinceLastRow * scale;
 
-        for (Brick b : activeBricks) {
+        for (final Brick b : activeBricks) {
             b.setX(b.getX() * scale);
             b.setY(b.getY() * scale);
 
-            int newSquareSize = (int) (b.getWidth() * scale);
+            final int newSquareSize = (int) (b.getWidth() * scale);
             b.setWidth(newSquareSize);
             b.setHeight(newSquareSize);
         }
@@ -189,21 +194,25 @@ public class LevelManagerImpl implements LevelManager {
      *
      * @param yPosition Y coordinate where the row is placed
      */
-    private void generateNewRow(double yPosition) {
-        int columns             = 10;
-        int baseWidth = screenWidth / columns;
-        int r = screenWidth % columns ;
-        int maxIndestructible   = columns / 3;
+    private void generateNewRow(final double yPosition) {
+        final int columns             = 10;
+        final int baseWidth = screenWidth / columns;
+        final int r = screenWidth % columns;
+        final int maxIndestructible   = columns / 3;
         int indestructibleCount = 0;
-        int currentRowId     = rowsGenerated;
+        final int currentRowId     = rowsGenerated;
         boolean specialGenerated = false;
         double currentX = 0.0;
 
         for (int i = 0; i < columns; i++) {
-            int currentBrickWidth = baseWidth + (i < r ? 1 : 0);
-            int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
-            if (type == BrickFactory.TYPE_INDESTRUCTIBLE) indestructibleCount++;
-            if (type == BrickFactory.TYPE_BONUS_MALUS || type == BrickFactory.TYPE_TNT) specialGenerated = true;
+            final int currentBrickWidth = baseWidth + (i < r ? 1 : 0);
+            final int type = chooseBrickType(indestructibleCount, maxIndestructible, specialGenerated);
+            if (type == BrickFactory.TYPE_INDESTRUCTIBLE) {
+                indestructibleCount++;
+            }
+            if (type == BrickFactory.TYPE_BONUS_MALUS || type == BrickFactory.TYPE_TNT) {
+                specialGenerated = true;
+            }
             activeBricks.add(BrickFactory.create(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId, i)); //The bricks are squared
             currentX += currentBrickWidth;
         }
@@ -222,12 +231,20 @@ public class LevelManagerImpl implements LevelManager {
      * @param max                   maximum allowed indestructible bricks per row
      * @return brick type: 1, 2, 3, 4 or 5
      */
-    private int chooseBrickType(int currentIndestructible, int max, boolean specialGenerated) {
-        int roll = rng.nextInt(100);
-        if (roll < 10 && currentIndestructible < max) return BrickFactory.TYPE_INDESTRUCTIBLE;
-        if (roll < 35) return BrickFactory.TYPE_DOUBLE;
-        if (roll < 44 && !specialGenerated) return BrickFactory.TYPE_BONUS_MALUS;//power up
-        if (roll < 50 && !specialGenerated) return BrickFactory.TYPE_TNT;//explosive block
+    private int chooseBrickType(final int currentIndestructible, final int max, final boolean specialGenerated) {
+        final int roll = rng.nextInt(100);
+        if (roll < 10 && currentIndestructible < max) {
+            return BrickFactory.TYPE_INDESTRUCTIBLE;
+        }
+        if (roll < 35) {
+            return BrickFactory.TYPE_DOUBLE;
+        }
+        if (roll < 44 && !specialGenerated) {
+            return BrickFactory.TYPE_BONUS_MALUS; //power up
+        }
+        if (roll < 50 && !specialGenerated) {
+            return BrickFactory.TYPE_TNT; //explosive block
+        }
         return BrickFactory.TYPE_NORMAL;
     }
 
@@ -241,16 +258,14 @@ public class LevelManagerImpl implements LevelManager {
      * (i.e. indestructible ones) are removed from the active list.
      */
     private void removeIndestructibleFromClearedRows() {
-        Map<Integer, List<Brick>> byRow = activeBricks.stream()
+        final Map<Integer, List<Brick>> byRow = activeBricks.stream()
                 .collect(Collectors.groupingBy(Brick::getRowId));
 
         byRow.forEach((rowId, bricks) -> {
-            boolean hasDestructible = bricks.stream().anyMatch(b -> !b.isIndestructible());
+            final boolean hasDestructible = bricks.stream().anyMatch(b -> !b.isIndestructible());
             if (!hasDestructible) {
                 activeBricks.removeAll(bricks);
             }
         });
     }
 }
-
-

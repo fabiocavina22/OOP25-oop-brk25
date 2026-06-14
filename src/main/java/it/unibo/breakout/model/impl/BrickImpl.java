@@ -2,6 +2,10 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Brick;
 
+/**
+ * Implementation of the Brick interface.
+ * Represents a brick in the breakout game with life, position, dimensions, and type.
+ */
 public class BrickImpl implements Brick {
 
     private int life;
@@ -26,20 +30,29 @@ public class BrickImpl implements Brick {
      * @param rowId    identifier of the row this brick belongs to
      * @param colIndex index of the column this brick belongs to
      */
-    public BrickImpl(double x, double y, int type, int width, int height, int rowId, int colIndex) {
+    public BrickImpl(
+            final double x,
+            final double y,
+            final int type,
+            final int width,
+            final int height,
+            final int rowId,
+            final int colIndex
+    ) {
         this.x = x;
         this.y = y;
         this.rowId = rowId;
-        this.type = type ;
-        if (type == 3) {
+        this.type = type;
+        if (type == BrickFactory.TYPE_INDESTRUCTIBLE) {
             this.indestructible = true;
             this.life = 1;
         } else {
             this.indestructible = false;
-            if (type == 4 || type == 5){
-                this.life = 1 ;
+            if (type == BrickFactory.TYPE_BONUS_MALUS || type == BrickFactory.TYPE_TNT) {
+                this.life = 1;
+            } else {
+                this.life = type;
             }
-            else this.life = type;
         }
         this.width = width;
         this.height = height;
@@ -48,19 +61,25 @@ public class BrickImpl implements Brick {
 
     /** Returns the identifier of the row this brick belongs to. */
     @Override
-    public int getRowId() { return this.rowId; }
+    public int getRowId() {
+        return this.rowId;
+    }
 
     /** Moves the brick down by the given amount of pixels. */
     @Override
-    public void moveDown(double amount) {
+    public void moveDown(final double amount) {
         this.y += amount;
     }
 
     /** Decreases life by one if the brick is not indestructible. */
     @Override
     public void hit() {
-        if (!indestructible) life--;
-        if (type == 2) type = 1 ;
+        if (!indestructible) {
+            life--;
+        }
+        if (type == BrickFactory.TYPE_DOUBLE) {
+            type = BrickFactory.TYPE_NORMAL;
+        }
     }
 
     /** Returns true if the brick has no life left and is not indestructible. */
@@ -89,49 +108,55 @@ public class BrickImpl implements Brick {
 
     /** Returns the width of the brick in pixels. */
     @Override
-    public int getWidth(){
+    public int getWidth() {
         return this.width;
     }
 
     /** Returns the height of the brick in pixels. */
     @Override
-    public int getHeight(){
+    public int getHeight() {
         return this.height;
     }
 
     /** Returns the current life of the brick (remaining hits before destruction). */
     @Override
-    public int getLife(){ return this.life ;}
+    public int getLife() {
+        return this.life;
+    }
 
     /** Returns the current type of the brick. */
     @Override
-    public int getType(){return this.type; }
+    public int getType() {
+        return this.type;
+    }
 
     /** Sets the horizontal position (X) of the brick in pixels. */
     @Override
-    public void setX(double x){
-        this.x = x ;
+    public void setX(final double x) {
+        this.x = x;
     }
 
     /** Sets the width of the brick in pixels. */
     @Override
-    public void setWidth(int width){
+    public void setWidth(final int width) {
         this.width = width;
     }
 
     /** Sets the vertical position (Y) of the brick in pixels. */
     @Override
-    public void setY(double y){
-        this.y = y ;
+    public void setY(final double y) {
+        this.y = y;
     }
 
     /** Sets the height of the brick in pixels. */
     @Override
-    public void setHeight(int height){
-        this.height = height ;
+    public void setHeight(final int height) {
+        this.height = height;
     }
 
     /** Returns the column index this brick belongs to. */
     @Override
-    public int getColIndex() { return colIndex; }
+    public int getColIndex() {
+        return colIndex;
+    }
 }

@@ -26,6 +26,13 @@ public final class BrickFactory {
     public static final int TYPE_TNT           = 5;
 
     /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private BrickFactory() {
+        // Prevents instantiation
+    }
+
+    /**
      * Creates a {@link Brick} of the requested type.
      *
      * @param x        horizontal position in pixels
@@ -38,12 +45,20 @@ public final class BrickFactory {
      * @return a new {@link BrickImpl} configured for the given type
      * @throws IllegalArgumentException if the type is not recognised
      */
-    public static Brick create(double x, double y, int type, int width, int height, int rowId, int colIndex) {
+    public static Brick create(
+            final double x,
+            final double y,
+            final int type,
+            final int width,
+            final int height,
+            final int rowId,
+            final int colIndex
+    ) {
         return switch (type) {
             case TYPE_NORMAL         -> new BrickImpl(x, y, TYPE_NORMAL, width, height, rowId, colIndex);
             case TYPE_DOUBLE         -> new BrickImpl(x, y, TYPE_DOUBLE, width, height, rowId, colIndex);
             case TYPE_INDESTRUCTIBLE -> new BrickImpl(x, y, TYPE_INDESTRUCTIBLE, width, height, rowId, colIndex);
-            case TYPE_BONUS_MALUS        -> new BrickImpl(x, y, TYPE_BONUS_MALUS, width, height, rowId, colIndex);
+            case TYPE_BONUS_MALUS    -> new BrickImpl(x, y, TYPE_BONUS_MALUS, width, height, rowId, colIndex);
             case TYPE_TNT            -> new BrickImpl(x, y, TYPE_TNT, width, height, rowId, colIndex);
             default -> throw new IllegalArgumentException("Unknown brick type: " + type);
         };

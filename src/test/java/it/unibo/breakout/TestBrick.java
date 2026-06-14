@@ -1,58 +1,80 @@
 package it.unibo.breakout;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import it.unibo.breakout.model.impl.BrickImpl;
 
-public class TestBrick {
+class TestBrick {
+
+    private static final int    BRICK_X       = 10;
+    private static final int    BRICK_Y       = 10;
+    private static final int    BRICK_WIDTH   = 4;
+    private static final int    BRICK_HEIGHT  = 4;
+    private static final int    BRICK_ROW     = 2;
+    private static final int    BRICK_COL     = 1;
+    private static final double INITIAL_Y     = 10.0;
+    private static final double MOVE_DELTA    = 5.5;
+    private static final double EXPECTED_Y    = 15.5;
+    private static final double TOLERANCE     = 0.001;
+    private static final int    HIT_LOOPS     = 100;
+    private static final int    GETTER_X      = 10;
+    private static final double GETTER_X_D    = 10.0;
+    private static final double GETTER_Y_D    = 20.0;
+    private static final int    GETTER_W      = 30;
+    private static final int    GETTER_H      = 40;
+    private static final int    GETTER_ROW    = 5;
+    private static final int    GETTER_COL    = 6;
+    private static final double SETTER_X      = 15.5;
+    private static final double SETTER_Y      = 25.5;
+    private static final int    SETTER_W      = 35;
+    private static final int    SETTER_H      = 45;
 
     @Test
-    public void testNormalBrick() {
-        // A normal brick with 1 life
-        BrickImpl b = new BrickImpl(10, 10, 1, 4, 4, 2,1);
+    void testNormalBrick() {
+        final BrickImpl b = new BrickImpl(BRICK_X, BRICK_Y, 1, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
         assertFalse(b.isDestroyed());
         b.hit();
         assertTrue(b.isDestroyed());
     }
 
     @Test
-    public void testHardBrick() {
-        // A double-hit brick with 2 lives
-        BrickImpl b = new BrickImpl(10, 10, 2, 4, 4, 2,1);
+    void testHardBrick() {
+        final BrickImpl b = new BrickImpl(BRICK_X, BRICK_Y, 2, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
         b.hit();
-        assertFalse(b.isDestroyed()); //vivo
+        assertFalse(b.isDestroyed());
         b.hit();
-        assertTrue(b.isDestroyed());  //distrutto
+        assertTrue(b.isDestroyed());
     }
 
     @Test
-    public void testIndestructibleBrick() {
-        // An indestructible brick should never be destroyed
-        BrickImpl b = new BrickImpl(10, 10, 3, 4, 4, 2,1);
-        for(int i=0; i<100; i++) {
+    void testIndestructibleBrick() {
+        final BrickImpl b = new BrickImpl(BRICK_X, BRICK_Y, 3, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
+        for (int i = 0; i < HIT_LOOPS; i++) {
             b.hit();
         }
         assertFalse(b.isDestroyed());
     }
 
     @Test
-    public void testMovement() {
-        BrickImpl b = new BrickImpl(10.0, 10.0, 1, 4, 4, 2, 1);
-        assertEquals(10.0, b.getY(), 0.001);
-        b.moveDown(5.5);
-        assertEquals(15.5, b.getY(), 0.001);
+    void testMovement() {
+        final BrickImpl b = new BrickImpl(GETTER_X_D, INITIAL_Y, 1, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
+        assertEquals(INITIAL_Y, b.getY(), TOLERANCE);
+        b.moveDown(MOVE_DELTA);
+        assertEquals(EXPECTED_Y, b.getY(), TOLERANCE);
     }
 
     @Test
-    public void testSpecialBricks() {
-        BrickImpl type4 = new BrickImpl(10, 10, 4, 4, 4, 2, 1);
+    void testSpecialBricks() {
+        final BrickImpl type4 = new BrickImpl(BRICK_X, BRICK_Y, 4, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
         assertEquals(1, type4.getLife());
         assertFalse(type4.isIndestructible());
         assertFalse(type4.isDestroyed());
         type4.hit();
         assertTrue(type4.isDestroyed());
 
-        BrickImpl type5 = new BrickImpl(10, 10, 5, 4, 4, 2, 1);
+        final BrickImpl type5 = new BrickImpl(BRICK_X, BRICK_Y, 5, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
         assertEquals(1, type5.getLife());
         assertFalse(type5.isIndestructible());
         assertFalse(type5.isDestroyed());
@@ -61,35 +83,34 @@ public class TestBrick {
     }
 
     @Test
-    public void testHardBrickTypeTransition() {
-        BrickImpl b = new BrickImpl(10, 10, 2, 4, 4, 2, 1);
+    void testHardBrickTypeTransition() {
+        final BrickImpl b = new BrickImpl(BRICK_X, BRICK_Y, 2, BRICK_WIDTH, BRICK_HEIGHT, BRICK_ROW, BRICK_COL);
         assertEquals(2, b.getType());
         b.hit();
         assertEquals(1, b.getType());
     }
 
-
     @Test
-    public void testGettersAndSetters() {
-        BrickImpl b = new BrickImpl(10.0, 20.0, 1, 30, 40, 5, 6);
-        assertEquals(10.0, b.getX(), 0.001);
-        assertEquals(20.0, b.getY(), 0.001);
-        assertEquals(30, b.getWidth());
-        assertEquals(40, b.getHeight());
-        assertEquals(5, b.getRowId());
-        assertEquals(6, b.getColIndex());
+    void testGettersAndSetters() {
+        final BrickImpl b = new BrickImpl(GETTER_X_D, GETTER_Y_D, 1, GETTER_W, GETTER_H, GETTER_ROW, GETTER_COL);
+        assertEquals(GETTER_X_D, b.getX(), TOLERANCE);
+        assertEquals(GETTER_Y_D, b.getY(), TOLERANCE);
+        assertEquals(GETTER_W, b.getWidth());
+        assertEquals(GETTER_H, b.getHeight());
+        assertEquals(GETTER_ROW, b.getRowId());
+        assertEquals(GETTER_COL, b.getColIndex());
         assertEquals(1, b.getLife());
         assertEquals(1, b.getType());
 
-        b.setX(15.5);
-        b.setY(25.5);
-        b.setWidth(35);
-        b.setHeight(45);
+        b.setX(SETTER_X);
+        b.setY(SETTER_Y);
+        b.setWidth(SETTER_W);
+        b.setHeight(SETTER_H);
 
-        assertEquals(15.5, b.getX(), 0.001);
-        assertEquals(25.5, b.getY(), 0.001);
-        assertEquals(35, b.getWidth());
-        assertEquals(45, b.getHeight());
+        assertEquals(SETTER_X, b.getX(), TOLERANCE);
+        assertEquals(SETTER_Y, b.getY(), TOLERANCE);
+        assertEquals(SETTER_W, b.getWidth());
+        assertEquals(SETTER_H, b.getHeight());
     }
 
 }

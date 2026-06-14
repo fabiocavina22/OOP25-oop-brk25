@@ -9,7 +9,10 @@ import it.unibo.breakout.model.impl.LevelManagerImpl;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LevelManagerImplTest {
 
@@ -18,6 +21,30 @@ class LevelManagerImplTest {
     private static final int BRICK_WIDTH   = 80;
     private static final int BRICK_HEIGHT  = 20;
 
+    private static final double BASE_SPEED         = 3.0;
+    private static final double SPEED_TOLERANCE    = 0.001;
+    private static final double UPDATE_DELTA_SMALL = 0.1;
+    private static final double UPDATE_DELTA_LARGE = 5.0;
+    private static final double UPDATE_DELTA_HUGE  = 10.0;
+    private static final double THRESHOLD_OFFSET   = 50.0;
+    private static final double THRESHOLD_FIXED    = 500.0;
+    private static final int    FRAMES_MANY        = 2000;
+    private static final int    FRAMES_MEDIUM      = 1000;
+    private static final int    BRICK_SIZE_INJECT  = 80;
+    private static final int    RESIZE_WIDTH_FIRST = 1000;
+    private static final int    RESIZE_HEIGHT_FIRST = 700;
+    private static final int    EXPECTED_COL_WIDTH = 100;
+    private static final int    RESIZE_WIDTH_BASE  = 800;
+    private static final int    RESIZE_HEIGHT_BASE = 600;
+    private static final int    RESIZE_WIDTH_LARGE = 1200;
+    private static final int    RESIZE_HEIGHT_LARGE = 900;
+    private static final double SCALE_FACTOR       = 1.5;
+    private static final double SCALE_TOLERANCE    = 0.01;
+    private static final int    INVALID_WIDTH_ZERO = 0;
+    private static final int    INVALID_HEIGHT_NEG = -10;
+    private static final int    ROWS_GENERATED_INIT = 3;
+    private static final int    MONOTONE_ITERATIONS = 5;
+
     private LevelManagerImpl levelManager;
 
     @BeforeEach
@@ -25,7 +52,7 @@ class LevelManagerImplTest {
         levelManager = new LevelManagerImpl(SCREEN_WIDTH, BRICK_WIDTH, BRICK_HEIGHT, SCREEN_HEIGHT);
     }
 
-    private void injectBricks(List<Brick> bricks) throws Exception {
+    private void injectBricks(final List<Brick> bricks) throws Exception {
         Field field = LevelManagerImpl.class.getDeclaredField("activeBricks");
         field.setAccessible(true);
         @SuppressWarnings("unchecked")
@@ -46,9 +73,9 @@ class LevelManagerImplTest {
 
     @Test
     void testResetClearsPreviousState() {
-        levelManager.update(5.0);
+        levelManager.update(UPDATE_DELTA_LARGE);
         levelManager.reset();
-        assertEquals(3, levelManager.getRowsGenerated(),
+        assertEquals(ROWS_GENERATED_INIT, levelManager.getRowsGenerated(),
                 "rowsGenerated should equal INITIAL_ROWS after reset");
     }
 
@@ -56,7 +83,7 @@ class LevelManagerImplTest {
     void testResetRestoresBaseSpeed() {
         levelManager.update(100.0);
         levelManager.reset();
-        assertEquals(3.0, levelManager.getScrollSpeed(), 0.001,
+        assertEquals(BASE_SPEED, levelManager.getScrollSpeed(), SPEED_TOLERANCE,
                 "Scroll speed should be reset to BASE_SPEED");
     }
 
@@ -76,7 +103,7 @@ class LevelManagerImplTest {
     void testInitialBrickCountMatchesExpectedRows() {
         // INITIAL_ROWS = 3, columns = SCREEN_WIDTH / BRICK_WIDTH = 10
         int expectedColumns = SCREEN_WIDTH / BRICK_WIDTH;
-        int expectedBricks  = 3 * expectedColumns;
+        int expectedBricks  = ROWS_GENERATED_INIT * expectedColumns;
         assertEquals(expectedBricks, levelManager.getActiveBricks().size(),
                 "Initial brick count should be INITIAL_ROWS * columns");
     }
@@ -88,7 +115,7 @@ class LevelManagerImplTest {
     @Test
     void testUpdateMovesBricksDown() {
         double initialY = levelManager.getActiveBricks().get(0).getY();
-        levelManager.update(1.0); // 1 second → bricks move down by scrollSpeed px
+        levelManager.update(1.0);
         double newY = levelManager.getActiveBricks().get(0).getY();
         assertTrue(newY > initialY,
                 "Bricks should move down after update");
@@ -97,15 +124,13 @@ class LevelManagerImplTest {
     @Test
     void testUpdateSpawnsNewRowOverTime() {
         int initialRows = levelManager.getRowsGenerated();
-        // Force enough time to trigger at least one new row spawn
-        levelManager.update(10.0);
+        levelManager.update(UPDATE_DELTA_HUGE);
         assertTrue(levelManager.getRowsGenerated() > initialRows,
                 "New rows should be generated after sufficient time");
     }
 
     @Test
     void testUpdateRemovesOffScreenBricks() {
-        // Push all bricks past the bottom of the screen
         levelManager.update(1000.0);
         for (Brick b : levelManager.getActiveBricks()) {
             assertTrue(b.getY() <= SCREEN_HEIGHT,
@@ -116,7 +141,7 @@ class LevelManagerImplTest {
     @Test
     void testScrollSpeedIncreasesOverTime() {
         double initialSpeed = levelManager.getScrollSpeed();
-        levelManager.update(50.0);
+        levelManager.update(THRESHOLD_OFFSET);
         assertTrue(levelManager.getScrollSpeed() > initialSpeed,
                 "Scroll speed should increase as more rows are generated");
     }
@@ -151,8 +176,8 @@ class LevelManagerImplTest {
 
     @Test
     void testRemoveDestroyedBricks() throws Exception {
-        BrickImpl normalBrick = new BrickImpl(0, 0, 1, 80, 80, 1, 0);
-        BrickImpl destroyedBrick = new BrickImpl(80, 0, 1, 80, 80, 1, 1);
+        BrickImpl normalBrick   = new BrickImpl(0, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 0);
+        BrickImpl destroyedBrick = new BrickImpl(BRICK_SIZE_INJECT, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 1);
 
         destroyedBrick.hit();
 
@@ -170,19 +195,17 @@ class LevelManagerImplTest {
 
     @Test
     void testHasBricksReachedThresholdFalseInitially() {
-        // Bricks start near y=0, paddle is near bottom
-        assertFalse(levelManager.hasBricksReachedThreshold(SCREEN_HEIGHT - 50),
+        assertFalse(levelManager.hasBricksReachedThreshold(SCREEN_HEIGHT - THRESHOLD_OFFSET),
                 "No brick should have reached the paddle threshold initially");
     }
 
     @Test
     void testHasBricksReachedThresholdTrueAfterScroll() {
-        double threshold = SCREEN_HEIGHT - 50;
+        double threshold = SCREEN_HEIGHT - THRESHOLD_OFFSET;
         boolean reached = false;
 
-        // movement = 3.0 × 0.1 = 0.3px per frame → need ~2000 frames to cross ~550px
-        for (int i = 0; i < 2000; i++) {
-            levelManager.update(0.1);
+        for (int i = 0; i < FRAMES_MANY; i++) {
+            levelManager.update(UPDATE_DELTA_SMALL);
             if (levelManager.hasBricksReachedThreshold(threshold)) {
                 reached = true;
                 break;
@@ -194,15 +217,13 @@ class LevelManagerImplTest {
 
     @Test
     void testHasBricksReachedThresholdUsesBottomEdge() {
-        // Place a brick just above the threshold and check bottom edge detection
-        // brickHeight = 20, so a brick at y = thresholdY - brickHeight is exactly on the line
-        double threshold = 500.0;
-        // Scroll until at least one brick bottom edge hits the threshold
-        for (int i = 0; i < 1000; i++) {
-            levelManager.update(0.1);
-            if (levelManager.hasBricksReachedThreshold(threshold)) break;
+        for (int i = 0; i < FRAMES_MEDIUM; i++) {
+            levelManager.update(UPDATE_DELTA_SMALL);
+            if (levelManager.hasBricksReachedThreshold(THRESHOLD_FIXED)) {
+                break;
+            }
         }
-        assertTrue(levelManager.hasBricksReachedThreshold(threshold),
+        assertTrue(levelManager.hasBricksReachedThreshold(THRESHOLD_FIXED),
                 "Bottom edge of brick should trigger the threshold check");
     }
     // -------------------------------------------------------------------------
@@ -213,33 +234,31 @@ class LevelManagerImplTest {
     void testUpdateDimensionsInvalidInputs() {
         int initialCount = levelManager.getActiveBricks().size();
 
-        levelManager.updateDimensions(0, 600);
+        levelManager.updateDimensions(INVALID_WIDTH_ZERO, SCREEN_HEIGHT);
         assertEquals(initialCount, levelManager.getActiveBricks().size());
 
-        levelManager.updateDimensions(800, -10);
+        levelManager.updateDimensions(SCREEN_WIDTH, INVALID_HEIGHT_NEG);
         assertEquals(initialCount, levelManager.getActiveBricks().size());
     }
 
     @Test
     void testUpdateDimensionsFirstResize() {
-        levelManager.updateDimensions(1000, 700);
+        levelManager.updateDimensions(RESIZE_WIDTH_FIRST, RESIZE_HEIGHT_FIRST);
 
         List<Brick> bricks = levelManager.getActiveBricks();
         assertFalse(bricks.isEmpty());
-        // On a 1000px screen divided into 10 columns, the initial width is 100
-        assertEquals(100.0, bricks.get(0).getWidth(), 0.001);
+        assertEquals(EXPECTED_COL_WIDTH, bricks.get(0).getWidth(), SPEED_TOLERANCE);
     }
 
     @Test
     void testUpdateDimensionsSubsequentResizeScalesBricks() {
-        levelManager.updateDimensions(800, 600);
+        levelManager.updateDimensions(RESIZE_WIDTH_BASE, RESIZE_HEIGHT_BASE);
         double originalX = levelManager.getActiveBricks().get(1).getX();
 
-        // Next resizing: 1.5x scale (800 -> 1200)
-        levelManager.updateDimensions(1200, 900);
+        levelManager.updateDimensions(RESIZE_WIDTH_LARGE, RESIZE_HEIGHT_LARGE);
 
         double scaledX = levelManager.getActiveBricks().get(1).getX();
-        assertEquals(originalX * 1.5, scaledX, 0.01,
+        assertEquals(originalX * SCALE_FACTOR, scaledX, SCALE_TOLERANCE,
                 "The X coordinates of the existing blocks must be scaled proportionally");
     }
 
@@ -250,21 +269,21 @@ class LevelManagerImplTest {
 
     @Test
     void testGetScrollSpeedInitialValue() {
-        assertEquals(3.0, levelManager.getScrollSpeed(), 0.001,
+        assertEquals(BASE_SPEED, levelManager.getScrollSpeed(), SPEED_TOLERANCE,
                 "Initial scroll speed should be BASE_SPEED (3.0)");
     }
 
     @Test
     void testGetRowsGeneratedInitialValue() {
-        assertEquals(3, levelManager.getRowsGenerated(),
+        assertEquals(ROWS_GENERATED_INIT, levelManager.getRowsGenerated(),
                 "Rows generated should equal INITIAL_ROWS after construction");
     }
 
     @Test
     void testGetRowsGeneratedIncreasesMonotonically() {
         int prev = levelManager.getRowsGenerated();
-        for (int i = 0; i < 5; i++) {
-            levelManager.update(5.0);
+        for (int i = 0; i < MONOTONE_ITERATIONS; i++) {
+            levelManager.update(UPDATE_DELTA_LARGE);
             int current = levelManager.getRowsGenerated();
             assertTrue(current >= prev,
                     "rowsGenerated should never decrease");

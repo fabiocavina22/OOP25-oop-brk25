@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("org.danilopianini.gradle-java-qa") version "1.75.0"
 }
 
 group = "it.unibo.breakout"

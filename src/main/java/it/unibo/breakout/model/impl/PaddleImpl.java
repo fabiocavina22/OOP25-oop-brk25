@@ -55,6 +55,11 @@ import it.unibo.breakout.model.api.Paddle;
     }
 
     @Override
+    public int getSpeed(){
+        return this.speed;
+    }
+
+    @Override
     public void paddleLarge(){
         if(this.width < 240){
             this.width += 30;
@@ -68,6 +73,7 @@ import it.unibo.breakout.model.api.Paddle;
         }
     }
 
+    @Override
     public void updateDimensions( int panelWidth, int panelHeight){
         /*
         *the pad occupies excactly the 10% of the central panel

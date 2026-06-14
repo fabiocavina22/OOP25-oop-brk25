@@ -14,6 +14,12 @@ public interface Paddle extends Collidable {
      */
     void moveRight() ;
 
+    /**
+     *
+     * @return the pad's speed
+     */
+    int getSpeed();
+
     //*Denies the paddle to go out of the choosen limits */
     void clamp(int screenWidth) ;
 

@@ -231,7 +231,7 @@ public class TestBall {
         PaddleImpl paddle = new PaddleImpl(100, 300, 80, 15, 12);
         BallImpl ball = new BallImpl(50, 50, 10, 0, 0);
         ball.updateDimensions(800, 600, paddle);
-        assertEquals(140, ball.getX(), DELTA);
+        assertEquals(130, ball.getX(), DELTA);
         assertEquals(290, ball.getY(), DELTA);
     }
 

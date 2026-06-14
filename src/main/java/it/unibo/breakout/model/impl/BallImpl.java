@@ -113,7 +113,7 @@ public class BallImpl implements Ball {
 
         if (this.velocityX == 0 && this.velocityY == 0) {
             // Se il gioco non è partito, centra matematicamente la palla sul nuovo pad
-            this.x = paddle.getX() + paddle.getWidth() / 2.0;
+            this.x = paddle.getX() + paddle.getWidth() / 2.0 - this.radius;
             this.y = paddle.getY() - this.radius;
         } else {
             // Se la palla sta volando e la finestra si stringe improvvisamente,

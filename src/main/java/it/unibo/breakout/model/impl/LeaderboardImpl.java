@@ -20,6 +20,8 @@ public class LeaderboardImpl implements Leaderboard{
     private final List<String> names;
     private final List<Integer> scores;
 
+    /**Loads the leaderboard from the file at startup; if the file doesn't exist the leaderboard starts empty
+     */
     public LeaderboardImpl(){
         this.names = new ArrayList<>();
         this.scores = new ArrayList<>();

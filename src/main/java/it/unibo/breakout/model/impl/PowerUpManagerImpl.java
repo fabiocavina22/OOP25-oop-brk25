@@ -56,16 +56,21 @@ public class PowerUpManagerImpl implements PowerUpManager{
         return new ArrayList<>(this.activePowerUp);
     }
 
+    @Override
     public void spawnPowerUp(double x , double y){
         int powerUpType = rng.nextInt(7) + 1;
 
         activePowerUp.add(new PowerUpImpl(x, y, powerUpType));
     }
 
+    /**Sets the lives manager, used to add a life when the extra-life power up is collected
+    */
     public void setLivesManager(LivesManager livesManager){
         this.livesManager = livesManager;
     }
 
+    /**decreases the frames of each active effect; when a counter reaches 0 the matching effect is cancelled
+    */
     public void updateTimer(Paddle paddle, Ball ball){
         if(doublePointsFrames > 0){
             doublePointsFrames--;
@@ -105,6 +110,7 @@ public class PowerUpManagerImpl implements PowerUpManager{
         }
     }
 
+    @Override
     public void updatePowerUp(Paddle paddle, Ball ball, int screenHeight){
         for(int i = 0; i < activePowerUp.size(); i++){
             PowerUpImpl powerUp = activePowerUp.get(i);
@@ -118,9 +124,13 @@ public class PowerUpManagerImpl implements PowerUpManager{
             powerUp.getY() + 10 >  paddle.getY() &&
             powerUp.getY() < paddle.getY() + paddle.getHeight()){
                 switch(powerUp.getType()){
+                    
+                    //extra life
                     case 1:
                         livesManager.addLife() ;
                         break;
+                    
+                    //short paddle
                     case 2:
                         if(paddleShortFrames > 0){
                             paddleShortFrames = EFFECT_FRAMES;
@@ -134,6 +144,8 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             paddleShortFrames = EFFECT_FRAMES;
                         }
                         break;
+                    
+                    //double points
                     case 3:
                         if(doublePointsFrames > 0){
                             doublePointsFrames = EFFECT_FRAMES;
@@ -147,6 +159,8 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             doublePointsFrames = EFFECT_FRAMES;
                         }
                         break;
+
+                    //large paddle
                     case 4:
                         if(paddleLargeFrames > 0){
                             paddleLargeFrames = EFFECT_FRAMES;
@@ -160,9 +174,13 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             paddleLargeFrames = EFFECT_FRAMES;
                         }
                         break;
+
+                    //frozen blocks
                     case 5:
                         freezeBlocksFrames = EFFECT_FRAMES;
                         break;
+
+                    //half points
                     case 6:
                         if(halfPointsFrames > 0){
                             halfPointsFrames = EFFECT_FRAMES;
@@ -176,6 +194,8 @@ public class PowerUpManagerImpl implements PowerUpManager{
                             halfPointsFrames = EFFECT_FRAMES;
                         }
                         break;
+
+                    //fast ball
                     case 7:
                         ball.setVelocityX(ball.getVelocityX() * 1.5);
                         ball.setVelocityY(ball.getVelocityY() * 1.5);

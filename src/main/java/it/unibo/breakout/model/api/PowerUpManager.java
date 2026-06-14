@@ -19,7 +19,7 @@ public interface PowerUpManager {
     */
     void updatePowerUp(Paddle paddle, Ball ball, int screenHeight);
 
-    /*Update the power up timers
+    /**Update the power up timers
     */
    void updateTimer(Paddle paddle, Ball ball);
 
@@ -27,11 +27,19 @@ public interface PowerUpManager {
     */
     List<PowerUpImpl> getActivePowerUp();
 
+    /**Return the current score multiplier
+    */
     double getScoreMultiplier();
 
+    /**Return the frames of the fast ball effect
+    */
     int getFastBallFrames();
 
+    /**Reset the fast ball effect frames
+    */
     void resetFastBallFrames();
 
+    /**Spawn the power up 
+    */
     void spawnPowerUp(double x, double y);
     }

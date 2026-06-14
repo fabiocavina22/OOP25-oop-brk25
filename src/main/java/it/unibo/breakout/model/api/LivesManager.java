@@ -14,9 +14,15 @@ public interface LivesManager {
     */
     boolean isLifeLost();
 
+    /**Is a "signal" for the life gained 
+    */
     boolean isLifeGained();
 
+    /**decrease the player's lives by 1
+    */
     void loseLives();
 
+    /**add a life to the player
+    */
     void addLife();
 }

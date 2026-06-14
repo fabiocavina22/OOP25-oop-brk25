@@ -8,6 +8,12 @@ public class PowerUpImpl implements PowerUp {
     private final int type;
     private static final double FALL_SPEED = 3.0;
 
+    /**
+     * Creates a power up capsule at the given position with the given type
+     * @param x
+     * @param y
+     * @param type
+     */
     public PowerUpImpl(double x, double y, int type){
         this.x = x;
         this.y = y;
@@ -38,6 +44,4 @@ public class PowerUpImpl implements PowerUp {
     public void fall(){
         this.y += FALL_SPEED;
     }
-
-
 }

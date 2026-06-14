@@ -232,7 +232,6 @@ public class GameController implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN){
             pause = !pause;
             if(pause){
-                leftPanel.pauseEffects();
                 if (leftPanel != null) leftPanel.setKeyPressed("S");
             }
 

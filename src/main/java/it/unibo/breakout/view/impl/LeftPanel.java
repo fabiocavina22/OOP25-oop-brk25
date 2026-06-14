@@ -29,7 +29,6 @@ public class LeftPanel extends JPanel {
         private int lifeBonus = 0;
         private JPanel effectsPanel;
 
-        private long effectPauseStart = 0;
         private final ImageIcon[] effectIcons = new ImageIcon[8];
         private static final int LIFE_BONUS_FRAMES = 120;
 
@@ -171,6 +170,10 @@ public class LeftPanel extends JPanel {
                 lblLives.setText(String.valueOf(lives));
         }
 
+        /**
+         * Adds or refreshes the icon of an active effect, extra life is shown for a determined duration
+         * @param frames
+        */
         public void addEffect(int type, long frames){
                 if(type == 1){
                         lifeBonus = LIFE_BONUS_FRAMES;
@@ -202,6 +205,9 @@ public class LeftPanel extends JPanel {
                 effectCount++;
         }
 
+        /**
+         * Updates the effect icons each frame
+         */
         public void updateEffects(){
                 if(lifeBonus > 0){
                         lifeBonus--;
@@ -223,6 +229,10 @@ public class LeftPanel extends JPanel {
                 }
         }
 
+        /**
+         * Removes the icon of the given effect type from the panel
+         * @param type
+         */
         public void removeEffect(int type){
                 for(int i = 0; i < effectCount; i++){
                         if(effectTypes[i] == type){
@@ -236,19 +246,6 @@ public class LeftPanel extends JPanel {
                                 return;
                         }
                 }
-        }
-
-        public void pauseEffects(){
-                effectPauseStart = System.currentTimeMillis();
-        }
-
-        public void resumeEffects(){
-                if(effectPauseStart == 0) return;
-                long pauseDuration = System.currentTimeMillis() - effectPauseStart;
-                for(int i = 0; i < effectCount; i++){
-                        effectExpires[i] += pauseDuration;
-                }
-                effectPauseStart = 0;
         }
 
         /**
@@ -275,6 +272,9 @@ public class LeftPanel extends JPanel {
                 loadEffectIcons();
         }
 
+        /**
+         *loads and scales to 80x80 the effect icons
+         */
         private void loadEffectIcons(){
                 String[] paths = {
                         null,                                                  // 0 non esiste

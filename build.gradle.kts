@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("com.gradleup.shadow") version "8.3.6"
     id("org.danilopianini.gradle-java-qa") version "1.75.0"
 }
 
@@ -12,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
@@ -28,13 +28,4 @@ application {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-// Fat-jar eseguibile (requisito P8)
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "it.unibo.breakout.App"
-    }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

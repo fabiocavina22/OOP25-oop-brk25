@@ -6,6 +6,7 @@ import javax.swing.Timer;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
@@ -17,6 +18,8 @@ import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.GameOverView;
 import it.unibo.breakout.view.impl.LeftPanel;
 import it.unibo.breakout.view.impl.MainPanel;
+// New import added for RightPanel
+import it.unibo.breakout.view.impl.RightPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.model.impl.LivesManagerImpl;
 import it.unibo.breakout.model.impl.PowerUpManagerImpl;
@@ -50,6 +53,8 @@ public final class GameController implements KeyListener {
     private MainPanel mainPanel;
 
     private LeftPanel leftPanel;
+
+    private RightPanel rightPanel;
 
     private final int gameAreaWidth;
 
@@ -114,6 +119,9 @@ public final class GameController implements KeyListener {
                 this.mainPanel = (MainPanel) comp;
             } else if (comp instanceof LeftPanel) {
                 this.leftPanel = (LeftPanel) comp;
+            // Detect and assign the RightPanel from the view components
+            } else if (comp instanceof RightPanel) {
+                this.rightPanel = (RightPanel) comp;
             }
         }
     }
@@ -258,7 +266,29 @@ public final class GameController implements KeyListener {
 
         view.repaint();
 
-        leftPanel.updateHUD(collisionManager.getScore(), livesManager.getlives());
+        if (leftPanel != null) {
+            leftPanel.updateHUD(collisionManager.getScore(), livesManager.getlives());
+        }
+
+        // Check if the current score qualifies for the leaderboard and tell RightPanel to update
+        final int currentScore = collisionManager.getScore();
+        if (this.rightPanel != null && isScoreQualified(currentScore)) {
+            this.rightPanel.updateLeaderboard(this.leaderboard);
+        }
+    }
+
+    /**
+     * Checks if the current score qualifies to enter the leaderboard list.
+     *
+     * @finalScore the score achieved by the player
+     * @return true if it qualifies, false otherwise
+     */
+    private boolean isScoreQualified(final int finalScore) {
+        final List<Integer> currentScores = this.leaderboard.getScores();
+        // Assuming a standard maximum capacity of 7 elements for the leaderboard
+        final int maxLeaderboardSize = 7; 
+        return currentScores.size() < maxLeaderboardSize 
+        || (!currentScores.isEmpty() && finalScore > currentScores.get(currentScores.size() - 1));
     }
 
 
@@ -287,7 +317,7 @@ public final class GameController implements KeyListener {
                 leftPanel.setKeyPressed("W");
 
                 final Timer wTimer = new Timer(500, event -> {
-                        leftPanel.setKeyReleased("W");
+                    leftPanel.setKeyReleased("W");
                     });
                     wTimer.setRepeats(false);
                     wTimer.start();
@@ -296,7 +326,7 @@ public final class GameController implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
             pause = !pause;
             if (pause) {
-                    leftPanel.setKeyPressed("S");
+                leftPanel.setKeyPressed("S");
             }
 
             } else {

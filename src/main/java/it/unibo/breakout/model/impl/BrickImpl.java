@@ -2,6 +2,7 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.Brick;
 
+
 /**
  * Implementation of the Brick interface.
  * Represents a brick in the breakout game with life, position, dimensions, and type.

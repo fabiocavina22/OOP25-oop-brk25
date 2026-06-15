@@ -3,8 +3,6 @@ package it.unibo.breakout.view.impl;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,6 +13,7 @@ import it.unibo.breakout.model.api.BallView;
 import it.unibo.breakout.model.api.Brick;
 import it.unibo.breakout.model.api.LevelView;
 import it.unibo.breakout.model.api.Paddle;
+import it.unibo.breakout.model.api.PowerUpView;
 import it.unibo.breakout.model.impl.PowerUpImpl;
 
 /**
@@ -28,7 +27,7 @@ public final class MainPanel extends JPanel {
     private final transient Paddle paddle;
     private final transient BallView ball;
     private final transient LevelView levelManager;
-    private final transient List<PowerUpImpl> activePowerUp = new ArrayList<>();
+    private final transient PowerUpView powerUpManager;
     private final transient Image brickImage1;
     private final transient Image brickImage2;
     private final transient Image brickImage3;
@@ -46,12 +45,14 @@ public final class MainPanel extends JPanel {
      * @param levelManager the level manager that provides the active bricks
      * @param ball the ball of the game
      */
-    public MainPanel(final Paddle paddle, final LevelView levelManager, final BallView ball) {
+    public MainPanel(final Paddle paddle, final LevelView levelManager,
+        final BallView ball, final PowerUpView powerUpManager) {
 
         super();
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
+        this.powerUpManager = powerUpManager;
 
         brickImage1 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick1.jpg")).getImage();
         brickImage2 = new ImageIcon(getClass().getResource("/it/unibo/breakout/images/brick2.jpg")).getImage();
@@ -88,16 +89,6 @@ public final class MainPanel extends JPanel {
      */
     public int getGameHeight() {
         return getHeight();
-    }
-
-    /**
-     * Sets the active power up capsules that the panel has to draw.
-     *
-     * @param powerUp the list of currently falling power up capsules
-     */
-    public void setPowerUp(final List<PowerUpImpl> powerUp) {
-        this.activePowerUp.clear();
-        this.activePowerUp.addAll(powerUp);
     }
 
     @Override
@@ -158,7 +149,7 @@ public final class MainPanel extends JPanel {
         );
 
         /* Power up */
-        for (final PowerUpImpl p : activePowerUp) {
+        for (final PowerUpImpl p : powerUpManager.getActivePowerUp()) {
             final int type = p.getType();
             if (type == 1 || type == 3 || type == 4 || type == EFFECT_TYPE) {
                 g.setColor(Color.GREEN);

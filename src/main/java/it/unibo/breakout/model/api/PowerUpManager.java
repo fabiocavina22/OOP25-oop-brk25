@@ -4,7 +4,7 @@ import java.util.List;
 
 import it.unibo.breakout.model.impl.PowerUpImpl;
 
-public interface PowerUpManager {
+public interface PowerUpManager extends PowerUpView {
 
     long getDoublePointsTimer();
     long getPaddleLargeTimer();
@@ -25,6 +25,7 @@ public interface PowerUpManager {
 
     /**Return the power up list
     */
+    @Override
     List<PowerUpImpl> getActivePowerUp();
 
     /**Return the current score multiplier

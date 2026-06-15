@@ -222,7 +222,6 @@ public final class GameController implements KeyListener {
             leftPanel.updateEffects();
         }
 
-        mainPanel.setPowerUp(powerUpManager.getActivePowerUp());
 
         if (collisionManager.isBorderHit()) {
             soundManager.playSound("ballHit.wav");

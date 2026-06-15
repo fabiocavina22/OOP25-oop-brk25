@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
+import it.unibo.breakout.model.api.PowerUpManager;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.view.api.GameMap;
 
@@ -35,15 +36,17 @@ public final class GameMapImpl extends JFrame implements GameMap {
     private static final int SCREEN_WIDTH = 1200;
     private static final int SCREEN_HEIGHT = 700;
 
-    /**
+  /**
      * Builds the game window and lays out its panels.
      *
      * @param paddle the paddle to display and update on resize
      * @param levelManager the level manager to update on resize
      * @param ball the ball to display and update on resize
+     * @param powerUpManager the power up manager that provides the active capsules
      * @param leaderboard the leaderboard shown in the right panel
      */
-    public GameMapImpl(final Paddle paddle, final LevelManager levelManager, final Ball ball, final LeaderboardImpl leaderboard) {
+    public GameMapImpl(final Paddle paddle, final LevelManager levelManager, final Ball ball,
+        final PowerUpManager powerUpManager, final LeaderboardImpl leaderboard) {
 
         setTitle("DiDo's Breakout");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,7 +68,7 @@ public final class GameMapImpl extends JFrame implements GameMap {
         this.getContentPane().add(lp, grid);
 
         /* Main Panel = 40% */
-        final MainPanel mp = new MainPanel(paddle, levelManager, ball);
+        final MainPanel mp = new MainPanel(paddle, levelManager, ball, powerUpManager);
         mp.setPreferredSize(fluidSize);
         grid.gridx = 1;
         grid.weightx = CENTRAL_DIMENSION;

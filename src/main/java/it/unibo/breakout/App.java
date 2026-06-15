@@ -4,6 +4,7 @@ import it.unibo.breakout.controller.impl.GameController;
 import it.unibo.breakout.model.impl.BallImpl;
 import it.unibo.breakout.model.impl.LevelManagerImpl;
 import it.unibo.breakout.model.impl.PaddleImpl;
+import it.unibo.breakout.model.impl.PowerUpManagerImpl;
 import it.unibo.breakout.view.impl.GameMapImpl;
 import it.unibo.breakout.view.impl.MenuView;
 import it.unibo.breakout.view.impl.SoundManagerImpl;
@@ -66,10 +67,11 @@ public final class App {
         final LevelManagerImpl levelManager = new LevelManagerImpl(mainPanelWidth, brickSide, mainPanelHeight);
         final LeaderboardImpl leaderboard = new LeaderboardImpl();
         final SoundManagerImpl soundManager = new SoundManagerImpl();
+        final PowerUpManagerImpl powerUpManager = new PowerUpManagerImpl();
 
         final int score = 0;
 
-        final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball, leaderboard);
+        final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball, powerUpManager, leaderboard);
         view.showWindow();
 
         final GameController controller = new GameController(

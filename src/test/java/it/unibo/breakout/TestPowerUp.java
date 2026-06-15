@@ -68,7 +68,7 @@ class TestPowerUp {
     private LivesManagerImpl lives;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         lives = new LivesManagerImpl(INITIAL_LIVES);
         manager = new PowerUpManagerImpl(lives);
     }

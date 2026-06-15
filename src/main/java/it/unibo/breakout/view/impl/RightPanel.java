@@ -1,75 +1,102 @@
 package it.unibo.breakout.view.impl;
 
-import javax.swing.*;
-import javax.swing.border.Border;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.util.List;
-import java.awt.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 
-public class RightPanel extends JPanel {
+/**
+ * Side panel that displays the leaderboard with the top scores.
+ */
+public final class RightPanel extends JPanel {
 
-        private final LeaderboardImpl leaderboard;
+    private static final long serialVersionUID = 1L;
 
-    public RightPanel(LeaderboardImpl leaderboard) {
+    private static final int LEFT_BORDER_THICKNESS = 10;
+    private static final int PADDING = 10;
+    private static final int TITLE_FONT_SIZE = 28;
+    private static final int ENTRY_FONT_SIZE = 20;
+
+    private static final int TITLE_VERTICAL_DIVISOR = 4;
+    private static final int TITLE_GAP = 60;
+    private static final int ROW_SPACING = 38;
+    private static final int COL_LEFT_DIVISOR = 4;
+    private static final int COL_RIGHT_NUMERATOR = 3;
+    private static final int COL_RIGHT_DIVISOR = 4;
+
+    private final LeaderboardImpl leaderboard;
+
+    /**
+     * Creates the right side panel showing the given leaderboard.
+     *
+     * @param leaderboard the leaderboard to display
+     */
+    public RightPanel(final LeaderboardImpl leaderboard) {
+        super();
         this.leaderboard = leaderboard;
 
-        setBackground(Color.WHITE);
+        super.setBackground(Color.WHITE);
 
-        Border leftBorder = BorderFactory.createMatteBorder(
-                0, // top
-                10, // left
-                0, // bottom
-                0, // right
+        final Border leftBorder = BorderFactory.createMatteBorder(
+                0,
+                LEFT_BORDER_THICKNESS,
+                0,
+                0,
                 Color.BLACK
         );
 
-        Border padding = BorderFactory.createEmptyBorder(
-                10,
-                10,
-                10,
-                10
+        final Border padding = BorderFactory.createEmptyBorder(
+                PADDING,
+                PADDING,
+                PADDING,
+                PADDING
         );
 
-        setBorder(
+        super.setBorder(
                 BorderFactory.createCompoundBorder(
                         leftBorder,
                         padding
                 )
         );
-
     }
 
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
+        final int panelWidth = getWidth();
+        final int panelHeight = getHeight();
 
         g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 28));
+        g.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
         FontMetrics fm = g.getFontMetrics();
-        String title = "LEADERBOARD";
-        int titleX = (panelWidth - fm.stringWidth(title)) / 2;
-        int titleY = panelHeight / 4;
+        final String title = "LEADERBOARD";
+        final int titleX = (panelWidth - fm.stringWidth(title)) / 2;
+        final int titleY = panelHeight / TITLE_VERTICAL_DIVISOR;
         g.drawString(title, titleX, titleY);
 
-        List<String> names = leaderboard.getNames();
-        List<Integer> scores = leaderboard.getScores();
+        final List<String> names = leaderboard.getNames();
+        final List<Integer> scores = leaderboard.getScores();
 
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.setFont(new Font("Arial", Font.BOLD, ENTRY_FONT_SIZE));
         fm = g.getFontMetrics();
-        int startY = titleY + 60;
-        int colLeft = panelWidth / 4;
-        int colRight = panelWidth * 3 / 4;
+        final int startY = titleY + TITLE_GAP;
+        final int colLeft = panelWidth / COL_LEFT_DIVISOR;
+        final int colRight = panelWidth * COL_RIGHT_NUMERATOR / COL_RIGHT_DIVISOR;
 
-        for(int i = 0; i < names.size(); i++){
-                String nameEntry = (i + 1) + ") " + names.get(i);
-                String scoreEntry = String.valueOf(scores.get(i));
+        for (int i = 0; i < names.size(); i++) {
+            final String nameEntry = (i + 1) + ") " + names.get(i);
+            final String scoreEntry = String.valueOf(scores.get(i));
 
-                g.drawString(nameEntry, colLeft, startY + i * 38);
-                g.drawString(scoreEntry, colRight - fm.stringWidth(scoreEntry), startY + i * 38);
+            g.drawString(nameEntry, colLeft, startY + i * ROW_SPACING);
+            g.drawString(scoreEntry, colRight - fm.stringWidth(scoreEntry), startY + i * ROW_SPACING);
         }
     }
 }

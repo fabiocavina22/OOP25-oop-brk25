@@ -6,7 +6,7 @@ import java.util.List;
  * Manages continuous arcade-style level generation:
  * brick row spawning, downward scrolling, and progressive difficulty.
  */
-public interface LevelManager {
+public interface LevelManager extends LevelView {
 
     /**
      * Returns the list of currently active bricks on screen.

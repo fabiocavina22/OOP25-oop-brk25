@@ -96,7 +96,7 @@ public final class MainPanel extends JPanel {
      * @param powerUp the list of currently falling power up capsules
      */
     public void setPowerUp(final List<PowerUpImpl> powerUp) {
-        this.activePowerUp = powerUp;
+        this.activePowerUp = new ArrayList<>(powerUp);
     }
 
     @Override

@@ -1,12 +1,10 @@
 package it.unibo.breakout.model.api;
 
-import it.unibo.breakout.model.api.collisions.Collidable;
-
 /**
  * Represents the ball.
  * The ball moves across the field, bouncing off walls, the paddle, and bricks.
  */
-public interface Ball extends Collidable {
+public interface Ball extends BallView {
 
     /**
      * Returns the current X position of the ball's center.

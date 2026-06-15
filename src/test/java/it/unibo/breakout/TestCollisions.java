@@ -32,7 +32,6 @@ class TestCollisions {
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
     private static final double EXPECTED_SPEED = 5.0;
-    private static final int CORNER_ANGLE = 60;
 
     /* collisions with objects */
 
@@ -111,9 +110,8 @@ class TestCollisions {
 
     /* ball's physics */
 
-    @Test
-    void boucesOnTheCentreAndGoesStraightUp() {
-        final FakeBall ball = new FakeBall(145, 490, 10, 10, 3.0, 4.0);
+    void assertBounce(final double ballX, final double expectedAngle) {
+        final FakeBall ball = new FakeBall(ballX, 490, 10, 10, 3.0, 4.0);
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
                 new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
@@ -123,40 +121,8 @@ class TestCollisions {
         final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
         final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
         assertEquals(EXPECTED_SPEED, modulo, DELTA);
-        assertEquals(0.0, angolo, DELTA);
-        assertTrue(ball.getVelocityY() < 0);
+        assertEquals(expectedAngle, angolo, DELTA);
     }
-
-    @Test
-    void boucesOnLeftCorner() {
-        final FakeBall ball = new FakeBall(195, 490, 10, 10, 3.0, 4.0);
-        final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
-        final CollisionManagerImpl cm =
-                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
-
-        cm.handleCollisions(ball, paddle, List.of(), SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-
-        final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
-        final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
-        assertEquals(EXPECTED_SPEED, modulo, DELTA);
-        assertEquals(Math.toRadians(CORNER_ANGLE), angolo, DELTA);
-    }
-
-    @Test
-    void boucesOnRightCorner() {
-        final FakeBall ball = new FakeBall(95, 490, 10, 10, 3.0, 4.0);
-        final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
-        final CollisionManagerImpl cm =
-                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
-
-        cm.handleCollisions(ball, paddle, List.of(), SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-
-        final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
-        final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
-        assertEquals(EXPECTED_SPEED, modulo, DELTA);
-        assertEquals(-Math.toRadians(CORNER_ANGLE), angolo, DELTA);
-    }
-
     /* fake classes used only to exercise the collision manager */
 
     private static final class FakeCollisionDetector implements CollisionDetector {

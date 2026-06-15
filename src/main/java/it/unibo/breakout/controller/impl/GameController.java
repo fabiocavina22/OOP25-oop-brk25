@@ -24,7 +24,7 @@ import it.unibo.breakout.view.impl.MainPanel;
 import it.unibo.breakout.view.impl.RightPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.model.impl.LivesManagerImpl;
-import it.unibo.breakout.model.impl.PowerUpManagerImpl;
+import it.unibo.breakout.model.api.PowerUpManager;
 
 /**
  * GameController: manages the game loop and the methods of written in the model and the view.
@@ -38,7 +38,7 @@ public final class GameController implements KeyListener {
     private final SoundManager soundManager;
     private final GameMapImpl view;
     private final LivesManagerImpl livesManager;
-    private final PowerUpManagerImpl powerUpManager;
+    private final PowerUpManager powerUpManager;
 
     private final int score;
 
@@ -77,6 +77,7 @@ public final class GameController implements KeyListener {
      * @param paddle
      * @param ball
      * @param levelManager
+     * @param powerUpManager
      * @param view
      * @param gameAreaWidth
      * @param gameAreaHeight
@@ -86,12 +87,14 @@ public final class GameController implements KeyListener {
      */
     @SuppressFBWarnings(
         value = "EI_EXPOSE_REP2",
-        justification = "As the MVC controller, GameController coordinates the shared model and view, which it must hold and mutate."
+        justification =
+        "As the MVC controller, GameController coordinates the shared model and view, which it must hold and mutate."
     )
     public GameController(
         final Paddle paddle,
         final Ball ball,
         final LevelManager levelManager,
+        final PowerUpManager powerUpManager,
         final GameMapImpl view,
         final int gameAreaWidth,
         final int gameAreaHeight,
@@ -102,6 +105,7 @@ public final class GameController implements KeyListener {
         this.paddle = paddle;
         this.ball = ball;
         this.levelManager = levelManager;
+        this.powerUpManager = powerUpManager;
         this.view = view;
         this.gameAreaWidth = gameAreaWidth;
         this.gameAreaHeight = gameAreaHeight;
@@ -110,7 +114,6 @@ public final class GameController implements KeyListener {
         this.soundManager = soundManager;
 
         this.livesManager = new LivesManagerImpl(3);
-        this.powerUpManager = new PowerUpManagerImpl();
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager);
 
         /* view listeners */
@@ -150,8 +153,16 @@ public final class GameController implements KeyListener {
         final int finalScore = collisionManager.getScore();
         SwingUtilities.invokeLater(() -> {
             view.dispose();
-            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0)).show(leaderboard);
+            new GameOverView(finalScore, onPlayAgain, this::quitApplication).show(leaderboard);
         });
+    }
+
+    @SuppressFBWarnings(
+        value = "DM_EXIT",
+        justification = "User-initiated quit is meant to terminate the game application."
+    )
+    private void quitApplication() {
+        System.exit(0);
     }
 
     private void update() {
@@ -290,14 +301,14 @@ public final class GameController implements KeyListener {
     /**
      * Checks if the current score qualifies to enter the leaderboard list.
      *
-     * @finalScore the score achieved by the player
+     * @param finalScore the score achieved by the player
      * @return true if it qualifies, false otherwise
      */
     private boolean isScoreQualified(final int finalScore) {
         final List<Integer> currentScores = this.leaderboard.getScores();
         // Assuming a standard maximum capacity of 7 elements for the leaderboard
-        final int maxLeaderboardSize = 7; 
-        return currentScores.size() < maxLeaderboardSize 
+        final int maxLeaderboardSize = 7;
+        return currentScores.size() < maxLeaderboardSize
         || (!currentScores.isEmpty() && finalScore > currentScores.get(currentScores.size() - 1));
     }
 

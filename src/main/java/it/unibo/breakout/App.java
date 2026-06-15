@@ -75,7 +75,7 @@ public final class App {
         view.showWindow();
 
         final GameController controller = new GameController(
-                paddle, ball, levelManager, view,
+                paddle, ball, levelManager, powerUpManager, view,
                 screenWidth, screenHeight, score, App::startGame, soundManager);
         controller.start();
     }

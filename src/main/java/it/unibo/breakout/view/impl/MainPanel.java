@@ -44,6 +44,7 @@ public final class MainPanel extends JPanel {
      * @param paddle the paddle of the game
      * @param levelManager the level manager that provides the active bricks
      * @param ball the ball of the game
+     * @param powerUpManager
      */
     public MainPanel(final Paddle paddle, final LevelView levelManager,
         final BallView ball, final PowerUpView powerUpManager) {

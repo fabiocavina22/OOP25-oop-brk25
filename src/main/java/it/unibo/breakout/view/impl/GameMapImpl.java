@@ -82,7 +82,7 @@ public final class GameMapImpl extends JFrame implements GameMap {
         /* screen dimension */
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setLocationRelativeTo(null);
-        setResizable(true);
+        setResizable(false);
 
         /* screen resize */
         final KeyStroke f11 = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0);

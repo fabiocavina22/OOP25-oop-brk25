@@ -52,9 +52,10 @@ class LevelManagerImplTest {
         levelManager = new LevelManagerImpl(SCREEN_WIDTH, BRICK_HEIGHT, SCREEN_HEIGHT);
     }
 
-    private void injectBricks(final List<Brick> bricks) throws ReflectiveOperationException {
+    @SuppressWarnings("PMD.AvoidAccessibilityAlteration")
+    private void injectBricks(final List<Brick> bricks) throws NoSuchFieldException, IllegalAccessException {
         final Field field = LevelManagerImpl.class.getDeclaredField("activeBricks");
-        field.setAccessible(true); // NOPMD - necessary for white-box testing of private state
+        field.setAccessible(true);
         @SuppressWarnings("unchecked")
         final List<Brick> activeList = (List<Brick>) field.get(levelManager);
         activeList.clear();
@@ -175,7 +176,7 @@ class LevelManagerImplTest {
     // -------------------------------------------------------------------------
 
     @Test
-    void testRemoveDestroyedBricks() throws ReflectiveOperationException {
+    void testRemoveDestroyedBricks() throws NoSuchFieldException, IllegalAccessException {
         final BrickImpl normalBrick    = new BrickImpl(0, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 0);
         final BrickImpl destroyedBrick = new BrickImpl(BRICK_SIZE_INJECT, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 1);
 

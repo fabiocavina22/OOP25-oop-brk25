@@ -2,58 +2,59 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.LivesManager;
 
-public class LivesManagerImpl implements LivesManager {
+/**
+ * Implementation of the LivesManager interface to manage player lives.
+ */
+public final class LivesManagerImpl implements LivesManager {
 
     private int lives;
     private boolean lifeLost;
     private boolean lifeGained;
 
-    public LivesManagerImpl(int lives){
-
+    /**
+     * Constructor for LivesManagerImpl.
+     *
+     * @param lives the initial number of lives
+     */
+    public LivesManagerImpl(final int lives) {
         this.lives = lives;
         this.lifeLost = false;
         this.lifeGained = false;
-
-    }
-
-        @Override
-    public int getlives(){
-        return lives;
     }
 
     @Override
-    public void loseLives(){
-        lives--;
-        lifeLost = true;
+    public int getlives() {
+        return this.lives;
     }
 
     @Override
-    public boolean isLifeLost(){
-        boolean result = this.lifeLost;
-        lifeLost = false;
+    public void loseLives() {
+        this.lives--;
+        this.lifeLost = true;
+    }
+
+    @Override
+    public boolean isLifeLost() {
+        final boolean result = this.lifeLost;
+        this.lifeLost = false;
         return result;
     }
 
     @Override
-    public boolean isLifeGained(){
-        boolean result = this.lifeGained;
-        lifeGained = false;
+    public boolean isLifeGained() {
+        final boolean result = this.lifeGained;
+        this.lifeGained = false;
         return result;
     }
 
     @Override
-    public boolean isGameOver(){
-        if(lives <= 0){
-            return true;
-        }
-        else{
-            return false;
-        }
+    public boolean isGameOver() {
+        return this.lives <= 0;
     }
 
     @Override
-    public void addLife(){
-        this.lives ++;
+    public void addLife() {
+        this.lives++;
         this.lifeGained = true;
     }
 }

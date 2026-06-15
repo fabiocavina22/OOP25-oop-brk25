@@ -170,15 +170,15 @@ public class GameController implements KeyListener {
 
         mainPanel.setPowerUp(powerUpManager.getActivePowerUp());
 
-        if(collisionManager.getBorderHit()){
+        if(collisionManager.isBorderHit()){
             soundManager.playSound("ballHit.wav");
         }
 
-        if(collisionManager.getPadHit()){
+        if(collisionManager.isPadHit()){
             soundManager.playSound("ballHit.wav");
         }
 
-        int hitBlockType = collisionManager.getBlockHit();
+        int hitBlockType = collisionManager.isBlockHit();
         if(hitBlockType > 0){
             if (hitBlockType == 5 ){
                 soundManager.playSound("explosion.wav");

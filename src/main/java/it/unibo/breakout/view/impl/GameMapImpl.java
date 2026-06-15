@@ -25,6 +25,8 @@ import it.unibo.breakout.view.api.GameMap;
  */
 public final class GameMapImpl extends JFrame implements GameMap {
 
+    private static final long serialVersionUID = 1L;
+
     private boolean fullScreen;
 
     private static final double SIDE_DIMENSION = 0.3;

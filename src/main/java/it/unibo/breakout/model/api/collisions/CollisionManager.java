@@ -17,7 +17,7 @@ public interface CollisionManager {
      * @param gameHeight
      * @param score
      */
-    public void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score);
+    void handleCollisions(Ball ball, Paddle paddle, List<Brick> bricks, int gameWidth, int gameHeight, int score);
 
     /**Keep the current player point
     */
@@ -46,19 +46,19 @@ public interface CollisionManager {
      * return if the ball hit a block and then sets the value to fals
      * @return BlockHit
      */
-    int getBlockHit();
+    int isBlockHit();
 
     /**
      * return if the ball hit a border and then sets the value to fals
      * @return BorderHit
      */
-    boolean getBorderHit();
+    boolean isBorderHit();
 
     /**
      * return if the ball hit the pad and then sets the value to fals
      * @return PadHit
      */
-    boolean getPadHit();
+    boolean isPadHit();
 
     /**
      *  resumes the game after the ball goes under the paddle
@@ -76,4 +76,5 @@ public interface CollisionManager {
      */
     boolean hasBallWentUnder(Ball ball, Paddle paddle);
 }
+
 

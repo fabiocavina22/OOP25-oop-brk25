@@ -7,5 +7,6 @@ public interface CollisionDetector {
      * @param ball
      * @param Collidable
      */
-    public boolean isColliding(Collidable a, Collidable b);
+    boolean isColliding(Collidable a, Collidable b);
 }
+

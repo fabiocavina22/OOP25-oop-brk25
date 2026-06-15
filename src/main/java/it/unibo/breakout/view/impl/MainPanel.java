@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 public final class MainPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private final Paddle paddle;
     private final Ball ball;
     private final LevelManager levelManager;

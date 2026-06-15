@@ -41,23 +41,23 @@ public final class App {
     private static void startGame() {
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
+        final int screenWidth = screenSize.width;
+        final int screenHeight = screenSize.height;
 
-        int mainPanelWidth = (int) (screenWidth * MAIN_PANEL_RATIO);
-        int mainPanelHeight = screenHeight;
+        final int mainPanelWidth = (int) (screenWidth * MAIN_PANEL_RATIO);
+        final int mainPanelHeight = screenHeight;
 
-        int paddleWidth = (int) (screenWidth * PADDLE_WIDTH_RATIO);
-        int paddleHeight = PADDLE_HEIGHT_PX;
+        final int paddleWidth = (int) (screenWidth * PADDLE_WIDTH_RATIO);
+        final int paddleHeight = PADDLE_HEIGHT_PX;
 
-        int paddleX = (mainPanelWidth - paddleWidth) / 2;
-        int paddleY = (int) (mainPanelHeight * PADDLE_Y_RATIO);
-        int brickSide = mainPanelWidth / 10;
-        int ballDiameter = BALL_DIAMETER_PX;
+        final int paddleX = (mainPanelWidth - paddleWidth) / 2;
+        final int paddleY = (int) (mainPanelHeight * PADDLE_Y_RATIO);
+        final int brickSide = mainPanelWidth / 10;
+        final int ballDiameter = BALL_DIAMETER_PX;
 
-        int ballX = paddleX + (paddleWidth / 2) - (ballDiameter / 2);
+        final int ballX = paddleX + (paddleWidth / 2) - (ballDiameter / 2);
 
-        int ballY = paddleY - ballDiameter;
+        final int ballY = paddleY - ballDiameter;
 
         final PaddleImpl paddle = new PaddleImpl(paddleX, paddleY, paddleWidth, paddleHeight, PADDLE_SPEED_PX);
         final BallImpl ball = new BallImpl(ballX, ballY, ballDiameter, 0.0, BALL_INIT_VY);
@@ -65,7 +65,7 @@ public final class App {
         final LeaderboardImpl leaderboard = new LeaderboardImpl();
         final SoundManagerImpl soundManager = new SoundManagerImpl();
 
-        int score = 0;
+        final int score = 0;
 
         final GameMapImpl view = new GameMapImpl(paddle, levelManager, ball, leaderboard);
         view.showWindow();

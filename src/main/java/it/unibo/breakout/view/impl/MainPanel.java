@@ -1,9 +1,9 @@
 package it.unibo.breakout.view.impl;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import javax.swing.border.Border;
-
-import java.awt.*;
 
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Brick;
@@ -11,6 +11,9 @@ import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.PowerUpImpl;
 import java.util.List;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.util.ArrayList;
 
 
@@ -20,14 +23,15 @@ public final class MainPanel extends JPanel {
     private final Ball ball;
     private final LevelManager levelManager;
     private List<PowerUpImpl> activePowerUp = new ArrayList<>();
-    final private Image brickImage1;
-    final private Image brickImage2;
-    final private Image brickImage3;
-    final private Image brickImage4;
-    final private Image brickImage5;
-    final private Image gameBackground;
+    private final Image brickImage1;
+    private final Image brickImage2;
+    private final Image brickImage3;
+    private final Image brickImage4;
+    private final Image brickImage5;
+    private final Image gameBackground;
 
-
+    private static final int DIAMETER = 15;
+    private static final int EFFECT_TYPE = 5;
 
     public MainPanel(final Paddle paddle, final LevelManager levelManager, final  Ball ball) {
 
@@ -69,7 +73,7 @@ public final class MainPanel extends JPanel {
 
     }
 
-    public void setPowerUp(final List<PowerUpImpl> powerUp){
+    public void setPowerUp(final List<PowerUpImpl> powerUp) {
         this.activePowerUp = powerUp;
     }
 
@@ -113,7 +117,7 @@ public final class MainPanel extends JPanel {
             } else if (b.getType() == 4) {
                 img = brickImage4;
             } else {
-                img = brickImage5 ;
+                img = brickImage5;
             }
 
             g.drawImage(img,
@@ -139,16 +143,15 @@ public final class MainPanel extends JPanel {
             /*
             *Power Up
             **/
-            for(int i = 0; i < activePowerUp.size(); i++){
+            for (int i = 0; i < activePowerUp.size(); i++) {
                 final PowerUpImpl p = activePowerUp.get(i);
                 final int type = p.getType();
-                if(type ==1 || type == 3 || type == 4 || type == 5){
+                if (type == 1 || type == 3 || type == 4 || type == EFFECT_TYPE) {
                     g.setColor(Color.GREEN);
+                } else {
+                    g.setColor(Color.BLACK);
                 }
-                else{
-                    g.setColor(new Color(128, 0, 128));
-                }
-                g.fillOval((int) p.getX(), (int) p.getY(), 15, 15);
+                g.fillOval((int) p.getX(), (int) p.getY(), DIAMETER, DIAMETER);
             }
         }
 }

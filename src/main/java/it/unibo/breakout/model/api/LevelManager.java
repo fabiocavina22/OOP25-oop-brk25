@@ -14,6 +14,7 @@ public interface LevelManager extends LevelView {
      *
      * @return the list of active bricks
      */
+    @Override
     List<Brick> getActiveBricks();
 
     /**

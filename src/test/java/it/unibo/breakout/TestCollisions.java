@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Brick;
+import it.unibo.breakout.model.api.LivesManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.api.PowerUpManager;
 import it.unibo.breakout.model.api.collisions.Collidable;
@@ -312,7 +313,7 @@ class TestCollisions {
         }
 
         @Override
-        public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight) {
+        public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight, final LivesManager livesManager) {
         }
 
         @Override

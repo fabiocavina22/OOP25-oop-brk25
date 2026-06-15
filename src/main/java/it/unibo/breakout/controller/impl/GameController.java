@@ -98,7 +98,7 @@ public final class GameController implements KeyListener {
         this.soundManager = soundManager;
 
         this.livesManager = new LivesManagerImpl(3);
-        this.powerUpManager = new PowerUpManagerImpl(this.livesManager);
+        this.powerUpManager = new PowerUpManagerImpl();
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager);
 
         /* view listeners */
@@ -182,7 +182,7 @@ public final class GameController implements KeyListener {
             }
         }
         powerUpManager.updateTimer(paddle, ball);
-        powerUpManager.updatePowerUp(paddle, ball, currentHeight);
+        powerUpManager.updatePowerUp(paddle, ball, currentHeight, livesManager);
 
         if (leftPanel != null) {
             if (livesManager.isLifeGained()) {

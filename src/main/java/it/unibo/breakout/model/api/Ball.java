@@ -27,6 +27,7 @@ public interface Ball extends BallView {
      *
      * @return the radius
      */
+    @Override
     double getRadius();
 
     /**

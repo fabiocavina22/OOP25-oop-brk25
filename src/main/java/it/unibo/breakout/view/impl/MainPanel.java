@@ -11,9 +11,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import it.unibo.breakout.model.api.Ball;
+import it.unibo.breakout.model.api.BallView;
 import it.unibo.breakout.model.api.Brick;
-import it.unibo.breakout.model.api.LevelManager;
+import it.unibo.breakout.model.api.LevelView;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.impl.PowerUpImpl;
 
@@ -26,9 +26,9 @@ public final class MainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final transient Paddle paddle;
-    private final transient Ball ball;
-    private final transient LevelManager levelManager;
-    private transient List<PowerUpImpl> activePowerUp = new ArrayList<>();
+    private final transient BallView ball;
+    private final transient LevelView levelManager;
+    private final transient List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private final transient Image brickImage1;
     private final transient Image brickImage2;
     private final transient Image brickImage3;
@@ -46,7 +46,7 @@ public final class MainPanel extends JPanel {
      * @param levelManager the level manager that provides the active bricks
      * @param ball the ball of the game
      */
-    public MainPanel(final Paddle paddle, final LevelManager levelManager, final Ball ball) {
+    public MainPanel(final Paddle paddle, final LevelView levelManager, final BallView ball) {
 
         super();
         this.paddle = paddle;
@@ -96,7 +96,8 @@ public final class MainPanel extends JPanel {
      * @param powerUp the list of currently falling power up capsules
      */
     public void setPowerUp(final List<PowerUpImpl> powerUp) {
-        this.activePowerUp = new ArrayList<>(powerUp);
+        this.activePowerUp.clear();
+        this.activePowerUp.addAll(powerUp);
     }
 
     @Override

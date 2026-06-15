@@ -70,12 +70,12 @@ class TestPowerUp {
     @BeforeEach
     void setUp() {
         lives = new LivesManagerImpl(INITIAL_LIVES);
-        manager = new PowerUpManagerImpl(lives);
+        manager = new PowerUpManagerImpl();
     }
 
     private void collect(final int type, final Paddle paddle, final Ball ball) {
         manager.spawnPowerUp(CAPSULE_X, PADDLE_Y, type);
-        manager.updatePowerUp(paddle, ball, SCREEN_HEIGHT);
+        manager.updatePowerUp(paddle, ball, SCREEN_HEIGHT, lives);
     }
 
     private Paddle newPaddle() {
@@ -308,14 +308,14 @@ class TestPowerUp {
     @Test
     void testCapsuleOutOfBoundsIsRemoved() {
         manager.spawnPowerUp(CAPSULE_X, CAPSULE_NEAR_BOTTOM_Y, TYPE_DOUBLE_POINTS);
-        manager.updatePowerUp(newPaddle(), newBall(), SCREEN_HEIGHT);
+        manager.updatePowerUp(newPaddle(), newBall(), SCREEN_HEIGHT, lives);
         assertTrue(manager.getActivePowerUp().isEmpty());
     }
 
     @Test
     void testCapsuleNotCollectedKeepsFalling() {
         manager.spawnPowerUp(FAR_X, PADDLE_Y, TYPE_DOUBLE_POINTS);
-        manager.updatePowerUp(newPaddle(), newBall(), SCREEN_HEIGHT);
+        manager.updatePowerUp(newPaddle(), newBall(), SCREEN_HEIGHT, lives);
         final List<PowerUpImpl> list = manager.getActivePowerUp();
         assertEquals(1, list.size());
         assertEquals(PADDLE_Y + FALL_SPEED, list.get(0).getY(), DELTA);

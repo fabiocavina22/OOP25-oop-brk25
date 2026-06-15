@@ -2,46 +2,51 @@ package it.unibo.breakout.model.impl;
 
 import it.unibo.breakout.model.api.PowerUp;
 
-public class PowerUpImpl implements PowerUp {
-    private double x;
-    private double y;
-    private final int type;
+/**
+ * Power up capsule that falls from a destroyed brick towards the paddle.
+ */
+public final class PowerUpImpl implements PowerUp {
+
     private static final double FALL_SPEED = 3.0;
 
+    private final double x;
+    private double y;
+    private final int type;
+
     /**
-     * Creates a power up capsule at the given position with the given type
+     *Creates a power up capsule at the given position with the given type.
      * @param x
      * @param y
      * @param type
      */
-    public PowerUpImpl(double x, double y, int type){
+    public PowerUpImpl(final double x, final double y, final int type) {
         this.x = x;
         this.y = y;
         this.type = type;
     }
 
     @Override
-    public double getX(){
+    public double getX() {
         return x;
     }
 
     @Override
-    public double getY(){
+    public double getY() {
         return y;
     }
 
     @Override
-    public int getType(){
+    public int getType() {
         return type;
     }
 
     @Override
-    public boolean isOutOfBounds(double screenHeight){
+    public boolean isOutOfBounds(final double screenHeight) {
         return y > screenHeight;
     }
 
     @Override
-    public void fall(){
+    public void fall() {
         this.y += FALL_SPEED;
     }
 }

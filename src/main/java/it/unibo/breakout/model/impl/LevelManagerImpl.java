@@ -32,7 +32,6 @@ public class LevelManagerImpl implements LevelManager {
     private static final double ROW_GAP         = 0.0;
     private static final int    INITIAL_ROWS    = 3;
 
-    // Constants to avoid magic numbers in random selection thresholds
     private static final int ROLL_MAX                      = 100;
     private static final int ROLL_THRESHOLD_INDESTRUCTIBLE = 10;
     private static final int ROLL_THRESHOLD_DOUBLE         = 35;

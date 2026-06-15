@@ -71,8 +71,7 @@ public class GameController implements KeyListener {
         this.soundManager = soundManager;
 
         this.livesManager = new LivesManagerImpl(3);
-        this.powerUpManager = new PowerUpManagerImpl();
-        this.powerUpManager.setLivesManager(this.livesManager);
+        this.powerUpManager = new PowerUpManagerImpl(this.livesManager);
         this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager, livesManager);
 
         /* view listeners */

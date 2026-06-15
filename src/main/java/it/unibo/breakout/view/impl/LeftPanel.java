@@ -1,12 +1,28 @@
 package it.unibo.breakout.view.impl;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.net.URL;
 
+import java.util.Locale;
+
 public final class LeftPanel extends JPanel {
+
+        private static final long serialVersionUID = 1L;
 
         ImageIcon iconW, iconA, iconS, iconD;
 
@@ -22,15 +38,36 @@ public final class LeftPanel extends JPanel {
         private final JLabel lblLives = new JLabel("3");
         private final JLabel lblScore = new JLabel("0");
 
-        private final int[] effectTypes = new int[7];
-        private final long[] effectExpires = new long[7];
-        private final JLabel[] effectLabels = new JLabel[7];
+        private final int[] effectTypes = new int[MAX_EFFECTS];
+        private final long[] effectExpires = new long[MAX_EFFECTS];
+        private final JLabel[] effectLabels = new JLabel[MAX_EFFECTS];
         private int effectCount;
         private int lifeBonus;
         private final JPanel effectsPanel;
 
-        private final ImageIcon[] effectIcons = new ImageIcon[8];
+        private final ImageIcon[] effectIcons = new ImageIcon[EFFECT_TYPE_COUNT];
+
+        private static final int MAX_EFFECTS = 7;
+        private static final int EFFECT_TYPE_COUNT = 8;
         private static final int LIFE_BONUS_FRAMES = 120;
+        private static final int LIFE_EFFECT_TYPE = 1;
+
+        private static final int BORDER_RIGHT = 10;
+        private static final int PADDING = 10;
+        private static final int FLOW_GAP = 10;
+        private static final int FONT_SIZE = 18;
+        private static final int HEART_SIZE = 30;
+        private static final int EFFECT_ICON_SIZE = 80;
+
+        private static final int SCORE_WIDTH = 85;
+        private static final int SCORE_HEIGHT = 35;
+        private static final int HUD_STRUT = 15;
+
+        private static final int INSET = 5;
+        private static final int INSET_TOP = 10;
+        private static final int INSET_BOTTOM = 20;
+        private static final int EFFECTS_TOP_INSET = 150;
+        private static final int KEYS_BOTTOM_INSET = 15;
 
         public LeftPanel() {
 
@@ -41,15 +78,15 @@ public final class LeftPanel extends JPanel {
                 0,
                 0,
                 0,
-                10,
+                BORDER_RIGHT,
                 Color.BLACK
                 );
 
                 final Border padding = BorderFactory.createEmptyBorder(
-                10,
-                10,
-                10,
-                10
+                PADDING,
+                PADDING,
+                PADDING,
+                PADDING
                 );
 
                 setBorder(
@@ -61,7 +98,7 @@ public final class LeftPanel extends JPanel {
 
                 loadImages();
 
-                effectsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+                effectsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_GAP, FLOW_GAP));
                 effectsPanel.setBackground(Color.WHITE);
 
                 lblW.setIcon(iconW);
@@ -69,7 +106,7 @@ public final class LeftPanel extends JPanel {
                 lblS.setIcon(iconS);
                 lblD.setIcon(iconD);
 
-                final Font retroFont = new Font("Courier New", Font.BOLD, 18);
+                final Font retroFont = new Font("Courier New", Font.BOLD, FONT_SIZE);
 
                 final JPanel hudContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 hudContainer.setBackground(Color.WHITE);
@@ -174,11 +211,13 @@ public final class LeftPanel extends JPanel {
          * Adds or refreshes the icon of an active effect, extra life is shown for a determined duration
          * @param frames
         */
-        public void addEffect(final int type, final long frames){
+        public void addEffect(final int type, final long frames) {
                 if(type == 1){
                         lifeBonus = LIFE_BONUS_FRAMES;
-                        for(int i = 0; i < effectCount; i++){
-                                if(effectTypes[i] == 1) return;
+                        for(int i = 0; i < effectCount; i++) {
+                                if (effectTypes[i] == 1) {
+                                        return;
+                                }
                         }
                         effectTypes[effectCount] = 1;
                         effectExpires[effectCount] = LIFE_BONUS_FRAMES;
@@ -189,8 +228,8 @@ public final class LeftPanel extends JPanel {
                         effectCount++;
                         return;
                 }
-                        for(int i = 0; i < effectCount; i++){
-                        if(effectTypes[i] == type){
+                        for(int i = 0; i < effectCount; i++) {
+                        if (effectTypes[i] == type){
                                 effectExpires[i] = frames;
                                 return;
                         }
@@ -208,14 +247,14 @@ public final class LeftPanel extends JPanel {
         /**
          * Updates the effect icons each frame
          */
-        public void updateEffects(){
+        public void updateEffects() {
                 if(lifeBonus > 0){
                         lifeBonus--;
                         if(lifeBonus == 0){
                                 removeEffect(1);
                         }
                 }
-                for(int i = 0; i < effectCount; i++){
+                for(int i = 0; i < effectCount; i++) {
                         if(effectExpires[i] <= 0){
                                 effectsPanel.remove(effectLabels[i]);
                                 effectTypes[i] = effectTypes[effectCount - 1];
@@ -233,9 +272,9 @@ public final class LeftPanel extends JPanel {
          * Removes the icon of the given effect type from the panel
          * @param type
          */
-        public void removeEffect(final int type){
-                for(int i = 0; i < effectCount; i++){
-                        if(effectTypes[i] == type){
+        public void removeEffect(final int type) {
+                for (int i = 0; i < effectCount; i++){
+                        if(effectTypes[i] == type) {
                                 effectsPanel.remove(effectLabels[i]);
                                 effectTypes[i] = effectTypes[effectCount - 1];
                                 effectExpires[i] = effectExpires[effectCount - 1];
@@ -310,11 +349,12 @@ public final class LeftPanel extends JPanel {
          * @param key ("W", "A", "S", "D")
          */
         public void setKeyPressed(final String key) {
-                switch (key.toUpperCase()) {
+                switch (key.toUpperCase(Locale.ROOT)) {
                 case "W" -> lblW.setIcon(iconWPressed);
                 case "A" -> lblA.setIcon(iconAPressed);
                 case "S" -> lblS.setIcon(iconSPressed);
                 case "D" -> lblD.setIcon(iconDPressed);
+                default -> {}
                 }
         }
 
@@ -323,11 +363,12 @@ public final class LeftPanel extends JPanel {
          * @param key ("W", "A", "S", "D")
          */
         public void setKeyReleased(final String key) {
-                switch (key.toUpperCase()) {
+                switch (key.toUpperCase(Locale.ROOT)) {
                 case "W" -> lblW.setIcon(iconW);
                 case "A" -> lblA.setIcon(iconA);
                 case "S" -> lblS.setIcon(iconS);
                 case "D" -> lblD.setIcon(iconD);
+                default -> {}
                 }
         }
 }

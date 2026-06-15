@@ -60,5 +60,20 @@ public interface CollisionManager {
      */
     boolean getPadHit();
 
+    /**
+     *  resumes the game after the ball goes under the paddle
+     * @param ball
+     * @param gameWidth
+     * @param paddle
+     */
+    void resume(Ball ball, int gameWidth, Paddle paddle);
+
+    /**
+     * checks if the ball goes under the paddle
+     * @param ball
+     * @param paddle
+     * @return
+     */
+    boolean hasBallWentUnder(Ball ball, Paddle paddle);
 }
 

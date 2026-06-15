@@ -73,7 +73,7 @@ public class GameController implements KeyListener {
         this.livesManager = new LivesManagerImpl(3);
         this.powerUpManager = new PowerUpManagerImpl();
         this.powerUpManager.setLivesManager(this.livesManager);
-        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager, livesManager);
+        this.collisionManager = new CollisionManagerImpl(new CollisionDetectorImpl(), score, powerUpManager);
 
         /* view listeners */
         this.view.addKeyListener(this);
@@ -140,6 +140,15 @@ public class GameController implements KeyListener {
         }
 
         collisionManager.handleCollisions(ball, paddle, levelManager.getActiveBricks(), currentWidth, currentHeight, score);
+        if (collisionManager.hasBallWentUnder(ball, paddle)) {
+            if(livesManager.getlives() > 1) {
+                livesManager.loseLives();
+                collisionManager.resume(ball, currentWidth, paddle);
+            }
+            else{
+                livesManager.loseLives();
+            }
+        }
         powerUpManager.updateTimer(paddle, ball);
         powerUpManager.updatePowerUp(paddle, ball, currentHeight);
 

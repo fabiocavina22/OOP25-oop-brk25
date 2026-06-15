@@ -27,7 +27,7 @@ public class TestPowerUp {
         manager = new PowerUpManagerImpl();
     }
 
-    private void injectPowerUp(PowerUpImpl p) throws Exception {
+    private void injectPowerUp(final PowerUpImpl p) throws Exception {
         Field field = PowerUpManagerImpl.class.getDeclaredField("activePowerUp");
         field.setAccessible(true);
         @SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class TestPowerUp {
     private Ball newBall(){
         return new BallImpl(0, 0, 5, 4, 8);
     }
-    
+
     // ---getType() ---
 
      @Test
@@ -136,7 +136,7 @@ public class TestPowerUp {
         assertEquals(1, manager.getActivePowerUp().size());
     }
 
-    // ---the power up must be chosen from 1 to 7--- 
+    // ---the power up must be chosen from 1 to 7---
     @Test
     public void testSpawnPowerUpValidType() {
         manager.spawnPowerUp(100, 50);
@@ -257,7 +257,7 @@ public class TestPowerUp {
     // ---udpateTimer()---
     @Test
     public void testUpdateTimerDecreasesFrames() throws Exception {
-        collect(5, newPaddle(), newBall()); 
+        collect(5, newPaddle(), newBall());
         manager.updateTimer(newPaddle(), newBall());
         assertEquals(EFFECT_FRAMES - 1, manager.getFreezeBlocksTimer());
     }

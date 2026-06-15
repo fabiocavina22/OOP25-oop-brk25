@@ -9,6 +9,8 @@ import it.unibo.breakout.view.impl.MenuView;
 import it.unibo.breakout.view.impl.SoundManagerImpl;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 
+import java.awt.Dimension;
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -40,7 +42,7 @@ public final class App {
 
     private static void startGame() {
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         final int screenWidth = screenSize.width;
         final int screenHeight = screenSize.height;
 

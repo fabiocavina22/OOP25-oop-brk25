@@ -8,12 +8,12 @@ import it.unibo.breakout.model.api.collisions.Collidable;
 public interface Paddle extends Collidable {
 
     /**
-     *  moves the paddle to its left
+     *  moves the paddle to its left.
      */
     void moveLeft();
 
     /**
-     * moves the paddle to its right
+     * moves the paddle to its right.
      **/
     void moveRight();
 

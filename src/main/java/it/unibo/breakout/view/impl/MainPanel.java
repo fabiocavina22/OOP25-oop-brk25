@@ -16,25 +16,34 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 
-
+/**
+ * Implementation of the central panel.
+ * Manage the ball, the paddle, the collisions and the life conditions
+ */
 public final class MainPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final Paddle paddle;
-    private final Ball ball;
-    private final LevelManager levelManager;
-    private List<PowerUpImpl> activePowerUp = new ArrayList<>();
-    private final Image brickImage1;
-    private final Image brickImage2;
-    private final Image brickImage3;
-    private final Image brickImage4;
-    private final Image brickImage5;
-    private final Image gameBackground;
+    private final transient Paddle paddle;
+    private final transient Ball ball;
+    private final transient LevelManager levelManager;
+    private transient List<PowerUpImpl> activePowerUp = new ArrayList<>();
+    private final transient Image brickImage1;
+    private final transient Image brickImage2;
+    private final transient Image brickImage3;
+    private final transient Image brickImage4;
+    private final transient Image brickImage5;
+    private final transient Image gameBackground;
 
     private static final int DIAMETER = 15;
     private static final int EFFECT_TYPE = 5;
 
+    /**
+     * main panel constructor.
+     * @param paddle
+     * @param levelManager
+     * @param ball
+     */
     public MainPanel(final Paddle paddle, final LevelManager levelManager, final  Ball ball) {
 
         this.paddle = paddle;
@@ -63,18 +72,31 @@ public final class MainPanel extends JPanel {
 
     // --- CUSTOM BACKGROUND ---
 
+
+    /**
+     * gets the main panel width
+     * @return main panel's width
+     */
     public int getGameWidth() {
 
         return getWidth();
 
     }
 
+    /**
+     * gets the main panel width
+     * @return main panel' height
+     */
     public int getGameHeight() {
 
         return getHeight();
 
     }
 
+    /**
+     * enables a powerUp
+     * @param powerUp
+     */
     public void setPowerUp(final List<PowerUpImpl> powerUp) {
         this.activePowerUp = powerUp;
     }

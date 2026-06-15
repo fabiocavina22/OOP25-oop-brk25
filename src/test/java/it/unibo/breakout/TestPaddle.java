@@ -20,91 +20,92 @@ class TestPaddle {
     private static final int PANEL_WIDTH = 1920;
     private static final int PANEL_HEIGHT = 1080;
 
+    private static final int CHANGE = 30;
+    private static final int MIN_WIDTH = 60;
+    private static final int MAX_WIDTH = 240;
+    private static final int EXPECTED_WIDTH = 480;
+    private static final int EXPECTED_Y = 864;
+
     private static final double DELTA = 0.0001;
 
     private PaddleImpl paddle;
 
-
-    /** CONSTRUCTOR */
+    /* constructor */
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         paddle = new PaddleImpl(X, Y, WIDTH, HEIGHT, SPEED);
-        assertEquals(paddle.getX(), X);
-        assertEquals(paddle.getY(), Y);
-        assertEquals(paddle.getWidth(), WIDTH);
-        assertEquals(paddle.getHeight(), HEIGHT);
-        assertEquals(paddle.getSpeed(), SPEED);
-
+        assertEquals(X, paddle.getX());
+        assertEquals(Y, paddle.getY());
+        assertEquals(WIDTH, paddle.getWidth());
+        assertEquals(HEIGHT, paddle.getHeight());
+        assertEquals(SPEED, paddle.getSpeed());
     }
 
-    /** MOVEMENTS */
+    /* movements */
 
     @Test
     void testPaddleMoveLeft() {
         paddle.moveLeft();
-        assertEquals(X - SPEED, paddle.getX(), DELTA );
+        assertEquals(X - SPEED, paddle.getX(), DELTA);
     }
 
     @Test
     void testPaddleMoveRight() {
         paddle.moveRight();
-        assertEquals(X + SPEED, paddle.getX(), DELTA );
+        assertEquals(X + SPEED, paddle.getX(), DELTA);
     }
 
     @Test
     void leftLimit() {
         final PaddleImpl p = new PaddleImpl(-20, Y, WIDTH, HEIGHT, SPEED);
         p.clamp(SCREEN_WIDTH);
-        assertEquals(p.getX(), 0, DELTA);
+        assertEquals(0, p.getX(), DELTA);
     }
 
     @Test
     void rightLimit() {
         final PaddleImpl p = new PaddleImpl(450, Y, WIDTH, HEIGHT, SPEED);
         p.clamp(SCREEN_WIDTH);
-        assertEquals(p.getX(), SCREEN_WIDTH - p.getWidth(), DELTA);
+        assertEquals(SCREEN_WIDTH - p.getWidth(), p.getX(), DELTA);
     }
 
-    /** DIMENSIONS */
+    /* dimensions */
 
     @Test
     void dimensionsChangesTest() {
-
         paddle.updateDimensions(PANEL_WIDTH, PANEL_HEIGHT);
-        assertEquals(paddle.getWidth(), 480);
-        assertEquals(paddle.getY(), 864);
+        assertEquals(EXPECTED_WIDTH, paddle.getWidth());
+        assertEquals(EXPECTED_Y, paddle.getY());
         assertTrue(paddle.getX() >= 0);
         assertTrue(paddle.getX() <= PANEL_WIDTH - paddle.getWidth());
-
     }
 
-    /** BONUS - MALUS */
+    /* bonus - malus */
 
     @Test
     void paddleGetsShorter() {
         paddle.paddleShort();
-        assertEquals(paddle.getWidth(), 120-30);
+        assertEquals(WIDTH - CHANGE, paddle.getWidth());
     }
 
     @Test
-    void paddleGetsBigger(){
+    void paddleGetsBigger() {
         paddle.paddleLarge();
-        assertEquals(paddle.getWidth(), 120+30);
-
+        assertEquals(WIDTH + CHANGE, paddle.getWidth());
     }
 
     @Test
     void paddleNotShorterThanLimit() {
-        final PaddleImpl p = new PaddleImpl(X, Y, 60, HEIGHT, SPEED);
+        final PaddleImpl p = new PaddleImpl(X, Y, MIN_WIDTH, HEIGHT, SPEED);
         p.paddleShort();
-        assertEquals(60, p.getWidth());
+        assertEquals(MIN_WIDTH, p.getWidth());
     }
 
     @Test
     void paddleNotGreaterThanLimit() {
-        final PaddleImpl p = new PaddleImpl(X, Y, 240, HEIGHT, SPEED);
+        final PaddleImpl p = new PaddleImpl(X, Y, MAX_WIDTH, HEIGHT, SPEED);
         p.paddleLarge();
-        assertEquals(240, p.getWidth());
+        assertEquals(MAX_WIDTH, p.getWidth());
     }
 }

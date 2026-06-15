@@ -12,7 +12,7 @@ import it.unibo.breakout.model.impl.PaddleImpl;
 /**
  * Unit tests for {@link BallImpl}.
  */
-public final class TestBall {
+final class TestBall {
 
     private static final double DELTA             = 1e-9;
     private static final int    NEG_RADIUS        = -5;
@@ -52,7 +52,7 @@ public final class TestBall {
      * Verifies that constructing a ball with radius zero throws IllegalArgumentException.
      */
     @Test
-    public void testConstructorThrowsOnZeroRadius() {
+    void testConstructorThrowsOnZeroRadius() {
         assertThrows(IllegalArgumentException.class,
                 () -> new BallImpl(0, 0, 0, 0, 0));
     }
@@ -61,7 +61,7 @@ public final class TestBall {
      * Verifies that constructing a ball with a negative radius throws IllegalArgumentException.
      */
     @Test
-    public void testConstructorThrowsOnNegativeRadius() {
+    void testConstructorThrowsOnNegativeRadius() {
         assertThrows(IllegalArgumentException.class,
                 () -> new BallImpl(0, 0, NEG_RADIUS, 3, 4));
     }
@@ -70,7 +70,7 @@ public final class TestBall {
      * Verifies that constructing a ball with a valid positive radius does not throw.
      */
     @Test
-    public void testConstructorValidRadiusDoesNotThrow() {
+    void testConstructorValidRadiusDoesNotThrow() {
         assertDoesNotThrow(() -> new BallImpl(10, BALL_Y_INIT, 1, 3, 4));
     }
 
@@ -80,8 +80,8 @@ public final class TestBall {
      * Verifies that move() updates position by the current velocity.
      */
     @Test
-    public void testMoveUpdatesPositionByVelocity() {
-        BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 3, VEL_Y);
+    void testMoveUpdatesPositionByVelocity() {
+        final BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 3, VEL_Y);
         ball.move();
         assertEquals(EXPECTED_X_MOVE, ball.getX(), DELTA);
         assertEquals(EXPECTED_Y_MOVE, ball.getY(), DELTA);
@@ -91,8 +91,8 @@ public final class TestBall {
      * Verifies that repeated calls to move() accumulate position changes correctly.
      */
     @Test
-    public void testMoveAccumulatesOverMultipleCalls() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 2, 3);
+    void testMoveAccumulatesOverMultipleCalls() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 2, 3);
         ball.move();
         ball.move();
         ball.move();
@@ -104,8 +104,8 @@ public final class TestBall {
      * Verifies that move() with negative velocity decreases the ball's position.
      */
     @Test
-    public void testMoveWithNegativeVelocityDecreasesPosition() {
-        BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, NEG_VX, NEG_VY);
+    void testMoveWithNegativeVelocityDecreasesPosition() {
+        final BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, NEG_VX, NEG_VY);
         ball.move();
         assertEquals(8, ball.getX(), DELTA);
         assertEquals(16, ball.getY(), DELTA);
@@ -117,8 +117,8 @@ public final class TestBall {
      * Verifies that bounceX() inverts the horizontal velocity.
      */
     @Test
-    public void testBounceXInvertsVelocityX() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceXInvertsVelocityX() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceX();
         assertEquals(BOUNCED_VX, ball.getVelocityX(), DELTA);
     }
@@ -127,8 +127,8 @@ public final class TestBall {
      * Verifies that bounceX() does not affect the vertical velocity.
      */
     @Test
-    public void testBounceXLeavesVelocityYUnchanged() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceXLeavesVelocityYUnchanged() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceX();
         assertEquals(VEL_Y, ball.getVelocityY(), DELTA);
     }
@@ -137,8 +137,8 @@ public final class TestBall {
      * Verifies that two consecutive bounceX() calls restore the original horizontal velocity.
      */
     @Test
-    public void testBounceXTwiceRestoresOriginalVelocity() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceXTwiceRestoresOriginalVelocity() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceX();
         ball.bounceX();
         assertEquals(3, ball.getVelocityX(), DELTA);
@@ -148,8 +148,8 @@ public final class TestBall {
      * Verifies that bounceX() followed by move() reverses horizontal movement.
      */
     @Test
-    public void testBounceXReversesMoveDirectionOnX() {
-        BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 4, 3);
+    void testBounceXReversesMoveDirectionOnX() {
+        final BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 4, 3);
         ball.bounceX();
         ball.move();
         assertEquals(TRIPLE_X, ball.getX(), DELTA);          // 10 + (-4)
@@ -162,8 +162,8 @@ public final class TestBall {
      * Verifies that bounceY() inverts the vertical velocity.
      */
     @Test
-    public void testBounceYInvertsVelocityY() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceYInvertsVelocityY() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceY();
         assertEquals(BOUNCED_VY, ball.getVelocityY(), DELTA);
     }
@@ -172,8 +172,8 @@ public final class TestBall {
      * Verifies that bounceY() does not affect the horizontal velocity.
      */
     @Test
-    public void testBounceYLeavesVelocityXUnchanged() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceYLeavesVelocityXUnchanged() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceY();
         assertEquals(3, ball.getVelocityX(), DELTA);
     }
@@ -182,8 +182,8 @@ public final class TestBall {
      * Verifies that two consecutive bounceY() calls restore the original vertical velocity.
      */
     @Test
-    public void testBounceYTwiceRestoresOriginalVelocity() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
+    void testBounceYTwiceRestoresOriginalVelocity() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, VEL_Y);
         ball.bounceY();
         ball.bounceY();
         assertEquals(VEL_Y, ball.getVelocityY(), DELTA);
@@ -193,8 +193,8 @@ public final class TestBall {
      * Verifies that bounceY() followed by move() reverses vertical movement.
      */
     @Test
-    public void testBounceYReversesMoveDirectionOnY() {
-        BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 3, 4);
+    void testBounceYReversesMoveDirectionOnY() {
+        final BallImpl ball = new BallImpl(10, BALL_Y_INIT, BALL_RADIUS, 3, 4);
         ball.bounceY();
         ball.move();
         assertEquals(EXPECTED_X_MOVE, ball.getX(), DELTA);  // 10 + 3
@@ -207,8 +207,8 @@ public final class TestBall {
      * Verifies that setPosition() updates both coordinates.
      */
     @Test
-    public void testSetPositionUpdatesCoordinates() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, 4);
+    void testSetPositionUpdatesCoordinates() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, 4);
         ball.setPosition(SET_POS_X, SET_POS_Y);
         assertEquals(SET_POS_X, ball.getX(), DELTA);
         assertEquals(SET_POS_Y, ball.getY(), DELTA);
@@ -218,8 +218,8 @@ public final class TestBall {
      * Verifies that setPosition() does not alter the ball's velocity.
      */
     @Test
-    public void testSetPositionDoesNotAffectVelocity() {
-        BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, 4);
+    void testSetPositionDoesNotAffectVelocity() {
+        final BallImpl ball = new BallImpl(0, 0, BALL_RADIUS, 3, 4);
         ball.setPosition(SET_POS_X, SET_POS_Y);
         assertEquals(3, ball.getVelocityX(), DELTA);
         assertEquals(4, ball.getVelocityY(), DELTA);
@@ -231,9 +231,9 @@ public final class TestBall {
      * Verifies that isOutOfBounds() returns true when the ball's bottom edge exceeds the field height.
      */
     @Test
-    public void testIsOutOfBoundsReturnsTrueWhenBallPastBottom() {
+    void testIsOutOfBoundsReturnsTrueWhenBallPastBottom() {
         // bordo inferiore della palla: 91 + 10 = 101 > 100 → true
-        BallImpl ball = new BallImpl(SET_POS_X, BALL_Y_PAST, 10, 0, 0);
+        final BallImpl ball = new BallImpl(SET_POS_X, BALL_Y_PAST, 10, 0, 0);
         assertTrue(ball.isOutOfBounds(100));
     }
 
@@ -241,9 +241,9 @@ public final class TestBall {
      * Verifies that isOutOfBounds() returns false when the ball is above the bottom boundary.
      */
     @Test
-    public void testIsOutOfBoundsReturnsFalseWhenBallAboveBottom() {
+    void testIsOutOfBoundsReturnsFalseWhenBallAboveBottom() {
         // bordo inferiore: 50 + 10 = 60, non supera 100 → false
-        BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
+        final BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
         assertFalse(ball.isOutOfBounds(100));
     }
 
@@ -251,9 +251,9 @@ public final class TestBall {
      * Verifies that isOutOfBounds() returns false when the ball's bottom edge exactly meets the boundary.
      */
     @Test
-    public void testIsOutOfBoundsReturnsFalseWhenBottomEdgeExactlyAtBoundary() {
+    void testIsOutOfBoundsReturnsFalseWhenBottomEdgeExactlyAtBoundary() {
         // bordo inferiore: 90 + 10 = 100, non strettamente > 100 → false
-        BallImpl ball = new BallImpl(SET_POS_X, 90, 10, 0, 0);
+        final BallImpl ball = new BallImpl(SET_POS_X, 90, 10, 0, 0);
         assertFalse(ball.isOutOfBounds(100));
     }
 
@@ -263,8 +263,8 @@ public final class TestBall {
      * Verifies that getRadius() returns the value supplied to the constructor.
      */
     @Test
-    public void testGetRadiusReturnsConstructorValue() {
-        BallImpl ball = new BallImpl(10, BALL_Y_INIT, RADIUS_SEVEN, 3, 4);
+    void testGetRadiusReturnsConstructorValue() {
+        final BallImpl ball = new BallImpl(10, BALL_Y_INIT, RADIUS_SEVEN, 3, 4);
         assertEquals(RADIUS_SEVEN, ball.getRadius(), DELTA);
     }
 
@@ -278,9 +278,9 @@ public final class TestBall {
      * Verifies that updateDimensions() does not move a flying ball that is within panel bounds.
      */
     @Test
-    public void testUpdateDimensionsFlyingBallInBoundsDoesNotChangePosition() {
+    void testUpdateDimensionsFlyingBallInBoundsDoesNotChangePosition() {
         // bordo destro: 50+10=60 <= 200; bordo inferiore: 30+10=40 <= 200 → nessun clamp
-        BallImpl ball = new BallImpl(SET_POS_X, COORD_30, 10, 3, 4);
+        final BallImpl ball = new BallImpl(SET_POS_X, COORD_30, 10, 3, 4);
         ball.updateDimensions(PANEL_DIM, PANEL_DIM,
                 new PaddleImpl(0, PADDLE_Y_FLY, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED));
         assertEquals(SET_POS_X, ball.getX(), DELTA);
@@ -291,9 +291,9 @@ public final class TestBall {
      * Verifies that updateDimensions() clamps the X coordinate when a flying ball exceeds the panel width.
      */
     @Test
-    public void testUpdateDimensionsFlyingBallClampsXWhenExceedsWidth() {
+    void testUpdateDimensionsFlyingBallClampsXWhenExceedsWidth() {
         // bordo destro: 195+10=205 > 200 → x = 200-10 = 190; y invariato
-        BallImpl ball = new BallImpl(NEAR_EDGE, COORD_30, 10, 3, 4);
+        final BallImpl ball = new BallImpl(NEAR_EDGE, COORD_30, 10, 3, 4);
         ball.updateDimensions(PANEL_DIM, PANEL_DIM,
                 new PaddleImpl(0, PADDLE_Y_FLY, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED));
         assertEquals(CLAMPED_POS, ball.getX(), DELTA);
@@ -304,9 +304,9 @@ public final class TestBall {
      * Verifies that updateDimensions() clamps the Y coordinate when a flying ball exceeds the panel height.
      */
     @Test
-    public void testUpdateDimensionsFlyingBallClampsYWhenExceedsHeight() {
+    void testUpdateDimensionsFlyingBallClampsYWhenExceedsHeight() {
         // bordo inferiore: 195+10=205 > 200 → y = 200-10 = 190; x invariato
-        BallImpl ball = new BallImpl(COORD_30, NEAR_EDGE, 10, 3, 4);
+        final BallImpl ball = new BallImpl(COORD_30, NEAR_EDGE, 10, 3, 4);
         ball.updateDimensions(PANEL_DIM, PANEL_DIM,
                 new PaddleImpl(0, PADDLE_Y_FLY, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED));
         assertEquals(COORD_30, ball.getX(), DELTA);
@@ -317,9 +317,9 @@ public final class TestBall {
      * Verifies that updateDimensions() does not alter a flying ball's velocity when clamping its position.
      */
     @Test
-    public void testUpdateDimensionsFlyingBallDoesNotChangeVelocity() {
+    void testUpdateDimensionsFlyingBallDoesNotChangeVelocity() {
         // il clamp non deve alterare la velocità
-        BallImpl ball = new BallImpl(NEAR_EDGE, NEAR_EDGE, 10, 3, 4);
+        final BallImpl ball = new BallImpl(NEAR_EDGE, NEAR_EDGE, 10, 3, 4);
         ball.updateDimensions(PANEL_DIM, PANEL_DIM,
                 new PaddleImpl(0, PADDLE_Y_FLY, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED));
         assertEquals(3, ball.getVelocityX(), DELTA);
@@ -330,8 +330,8 @@ public final class TestBall {
      * Verifies that updateDimensions() does not alter a flying ball's radius.
      */
     @Test
-    public void testUpdateDimensionsFlyingBallDoesNotChangeRadius() {
-        BallImpl ball = new BallImpl(NEAR_EDGE, NEAR_EDGE, 10, 3, 4);
+    void testUpdateDimensionsFlyingBallDoesNotChangeRadius() {
+        final BallImpl ball = new BallImpl(NEAR_EDGE, NEAR_EDGE, 10, 3, 4);
         ball.updateDimensions(PANEL_DIM, PANEL_DIM,
                 new PaddleImpl(0, PADDLE_Y_FLY, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED));
         assertEquals(10, ball.getRadius(), DELTA);
@@ -341,11 +341,11 @@ public final class TestBall {
      * Verifies that updateDimensions() centres a stationary ball on the paddle.
      */
     @Test
-    public void testUpdateDimensionsStationaryBallCentersOnPaddle() {
+    void testUpdateDimensionsStationaryBallCentersOnPaddle() {
         // x = paddleX(100) + paddleWidth/2.0(40.0) - radius(10) = 130
         // y = paddleY(300) - radius(10) = 290
-        PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
-        BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
+        final PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
+        final BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
         ball.updateDimensions(PANEL_W_STAT, PANEL_H_STAT, paddle);
         assertEquals(EXPECTED_CENTER_X, ball.getX(), DELTA);
         assertEquals(EXPECTED_CENTER_Y, ball.getY(), DELTA);
@@ -355,9 +355,9 @@ public final class TestBall {
      * Verifies that updateDimensions() does not change a stationary ball's velocity.
      */
     @Test
-    public void testUpdateDimensionsStationaryBallDoesNotChangeVelocity() {
-        PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
-        BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
+    void testUpdateDimensionsStationaryBallDoesNotChangeVelocity() {
+        final PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
+        final BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
         ball.updateDimensions(PANEL_W_STAT, PANEL_H_STAT, paddle);
         assertEquals(0, ball.getVelocityX(), DELTA);
         assertEquals(0, ball.getVelocityY(), DELTA);
@@ -367,9 +367,9 @@ public final class TestBall {
      * Verifies that updateDimensions() does not change a stationary ball's radius.
      */
     @Test
-    public void testUpdateDimensionsStationaryBallDoesNotChangeRadius() {
-        PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
-        BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
+    void testUpdateDimensionsStationaryBallDoesNotChangeRadius() {
+        final PaddleImpl paddle = new PaddleImpl(100, PADDLE_Y_STAT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
+        final BallImpl ball = new BallImpl(SET_POS_X, SET_POS_X, 10, 0, 0);
         ball.updateDimensions(PANEL_W_STAT, PANEL_H_STAT, paddle);
         assertEquals(10, ball.getRadius(), DELTA);
     }

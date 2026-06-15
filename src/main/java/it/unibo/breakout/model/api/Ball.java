@@ -13,6 +13,7 @@ public interface Ball extends Collidable {
      *
      * @return the X coordinate
      */
+    @Override
     double getX();
 
     /**
@@ -20,6 +21,7 @@ public interface Ball extends Collidable {
      *
      * @return the Y coordinate
      */
+    @Override
     double getY();
 
     /**

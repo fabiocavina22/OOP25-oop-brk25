@@ -16,7 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import it.unibo.breakout.model.impl.LeaderboardImpl;
+import it.unibo.breakout.model.api.Leaderboard;
 
 /**
  * Game over screen shown when the player loses all lives or bricks reach the paddle.
@@ -36,7 +36,7 @@ public final class GameOverView {
     private static final int BUTTON_DARK      = 30;
 
     private final JFrame frame;
-    private final LeaderboardImpl leaderboard;
+    private final Leaderboard leaderboard;
     private final int finalScore;
 
     /**
@@ -47,8 +47,9 @@ public final class GameOverView {
      * @param onQuit      callback invoked when the player clicks "Quit"
      * @param leaderboard the leaderboard used to check and save high scores
      */
+    @SuppressWarnings("SpotBugs:EI_EXPOSE_REP2")
     public GameOverView(final int finalScore, final Runnable onPlayAgain,
-            final Runnable onQuit, final LeaderboardImpl leaderboard) {
+            final Runnable onQuit, final Leaderboard leaderboard) {
         this.finalScore = finalScore;
         this.leaderboard = leaderboard;
         frame = new JFrame("Dido's Breakout");

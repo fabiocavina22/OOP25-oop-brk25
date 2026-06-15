@@ -42,7 +42,11 @@ public final class App {
 
     private static void startGame() {
 
+<<<<<<< HEAD
         final Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+=======
+        final java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+>>>>>>> 4721715 (fix checkstyle)
         final int screenWidth = screenSize.width;
         final int screenHeight = screenSize.height;
 

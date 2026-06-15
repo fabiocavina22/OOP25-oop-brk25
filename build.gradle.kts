@@ -15,6 +15,7 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.3")
 }
 
 java {

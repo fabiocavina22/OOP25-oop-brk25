@@ -3,6 +3,8 @@ package it.unibo.breakout.controller.impl;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,6 +22,7 @@ import it.unibo.breakout.view.impl.MainPanel;
 import it.unibo.breakout.model.impl.LeaderboardImpl;
 import it.unibo.breakout.model.impl.LivesManagerImpl;
 import it.unibo.breakout.model.impl.PowerUpManagerImpl;
+
 /**
  * GameController: manages the game loop and the methods of written in the model and the view.
  */
@@ -76,6 +79,10 @@ public final class GameController implements KeyListener {
      * @param onPlayAgain
      * @param soundManager
      */
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "As the MVC controller, GameController coordinates the shared model and view, which it must hold and mutate."
+    )
     public GameController(
         final Paddle paddle,
         final Ball ball,
@@ -106,7 +113,6 @@ public final class GameController implements KeyListener {
         this.view.setFocusable(true);
         this.view.requestFocusInWindow();
 
-        // Game Loop
         this.timer = new Timer(DELAY_MS, e -> update());
 
         for (final Component comp : view.getContentPane().getComponents()) {
@@ -127,6 +133,10 @@ public final class GameController implements KeyListener {
     /**
      * check's if the player has finished the lives.
      */
+    @SuppressFBWarnings(
+        value = "DM_EXIT",
+        justification = "User-initiated quit is meant to terminate the game application."
+    )
     private void gameOver() {
         timer.stop();
         final int finalScore = collisionManager.getScore();

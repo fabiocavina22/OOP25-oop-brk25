@@ -132,7 +132,7 @@ public final class GameController implements KeyListener {
         final int finalScore = collisionManager.getScore();
         SwingUtilities.invokeLater(() -> {
             view.dispose();
-            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0), leaderboard).show();
+            new GameOverView(finalScore, onPlayAgain, () -> System.exit(0)).show(leaderboard);
         });
     }
 

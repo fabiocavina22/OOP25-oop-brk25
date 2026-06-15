@@ -36,7 +36,6 @@ public final class GameOverView {
     private static final int BUTTON_DARK      = 30;
 
     private final JFrame frame;
-    private final Leaderboard leaderboard;
     private final int finalScore;
 
     /**
@@ -45,13 +44,10 @@ public final class GameOverView {
      * @param finalScore  the score achieved during the game session
      * @param onPlayAgain callback invoked when the player clicks "Play Again"
      * @param onQuit      callback invoked when the player clicks "Quit"
-     * @param leaderboard the leaderboard used to check and save high scores
      */
-    @SuppressWarnings("SpotBugs:EI_EXPOSE_REP2")
     public GameOverView(final int finalScore, final Runnable onPlayAgain,
-            final Runnable onQuit, final Leaderboard leaderboard) {
+            final Runnable onQuit) {
         this.finalScore = finalScore;
-        this.leaderboard = leaderboard;
         frame = new JFrame("Dido's Breakout");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -125,9 +121,11 @@ public final class GameOverView {
     }
 
     /**
-     * Makes the game over window visible.
+     * Makes the game over window visible and handles the high-score flow.
+     *
+     * @param leaderboard the leaderboard used to check and save high scores
      */
-    public void show() {
+    public void show(final Leaderboard leaderboard) {
         frame.setVisible(true);
         if (leaderboard.isHighScore(finalScore)) {
             final String name = JOptionPane.showInputDialog(frame, "inserisci 3 lettere per il tuo nome");

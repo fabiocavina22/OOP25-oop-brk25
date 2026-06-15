@@ -1,14 +1,18 @@
 package it.unibo.breakout.view.api;
 
+/**
+ * Represents the game window that displays the Breakout game.
+ */
 public interface GameMap {
     /**
-     * turn the window visible
+     * Turns the window visible.
      */
     void showWindow();
 
     /**
-     * checks if the window is visible
-     * @return true if the window is visible or fals if it's not
+     * Checks if the window is visible.
+     *
+     * @return true if the window is visible or false if it's not
      */
     boolean isFullScreen();
 

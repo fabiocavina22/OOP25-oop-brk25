@@ -26,7 +26,7 @@ public class TestCollisions {
 
     @Test
     public void padGetsHitOnlyOneTime() {
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
         assertFalse(cm.getPadHit());
         cm.padHit();
         assertTrue(cm.getPadHit());
@@ -35,7 +35,7 @@ public class TestCollisions {
 
     @Test
     public void borderGetsHitOnlyOneTime() {
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
         assertFalse(cm.getBorderHit());
         cm.borderHit();
         assertTrue(cm.getBorderHit());
@@ -44,7 +44,7 @@ public class TestCollisions {
 
     @Test
     public void blockGetsHitOnlyOneTimeAndSavesTheType() {
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
         assertEquals(0, cm.getBlockHit());
         cm.blockHit(new FakeBrick(5, false, false));
         assertEquals(5, cm.getBlockHit());
@@ -54,14 +54,14 @@ public class TestCollisions {
     /** Score */
     @Test
     public void getScoreReturnsTheInitialScore() {
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, null, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, null);
         assertEquals(100, cm.getScore());
     }
 
      @Test
     public void ifTheBlockIsIndestructibleTheScoreDoesentChange() {
         final FakePowerUpManager pum = new FakePowerUpManager();
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, pum, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, pum);
         final FakeBrick brick = new FakeBrick(1, true, false);
         final int result = cm.points(brick);
         assertEquals(100, result);
@@ -71,7 +71,7 @@ public class TestCollisions {
     @Test
     public void pointsAdd300IfTheBlockGetsDestroyed() {
         final FakePowerUpManager pum = new FakePowerUpManager();
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
         final FakeBrick brick = new FakeBrick(1, false, true);   // distruttibile e distrutto
         cm.points(brick);
         assertEquals(300, cm.getScore());
@@ -80,7 +80,7 @@ public class TestCollisions {
     @Test
     public void pointsAdd150IfTheBlockGetsHitButNotDestroyed() {
         final FakePowerUpManager pum = new FakePowerUpManager();
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
         final FakeBrick brick = new FakeBrick(1, false, false);  // colpito ma non ancora distrutto
         cm.points(brick);
         assertEquals(150, cm.getScore());
@@ -90,7 +90,7 @@ public class TestCollisions {
     public void pointsAppliesTheMultiplyer() {
         final FakePowerUpManager pum = new FakePowerUpManager();
         pum.setScoreMultiplier(2.0);
-        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum, null);
+        final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
         final FakeBrick brick = new FakeBrick(1, false, true);
         cm.points(brick);
         assertEquals(600, cm.getScore());  // (int)(300 * 2.0)
@@ -102,7 +102,7 @@ public class TestCollisions {
         final FakeBall ball = new FakeBall(145, 490, 10, 10, 3.0, 4.0); // centro -> offset 0
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
-                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager(), null);
+                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
         cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
 
@@ -118,7 +118,7 @@ public class TestCollisions {
         final FakeBall ball = new FakeBall(195, 490, 10, 10, 3.0, 4.0); // bordo destro -> offset +1
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
-                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager(), null);
+                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
         cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
 
@@ -133,7 +133,7 @@ public class TestCollisions {
         final FakeBall ball = new FakeBall(95, 490, 10, 10, 3.0, 4.0); // bordo sinistro -> offset -1
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
-                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager(), null);
+                new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
         cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
 

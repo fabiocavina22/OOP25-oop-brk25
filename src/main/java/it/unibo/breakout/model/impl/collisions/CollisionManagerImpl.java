@@ -8,7 +8,6 @@ import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.api.PowerUpManager;
 import it.unibo.breakout.model.api.collisions.CollisionDetector;
 import it.unibo.breakout.model.api.collisions.CollisionManager;
-import it.unibo.breakout.model.api.LivesManager;
 
 
 public class CollisionManagerImpl implements CollisionManager {
@@ -17,16 +16,18 @@ public class CollisionManagerImpl implements CollisionManager {
     private int score;
 
     private final PowerUpManager powerUpManager;
-    private final LivesManager livesManager;
 
     private int blockHit;
     private boolean padHit;
     private boolean borderHit;
 
-    public CollisionManagerImpl(final CollisionDetector detector, final int score, final PowerUpManager powerUpManager, final LivesManager livesManager) {
+    private static int EXPLOSIVE_BLOCK = 5;
+    private static int LUCKY_BLOCK = 4;
+
+
+    public CollisionManagerImpl(final CollisionDetector detector, final int score, final PowerUpManager powerUpManager) {
         this.detector = detector;
         this.score = score;
-        this.livesManager = livesManager;
         this.powerUpManager = powerUpManager;
     }
 
@@ -34,7 +35,7 @@ public class CollisionManagerImpl implements CollisionManager {
     public void handleCollisions(final Ball ball, final Paddle paddle, final List<Brick> bricks, final int gameWidth, final int gameHeight, final int score){
         checkPaddleCollision(ball, paddle);
         checkBrickCollisions(ball, bricks);
-        checkBorderCollision(ball, gameWidth, paddle);
+        checkBorderCollision(ball, gameWidth);
     }
 
     @Override
@@ -143,7 +144,7 @@ public class CollisionManagerImpl implements CollisionManager {
      * @param gameHeight
      * @param paddle
      */
-    private void checkBorderCollision(final Ball ball, final int gameWidth, final Paddle paddle) {
+    private void checkBorderCollision(final Ball ball, final int gameWidth) {
 
         if (ball.getX() <= 0) {
             borderHit();
@@ -162,21 +163,28 @@ public class CollisionManagerImpl implements CollisionManager {
             ball.setPosition(ball.getX(), 0);
             ball.setVelocityY(Math.abs(ball.getVelocityY()));
         }
+    }
 
-        if(ball.getY() > paddle.getY() + paddle.getHeight() + 22 && !livesManager.isLifeLost()){
-            livesManager.loseLives();
-            if(powerUpManager.getFastBallFrames() > 0){
-                ball.setVelocityX(ball.getVelocityX() / 1.5);
-                ball.setVelocityY(ball.getVelocityY() / 1.5);
-                powerUpManager.resetFastBallFrames();
-            }
+    @Override
+    public boolean hasBallWentUnder(final Ball ball, final Paddle paddle){
+        return ball.getY() > paddle.getY() + paddle.getHeight() + 22 ;
+
+    }
+
+    @Override
+    public void resume(final Ball ball, final int gameWidth, final Paddle paddle){
+
+            ball.setVelocityX(ball.getVelocityX() / 1.5);
+            ball.setVelocityY(ball.getVelocityY() / 1.5);
+            powerUpManager.resetFastBallFrames();
+
             ball.setPosition(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getHeight());
             ball.setVelocityX(0);
             ball.setVelocityY(0);
-        }
+
     }
 
-    private boolean isAdjacent(Brick brick, final Brick adjacentBrick){
+    private boolean isAdjacent(final Brick brick, final Brick adjacentBrick){
         final double dx = Math.abs(brick.getX() - adjacentBrick.getX());
         final double dy = Math.abs(brick.getY() - adjacentBrick.getY());
         final boolean adjacentX = dx < brick.getWidth() * 1.5;
@@ -270,22 +278,24 @@ public class CollisionManagerImpl implements CollisionManager {
                 points(brick);
 
                 /* bomb brick */
-                if(brick.getType() == 5){
-                    for(int i = 0; i < bricks.size(); i++){
+                if (brick.getType() == EXPLOSIVE_BLOCK){
+                    for (int i = 0; i < bricks.size(); i++) {
                         final Brick adjacentBrick = bricks.get(i);
-                        if(adjacentBrick != brick && isAdjacent(brick, adjacentBrick)){
+                        if (adjacentBrick != brick && isAdjacent(brick, adjacentBrick)) {
                             adjacentBrick.hit();
                             points(adjacentBrick);
-                            if(adjacentBrick.isDestroyed() && adjacentBrick.getType() == 4){
-                                powerUpManager.spawnPowerUp(adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0, adjacentBrick.getY());
+                            if (adjacentBrick.isDestroyed() && adjacentBrick.getType() == LUCKY_BLOCK) {
+                                powerUpManager.spawnPowerUp(
+                                    adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0, adjacentBrick.getY()
+                                );
                                 }
                             }
                         }
                     }
 
                     /* power up block */
-                    if(brick.isDestroyed() && brick.getType() == 4){
-                        powerUpManager.spawnPowerUp (brick.getX() + brick.getWidth() / 2.0, brick.getY());
+                    if (brick.isDestroyed() && brick.getType() == LUCKY_BLOCK) {
+                        powerUpManager.spawnPowerUp(brick.getX() + brick.getWidth() / 2.0, brick.getY());
                     }
                 blockHit(brick);
 

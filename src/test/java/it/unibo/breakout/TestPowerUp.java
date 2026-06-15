@@ -3,6 +3,7 @@ package it.unibo.breakout;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,32 +11,42 @@ import java.util.List;
 
 import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.Paddle;
-import it.unibo.breakout.model.impl.LivesManagerImpl;
 import it.unibo.breakout.model.impl.BallImpl;
+import it.unibo.breakout.model.impl.LivesManagerImpl;
 import it.unibo.breakout.model.impl.PaddleImpl;
 import it.unibo.breakout.model.impl.PowerUpImpl;
 import it.unibo.breakout.model.impl.PowerUpManagerImpl;
 
+/**
+ * Tests for the power up capsules and the power up manager.
+ */
 class TestPowerUp {
+
     private static final double DELTA = 1e-9;
     private static final int EFFECT_FRAMES = 500;
     private static final int SCREEN_HEIGHT = 600;
+
     private static final int PADDLE_X = 100;
     private static final int PADDLE_Y = 300;
     private static final int PADDLE_WIDTH = 80;
     private static final int PADDLE_HEIGHT = 15;
     private static final int PADDLE_SPEED = 12;
+
     private static final double BALL_SIZE = 5;
     private static final double BALL_VX = 4;
     private static final double BALL_VY = 8;
     private static final double FAST_BALL_VX = 6;
     private static final double FAST_BALL_VY = 12;
+
     private static final double CAPSULE_X = 130;
+
     private static final double BASE_MULTIPLIER = 1.0;
     private static final double DOUBLE_MULTIPLIER = 2.0;
     private static final double HALF_MULTIPLIER = 0.5;
+
     private static final int INITIAL_LIVES = 3;
     private static final int LIVES_AFTER_BONUS = 4;
+
     private static final int TYPE_EXTRA_LIFE = 1;
     private static final int TYPE_SHORT_PADDLE = 2;
     private static final int TYPE_DOUBLE_POINTS = 3;
@@ -43,6 +54,7 @@ class TestPowerUp {
     private static final int TYPE_FREEZE = 5;
     private static final int TYPE_HALF_POINTS = 6;
     private static final int TYPE_FAST_BALL = 7;
+
     private static final double POS_X = 10;
     private static final double POS_Y = 20;
     private static final double FALL_SPEED = 3.0;
@@ -62,7 +74,7 @@ class TestPowerUp {
     }
 
     private void collect(final int type, final Paddle paddle, final Ball ball) {
-       manager.spawnPowerUp(CAPSULE_X, PADDLE_Y, type);
+        manager.spawnPowerUp(CAPSULE_X, PADDLE_Y, type);
         manager.updatePowerUp(paddle, ball, SCREEN_HEIGHT);
     }
 
@@ -70,11 +82,11 @@ class TestPowerUp {
         return new PaddleImpl(PADDLE_X, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED);
     }
 
-    private Ball newBall(){
+    private Ball newBall() {
         return new BallImpl(0, 0, BALL_SIZE, BALL_VX, BALL_VY);
     }
-    
-    // ---getType() ---
+
+    // --- getType() ---
 
     @Test
     void testGetType() {
@@ -82,7 +94,7 @@ class TestPowerUp {
         assertEquals(TYPE_DOUBLE_POINTS, p.getType());
     }
 
-    // ---getX() and getY()---
+    // --- getX() and getY() ---
     @Test
     void testGetPosition() {
         final PowerUpImpl p = new PowerUpImpl(POS_X, POS_Y, TYPE_EXTRA_LIFE);
@@ -90,7 +102,7 @@ class TestPowerUp {
         assertEquals(POS_Y, p.getY(), DELTA);
     }
 
-    // ---fall()---
+    // --- fall() ---
     @Test
     void testFallIncreasesY() {
         final PowerUpImpl p = new PowerUpImpl(POS_X, POS_Y, TYPE_EXTRA_LIFE);
@@ -114,7 +126,7 @@ class TestPowerUp {
         assertEquals(POS_X, p.getX(), DELTA);
     }
 
-    // ---isOutOfBounds()---
+    // --- isOutOfBounds() ---
     @Test
     void testIsOutOfBoundsTrue() {
         final PowerUpImpl p = new PowerUpImpl(POS_X, Y_ABOVE_BOUND, TYPE_EXTRA_LIFE);
@@ -137,35 +149,30 @@ class TestPowerUp {
     // PowerUpManagerImpl - start game
     // -------------------------------------------------------------------------
 
-    // ---no frozen blocks---
     @Test
     void testInitiallyNotFrozen() {
         assertFalse(manager.isFrozen());
     }
 
-    // ---the score umltiplier must be 1.0---
     @Test
     void testInitialScoreMultiplier() {
         assertEquals(BASE_MULTIPLIER, manager.getScoreMultiplier(), DELTA);
     }
 
-    // ---no active power up--
     @Test
     void testInitialPowerUpListEmpty() {
         assertTrue(manager.getActivePowerUp().isEmpty());
     }
 
-    // ---verify the spawn of the power up---
     @Test
     void testSpawnPowerUpAddsCapsule() {
         manager.spawnPowerUp(PADDLE_X, PADDLE_Y);
         assertEquals(1, manager.getActivePowerUp().size());
     }
 
-    // ---the power up must be chosen from 1 to 7--- 
     @Test
     void testSpawnPowerUpValidType() {
-        manager.spawnPowerUp(100, 50);
+        manager.spawnPowerUp(PADDLE_X, PADDLE_Y);
         final int type = manager.getActivePowerUp().get(0).getType();
         assertTrue(type >= TYPE_EXTRA_LIFE && type <= TYPE_FAST_BALL, "Il tipo deve essere tra 1 e 7");
     }
@@ -174,14 +181,12 @@ class TestPowerUp {
     // effects taken
     // -------------------------------------------------------------------------
 
-    // ---paddleShort must be number 2---
     @Test
     void testCollectShortPaddle() {
         collect(TYPE_SHORT_PADDLE, newPaddle(), newBall());
         assertEquals(EFFECT_FRAMES, manager.getPaddleShortTimer());
     }
 
-    // ---2.0 multiplier must be number 3---
     @Test
     void testCollectDoublePoints() {
         collect(TYPE_DOUBLE_POINTS, newPaddle(), newBall());
@@ -189,14 +194,12 @@ class TestPowerUp {
         assertEquals(EFFECT_FRAMES, manager.getDoublePointsTimer());
     }
 
-    // ---paddleLarge must be number 4---
     @Test
     void testCollectEnlargePaddle() {
-        collect(4, newPaddle(), newBall());
+        collect(TYPE_LARGE_PADDLE, newPaddle(), newBall());
         assertEquals(EFFECT_FRAMES, manager.getPaddleLargeTimer());
     }
 
-    // ---frozenblocks must be number 5---
     @Test
     void testCollectFreezeBlocks() {
         collect(TYPE_FREEZE, newPaddle(), newBall());
@@ -204,7 +207,6 @@ class TestPowerUp {
         assertEquals(EFFECT_FRAMES, manager.getFreezeBlocksTimer());
     }
 
-    // ---0.5 multiplier must be number 6---
     @Test
     void testCollectHalfPoints() {
         collect(TYPE_HALF_POINTS, newPaddle(), newBall());
@@ -212,7 +214,6 @@ class TestPowerUp {
         assertEquals(EFFECT_FRAMES, manager.getHalfPointsTimer());
     }
 
-    //---fastBall must be number 7---
     @Test
     void testCollectFastBall() {
         final Ball ball = newBall();
@@ -222,7 +223,6 @@ class TestPowerUp {
         assertEquals(FAST_BALL_VY, ball.getVelocityY(), DELTA);
     }
 
-    //---extra life must be number 1---
     @Test
     void testCollectExtraLife() {
         collect(TYPE_EXTRA_LIFE, newPaddle(), newBall());
@@ -239,7 +239,6 @@ class TestPowerUp {
     // opposite effects and repeated effects
     // -------------------------------------------------------------------------
 
-    // ---cancelletion of paddleShort---
     @Test
     void testEnlargeCancelsShort() {
         final Paddle paddle = newPaddle();
@@ -250,7 +249,6 @@ class TestPowerUp {
         assertEquals(EFFECT_FRAMES, manager.getPaddleLargeTimer());
     }
 
-    // ---cancelletion of half points multiplier---
     @Test
     void testHalfCancelsDouble() {
         final Paddle paddle = newPaddle();
@@ -261,7 +259,6 @@ class TestPowerUp {
         assertEquals(HALF_MULTIPLIER, manager.getScoreMultiplier(), DELTA);
     }
 
-    // ---same effects taken more times---
     @Test
     void testSameEffectResetsTimer() {
         final Paddle paddle = newPaddle();
@@ -276,18 +273,16 @@ class TestPowerUp {
     // timers and power up
     // -------------------------------------------------------------------------
 
-    // ---udpateTimer()---
     @Test
     void testUpdateTimerDecreasesFrames() {
-        collect(TYPE_FREEZE, newPaddle(), newBall()); 
+        collect(TYPE_FREEZE, newPaddle(), newBall());
         manager.updateTimer(newPaddle(), newBall());
         assertEquals(EFFECT_FRAMES - 1, manager.getFreezeBlocksTimer());
     }
 
-    // ---doublePointsTimer---
     @Test
     void testDoublePointsExpiresResetsMultiplier() {
-       final Paddle paddle = newPaddle();
+        final Paddle paddle = newPaddle();
         final Ball ball = newBall();
         collect(TYPE_DOUBLE_POINTS, paddle, ball);
         for (int i = 0; i < EFFECT_FRAMES; i++) {
@@ -297,7 +292,6 @@ class TestPowerUp {
         assertEquals(0, manager.getDoublePointsTimer());
     }
 
-    // ---fastBallTimer---
     @Test
     void testFastBallExpiresRestoresSpeed() {
         final Paddle paddle = newPaddle();
@@ -311,7 +305,6 @@ class TestPowerUp {
         assertEquals(0, manager.getFastBallTimer());
     }
 
-    // ---removal of the power up at the bottom of the screen---
     @Test
     void testCapsuleOutOfBoundsIsRemoved() {
         manager.spawnPowerUp(CAPSULE_X, CAPSULE_NEAR_BOTTOM_Y, TYPE_DOUBLE_POINTS);
@@ -319,7 +312,6 @@ class TestPowerUp {
         assertTrue(manager.getActivePowerUp().isEmpty());
     }
 
-    // ---test the falling of the power up if not taken---
     @Test
     void testCapsuleNotCollectedKeepsFalling() {
         manager.spawnPowerUp(FAR_X, PADDLE_Y, TYPE_DOUBLE_POINTS);
@@ -329,7 +321,6 @@ class TestPowerUp {
         assertEquals(PADDLE_Y + FALL_SPEED, list.get(0).getY(), DELTA);
     }
 
-    // ---resetBallframes()---
     @Test
     void testResetFastBallFrames() {
         collect(TYPE_FAST_BALL, newPaddle(), newBall());

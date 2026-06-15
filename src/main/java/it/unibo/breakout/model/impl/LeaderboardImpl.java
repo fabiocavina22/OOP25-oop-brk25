@@ -13,20 +13,21 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class LeaderboardImpl implements Leaderboard{
-    
+
     private static final int MAX = 10;
     private static final String FILE_PATH = "leaderboard.txt";
 
     private final List<String> names;
     private final List<Integer> scores;
 
-    /**Loads the leaderboard from the file at startup; if the file doesn't exist the leaderboard starts empty
+    /**
+     * Loads the leaderboard from the file at startup; if the file doesn't exist the leaderboard starts empty
      */
     public LeaderboardImpl(){
         this.names = new ArrayList<>();
         this.scores = new ArrayList<>();
 
-        try(final BufferedReader r = new BufferedReader(
+        try (final BufferedReader r = new BufferedReader(
             new InputStreamReader(
                 new FileInputStream(FILE_PATH), "UTF-8"))){
                     String line;

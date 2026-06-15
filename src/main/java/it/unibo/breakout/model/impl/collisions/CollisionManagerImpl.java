@@ -286,18 +286,18 @@ public final class CollisionManagerImpl implements CollisionManager {
 
                 /* bomb brick */
                 if (brick.getType() == EXPLOSIVE_BLOCK) {
-                    for (int i = 0; i < bricks.size(); i++) {
-                        final Brick adjacentBrick = bricks.get(i);
-                        if (adjacentBrick != brick && isAdjacent(brick, adjacentBrick)) {
+                    for (final Brick adjacentBrick : bricks) {
+                        if (!brick.equals(adjacentBrick) && isAdjacent(brick, adjacentBrick)) {
                             adjacentBrick.hit();
                             points(adjacentBrick);
-                            if (adjacentBrick.isDestroyed() && adjacentBrick.getType() == LUCKY_BLOCK) {
+                            if (adjacentBrick.isDestroyed() && adjacentBrick.getType() == 4) {
                                 powerUpManager.spawnPowerUp(
-                                    adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0, adjacentBrick.getY()
+                                    adjacentBrick.getX() + adjacentBrick.getWidth() / 2.0,
+                                    adjacentBrick.getY()
                                 );
-                                }
                             }
                         }
+                    }
                     }
 
                     /* power up block */

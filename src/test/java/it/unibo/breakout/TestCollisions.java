@@ -18,14 +18,25 @@ import it.unibo.breakout.model.impl.PaddleImpl;
 import it.unibo.breakout.model.impl.PowerUpImpl;
 import it.unibo.breakout.model.impl.collisions.CollisionManagerImpl;
 
-public class TestCollisions {
+/**
+ * Unit tests for the collision manager: object hits, scoring and ball bounce physics.
+ */
+class TestCollisions {
 
     private static final double DELTA = 0.0001;
+    private static final int BLOCK_TYPE = 5;
+    private static final int DESTROY_SCORE = 300;
+    private static final int HIT_SCORE = 150;
+    private static final double MULTIPLIER = 2.0;
+    private static final int SCREEN_WIDTH = 800;
+    private static final int SCREEN_HEIGHT = 600;
+    private static final double EXPECTED_SPEED = 5.0;
+    private static final int CORNER_ANGLE = 60;
 
-    /** COLLISIONS WITH OBJECTS */
+    /* collisions with objects */
 
     @Test
-    public void padGetsHitOnlyOneTime() {
+    void padGetsHitOnlyOneTime() {
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
         assertFalse(cm.isPadHit());
         cm.padHit();
@@ -34,7 +45,7 @@ public class TestCollisions {
     }
 
     @Test
-    public void borderGetsHitOnlyOneTime() {
+    void borderGetsHitOnlyOneTime() {
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
         assertFalse(cm.isBorderHit());
         cm.borderHit();
@@ -43,23 +54,24 @@ public class TestCollisions {
     }
 
     @Test
-    public void blockGetsHitOnlyOneTimeAndSavesTheType() {
+    void blockGetsHitOnlyOneTimeAndSavesTheType() {
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, null);
-        assertEquals(0, cm.isBlockHit());
-        cm.blockHit(new FakeBrick(5, false, false));
-        assertEquals(5, cm.isBlockHit());
-        assertEquals(0, cm.isBlockHit());
+        assertEquals(0, cm.typeOfBlockHit());
+        cm.blockHit(new FakeBrick(BLOCK_TYPE, false, false));
+        assertEquals(BLOCK_TYPE, cm.typeOfBlockHit());
+        assertEquals(0, cm.typeOfBlockHit());
     }
 
-    /** Score */
+    /* score */
+
     @Test
-    public void getScoreReturnsTheInitialScore() {
+    void scoreReturnsTheInitialScore() {
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, null);
         assertEquals(100, cm.getScore());
     }
 
-     @Test
-    public void ifTheBlockIsIndestructibleTheScoreDoesentChange() {
+    @Test
+    void ifTheBlockIsIndestructibleTheScoreDoesentChange() {
         final FakePowerUpManager pum = new FakePowerUpManager();
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 100, pum);
         final FakeBrick brick = new FakeBrick(1, true, false);
@@ -69,83 +81,83 @@ public class TestCollisions {
     }
 
     @Test
-    public void pointsAdd300IfTheBlockGetsDestroyed() {
+    void pointsAdd300IfTheBlockGetsDestroyed() {
         final FakePowerUpManager pum = new FakePowerUpManager();
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
-        final FakeBrick brick = new FakeBrick(1, false, true);   // distruttibile e distrutto
+        final FakeBrick brick = new FakeBrick(1, false, true);
         cm.points(brick);
-        assertEquals(300, cm.getScore());
+        assertEquals(DESTROY_SCORE, cm.getScore());
     }
 
     @Test
     void pointsAdd150IfTheBlockGetsHitButNotDestroyed() {
         final FakePowerUpManager pum = new FakePowerUpManager();
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
-        final FakeBrick brick = new FakeBrick(1, false, false);  // colpito ma non ancora distrutto
+        final FakeBrick brick = new FakeBrick(1, false, false);
         cm.points(brick);
-        assertEquals(150, cm.getScore());
+        assertEquals(HIT_SCORE, cm.getScore());
     }
 
     @Test
     void pointsAppliesTheMultiplyer() {
         final FakePowerUpManager pum = new FakePowerUpManager();
-        pum.setScoreMultiplier(2.0);
+        pum.setScoreMultiplier(MULTIPLIER);
         final CollisionManagerImpl cm = new CollisionManagerImpl(null, 0, pum);
         final FakeBrick brick = new FakeBrick(1, false, true);
         cm.points(brick);
-        assertEquals(600, cm.getScore());  // (int)(300 * 2.0)
+        assertEquals((int) (DESTROY_SCORE * MULTIPLIER), cm.getScore());
     }
 
-    /** Ball's physics */
+    /* ball's physics */
+
     @Test
     void boucesOnTheCentreAndGoesStraightUp() {
-        final FakeBall ball = new FakeBall(145, 490, 10, 10, 3.0, 4.0); // centro -> offset 0
+        final FakeBall ball = new FakeBall(145, 490, 10, 10, 3.0, 4.0);
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
                 new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
-        cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
+        cm.handleCollisions(ball, paddle, List.of(), SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
         final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
         final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
-        assertEquals(5.0, modulo, DELTA);     // la velocita' si conserva
-        assertEquals(0.0, angolo, DELTA);     // angolo 0: dritto verso l'alto
-        assertTrue(ball.getVelocityY() < 0);  // ...e sta effettivamente salendo
+        assertEquals(EXPECTED_SPEED, modulo, DELTA);
+        assertEquals(0.0, angolo, DELTA);
+        assertTrue(ball.getVelocityY() < 0);
     }
 
     @Test
     void boucesOnLeftCorner() {
-        final FakeBall ball = new FakeBall(195, 490, 10, 10, 3.0, 4.0); // bordo destro -> offset +1
+        final FakeBall ball = new FakeBall(195, 490, 10, 10, 3.0, 4.0);
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
                 new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
-        cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
+        cm.handleCollisions(ball, paddle, List.of(), SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
         final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
         final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
-        assertEquals(5.0, modulo, DELTA);
-        assertEquals(Math.toRadians(60), angolo, DELTA);   // +60 gradi dalla verticale
+        assertEquals(EXPECTED_SPEED, modulo, DELTA);
+        assertEquals(Math.toRadians(CORNER_ANGLE), angolo, DELTA);
     }
 
     @Test
     void boucesOnRightCorner() {
-        final FakeBall ball = new FakeBall(95, 490, 10, 10, 3.0, 4.0); // bordo sinistro -> offset -1
+        final FakeBall ball = new FakeBall(95, 490, 10, 10, 3.0, 4.0);
         final PaddleImpl paddle = new PaddleImpl(100, 500, 100, 20, 5);
         final CollisionManagerImpl cm =
                 new CollisionManagerImpl(new FakeCollisionDetector(), 0, new FakePowerUpManager());
 
-        cm.handleCollisions(ball, paddle, List.of(), 800, 600, 0);
+        cm.handleCollisions(ball, paddle, List.of(), SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
         final double modulo = Math.hypot(ball.getVelocityX(), ball.getVelocityY());
         final double angolo = Math.atan2(ball.getVelocityX(), -ball.getVelocityY());
-        assertEquals(5.0, modulo, DELTA);
-        assertEquals(-Math.toRadians(60), angolo, DELTA);  // -60 gradi dalla verticale
+        assertEquals(EXPECTED_SPEED, modulo, DELTA);
+        assertEquals(-Math.toRadians(CORNER_ANGLE), angolo, DELTA);
     }
 
-    /**
-     * Fake classes
-     */
+    /* fake classes used only to exercise the collision manager */
+
     private static final class FakeCollisionDetector implements CollisionDetector {
         @Override
         public boolean isColliding(final Collidable a, final Collidable b) {
@@ -172,23 +184,81 @@ public class TestCollisions {
             this.velocityY = velocityY;
         }
 
-        /** necessary only in order ti compile */
-        @Override public double getX() { return x; }
-        @Override public double getY() { return y; }
-        @Override public int getWidth() { return width; }
-        @Override public int getHeight() { return height; }
-        @Override public double getVelocityX() { return velocityX; }
-        @Override public double getVelocityY() { return velocityY; }
-        @Override public void setVelocityX(final double vx) { this.velocityX = vx; }
-        @Override public void setVelocityY(final double vy) { this.velocityY = vy; }
-        @Override public void setPosition(final double x, final double y) { this.x = x; this.y = y; }
+        /* stub methods, needed only to compile */
 
-        @Override public double getRadius() { return 0; }
-        @Override public void move() { }
-        @Override public void bounceX() { this.velocityX = -this.velocityX; }
-        @Override public void bounceY() { this.velocityY = -this.velocityY; }
-        @Override public boolean isOutOfBounds(final double fieldHeight) { return false; }
-        @Override public void updateDimensions(final int panelWidth, final int panelHeight, final Paddle paddle) { }
+        @Override
+        public double getX() {
+            return x;
+        }
+
+        @Override
+        public double getY() {
+            return y;
+        }
+
+        @Override
+        public int getWidth() {
+            return width;
+        }
+
+        @Override
+        public int getHeight() {
+            return height;
+        }
+
+        @Override
+        public double getVelocityX() {
+            return velocityX;
+        }
+
+        @Override
+        public double getVelocityY() {
+            return velocityY;
+        }
+
+        @Override
+        public void setVelocityX(final double vx) {
+            this.velocityX = vx;
+        }
+
+        @Override
+        public void setVelocityY(final double vy) {
+            this.velocityY = vy;
+        }
+
+        @Override
+        public void setPosition(final double x, final double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public double getRadius() {
+            return 0;
+        }
+
+        @Override
+        public void move() {
+        }
+
+        @Override
+        public void bounceX() {
+            this.velocityX = -this.velocityX;
+        }
+
+        @Override
+        public void bounceY() {
+            this.velocityY = -this.velocityY;
+        }
+
+        @Override
+        public boolean isOutOfBounds(final double fieldHeight) {
+            return false;
+        }
+
+        @Override
+        public void updateDimensions(final int panelWidth, final int panelHeight, final Paddle paddle) {
+        }
     }
 
     private static final class FakePowerUpManager implements PowerUpManager {
@@ -204,21 +274,68 @@ public class TestCollisions {
             return scoreMultiplier;
         }
 
-        /** necessary only in order ti compile */
+        /* stub methods, needed only to compile */
 
-        @Override public long getDoublePointsTimer() { return 0; }
-        @Override public long getPaddleLargeTimer() { return 0; }
-        @Override public long getPaddleShortTimer() { return 0; }
-        @Override public long getFreezeBlocksTimer() { return 0; }
-        @Override public long getHalfPointsTimer() { return 0; }
-        @Override public long getFastBallTimer() { return 0; }
-        @Override public boolean isFrozen() { return false; }
-        @Override public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight) { }
-        @Override public void updateTimer(final Paddle paddle, final Ball ball) { }
-        @Override public List<PowerUpImpl> getActivePowerUp() { return List.of(); }
-        @Override public int getFastBallFrames() { return 0; }
-        @Override public void resetFastBallFrames() { }
-        @Override public void spawnPowerUp(final double x, final double y) { }
+        @Override
+        public long getDoublePointsTimer() {
+            return 0;
+        }
+
+        @Override
+        public long getPaddleLargeTimer() {
+            return 0;
+        }
+
+        @Override
+        public long getPaddleShortTimer() {
+            return 0;
+        }
+
+        @Override
+        public long getFreezeBlocksTimer() {
+            return 0;
+        }
+
+        @Override
+        public long getHalfPointsTimer() {
+            return 0;
+        }
+
+        @Override
+        public long getFastBallTimer() {
+            return 0;
+        }
+
+        @Override
+        public boolean isFrozen() {
+            return false;
+        }
+
+        @Override
+        public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight) {
+        }
+
+        @Override
+        public void updateTimer(final Paddle paddle, final Ball ball) {
+        }
+
+        @Override
+        public List<PowerUpImpl> getActivePowerUp() {
+            return List.of();
+        }
+
+        @Override
+        public int getFastBallFrames() {
+            return 0;
+        }
+
+        @Override
+        public void resetFastBallFrames() {
+        }
+
+        @Override
+        public void spawnPowerUp(final double x, final double y) {
+        }
     }
 
     private static final class FakeBrick implements Brick {
@@ -248,23 +365,65 @@ public class TestCollisions {
             return destroyed;
         }
 
-        /** necessary only in order ti compile */
-        @Override public void hit() { }
-        @Override public void moveDown(final double amount) { }
-        @Override public int getLife() { return 0; }
-        @Override public int getRowId() { return 0; }
-        @Override public void setX(final double x) { }
-        @Override public void setWidth(final int width) { }
-        @Override public void setY(final double y) { }
-        @Override public void setHeight(final int height) { }
-        @Override public int getColIndex() { return 0; }
+        /* stub methods, needed only to compile */
 
-        @Override public double getX() { return 0; }
-        @Override public double getY() { return 0; }
-        @Override public int getWidth() { return 0; }
-        @Override public int getHeight() { return 0; }
+        @Override
+        public void hit() {
+        }
+
+        @Override
+        public void moveDown(final double amount) {
+        }
+
+        @Override
+        public int getLife() {
+            return 0;
+        }
+
+        @Override
+        public int getRowId() {
+            return 0;
+        }
+
+        @Override
+        public void setX(final double x) {
+        }
+
+        @Override
+        public void setWidth(final int width) {
+        }
+
+        @Override
+        public void setY(final double y) {
+        }
+
+        @Override
+        public void setHeight(final int height) {
+        }
+
+        @Override
+        public int getColIndex() {
+            return 0;
+        }
+
+        @Override
+        public double getX() {
+            return 0;
+        }
+
+        @Override
+        public double getY() {
+            return 0;
+        }
+
+        @Override
+        public int getWidth() {
+            return 0;
+        }
+
+        @Override
+        public int getHeight() {
+            return 0;
+        }
     }
-
-
-
 }

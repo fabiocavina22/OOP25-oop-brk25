@@ -46,7 +46,7 @@ public interface CollisionManager {
      * return if the ball hit a block and then sets the value to fals
      * @return BlockHit
      */
-    int isBlockHit();
+    int typeOfBlockHit();
 
     /**
      * return if the ball hit a border and then sets the value to fals

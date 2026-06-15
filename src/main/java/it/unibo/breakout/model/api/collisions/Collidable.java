@@ -1,5 +1,8 @@
 package it.unibo.breakout.model.api.collisions;
 
+/**
+ * Rappresentation of an object which can collide with an another object.
+ */
 public interface Collidable {
 
     /**

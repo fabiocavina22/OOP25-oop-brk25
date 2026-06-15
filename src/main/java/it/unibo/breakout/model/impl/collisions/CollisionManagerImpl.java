@@ -53,7 +53,7 @@ public final class CollisionManagerImpl implements CollisionManager {
 
     @Override
     public int points(final Brick brick) {
-        if (brick.isIndestructible()){
+        if (brick.isIndestructible()) {
             return score;
         }
         if (brick.isDestroyed()) {
@@ -86,7 +86,7 @@ public final class CollisionManagerImpl implements CollisionManager {
     }
 
     @Override
-    public int isBlockHit() {
+    public int typeOfBlockHit() {
         final int result = this.blockHit;
         this.blockHit = 0;
         return result;
@@ -107,8 +107,7 @@ public final class CollisionManagerImpl implements CollisionManager {
     }
 
     /**
-     *
-     *Checks if a collision happens between the ball and the paddle
+     * Checks if a collision happens between the ball and the paddle.
      *
      * @param ball
      * @param paddle
@@ -153,8 +152,8 @@ public final class CollisionManagerImpl implements CollisionManager {
 
     }
     /**
-     * Checks if the ball hit the borders or goes under the paddle
-     * manages the logic of the life loss
+     * Checks if the ball hit the borders or goes under the paddle.
+     * manages the logic of the life loss.
      * @param ball
      * @param gameWidth
      */
@@ -206,9 +205,8 @@ public final class CollisionManagerImpl implements CollisionManager {
     }
 
     /**
-     *
-     * Checks if a collision happens between any block and the ball
-     * Manages the brick destruction, power ups releas
+     *Checks if a collision happens between any block and the ball.
+     *Manages the brick destruction, power ups releas.
      *
      * @param ball
      * @param bricks

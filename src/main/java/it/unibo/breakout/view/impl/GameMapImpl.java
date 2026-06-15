@@ -17,7 +17,7 @@ import it.unibo.breakout.model.api.Ball;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Paddle;
 import it.unibo.breakout.model.api.PowerUpManager;
-import it.unibo.breakout.model.impl.LeaderboardImpl;
+import it.unibo.breakout.model.api.Leaderboard;
 import it.unibo.breakout.view.api.GameMap;
 
 /**
@@ -46,7 +46,7 @@ public final class GameMapImpl extends JFrame implements GameMap {
      * @param leaderboard the leaderboard shown in the right panel
      */
     public GameMapImpl(final Paddle paddle, final LevelManager levelManager, final Ball ball,
-        final PowerUpManager powerUpManager, final LeaderboardImpl leaderboard) {
+        final PowerUpManager powerUpManager, final Leaderboard leaderboard) {
 
         setTitle("DiDo's Breakout");
         setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -17,7 +17,7 @@ public interface PowerUpManager {
 
     /**Uptade the position of the power up
     */
-    void updatePowerUp(Paddle paddle, Ball ball, int screenHeight);
+    void updatePowerUp(Paddle paddle, Ball ball, int screenHeight, LivesManager livesManager);
 
     /**Update the power up timers
     */
@@ -39,7 +39,7 @@ public interface PowerUpManager {
     */
     void resetFastBallFrames();
 
-    /**Spawn the power up 
+    /**Spawn the power up
     */
     void spawnPowerUp(double x, double y);
     }

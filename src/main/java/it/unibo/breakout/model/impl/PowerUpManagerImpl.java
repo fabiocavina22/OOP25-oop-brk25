@@ -28,7 +28,7 @@ public final class PowerUpManagerImpl implements PowerUpManager {
     private static final int TYPE_FREEZE = 5;
     private static final int TYPE_HALF_POINTS = 6;
     private static final int TYPE_FAST_BALL = 7;
- 
+
     private final List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private int doublePointsFrames;
     private int paddleLargeFrames;
@@ -36,17 +36,8 @@ public final class PowerUpManagerImpl implements PowerUpManager {
     private int freezeBlocksFrames;
     private int halfPointsFrames;
     private int fastBallFrames;
-    private final LivesManager livesManager;
     private final Random rng = new Random();
     private double scoreMultiplier = BASE_MULTIPLIER;
-
-    /**
-     * Creates a power up manager that uses the given lives manager to grant an extra life when the related power up is collected.
-     * @param livesManager
-    */
-    public PowerUpManagerImpl(final LivesManager livesManager) {
-        this.livesManager = livesManager;
-    }
 
     @Override
     public double getScoreMultiplier() {
@@ -157,7 +148,7 @@ public final class PowerUpManagerImpl implements PowerUpManager {
     }
 
     @Override
-    public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight) {
+    public void updatePowerUp(final Paddle paddle, final Ball ball, final int screenHeight, final LivesManager livesManager) {
         for (int i = 0; i < activePowerUp.size(); i++) {
             final PowerUpImpl powerUp = activePowerUp.get(i);
             powerUp.fall();

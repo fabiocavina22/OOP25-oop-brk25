@@ -12,6 +12,23 @@ import it.unibo.breakout.model.api.PowerUpManager;
  * Manages the power up capsules.
  */
 public final class PowerUpManagerImpl implements PowerUpManager {
+
+    private static final int EFFECT_FRAMES = 500;
+    private static final int POWER_UP_TYPES = 7;
+    private static final double DOUBLE_MULTIPLIER = 2.0;
+    private static final double HALF_MULTIPLIER = 0.5;
+    private static final double BASE_MULTIPLIER = 1.0;
+    private static final double FAST_BALL_FACTOR = 1.5;
+    private static final int CAPSULE_WIDTH = 20;
+    private static final int CAPSULE_HEIGHT = 10;
+    private static final int TYPE_EXTRA_LIFE = 1;
+    private static final int TYPE_SHORT_PADDLE = 2;
+    private static final int TYPE_DOUBLE_POINTS = 3;
+    private static final int TYPE_LARGE_PADDLE = 4;
+    private static final int TYPE_FREEZE = 5;
+    private static final int TYPE_HALF_POINTS = 6;
+    private static final int TYPE_FAST_BALL = 7;
+ 
     private final List<PowerUpImpl> activePowerUp = new ArrayList<>();
     private int doublePointsFrames;
     private int paddleLargeFrames;
@@ -21,10 +38,7 @@ public final class PowerUpManagerImpl implements PowerUpManager {
     private int fastBallFrames;
     private final LivesManager livesManager;
     private final Random rng = new Random();
-
-    private double scoreMultiplier = 1.0;
-
-    private static final int EFFECT_FRAMES = 500;
+    private double scoreMultiplier = BASE_MULTIPLIER;
 
     /**
      * Creates a power up manager that uses the given lives manager to grant an extra life when the related power up is collected.
@@ -91,7 +105,7 @@ public final class PowerUpManagerImpl implements PowerUpManager {
 
     @Override
     public void spawnPowerUp(final double x, final double y) {
-        spawnPowerUp(x, y, rng.nextInt(7) + 1);
+        spawnPowerUp(x, y, rng.nextInt(POWER_UP_TYPES) + 1);
     }
 
     /**
@@ -109,7 +123,7 @@ public final class PowerUpManagerImpl implements PowerUpManager {
         if (doublePointsFrames > 0) {
             doublePointsFrames--;
             if (doublePointsFrames == 0) {
-                scoreMultiplier = 1.0;
+                scoreMultiplier = BASE_MULTIPLIER;
             }
         }
         if (paddleShortFrames > 0) {
@@ -130,14 +144,14 @@ public final class PowerUpManagerImpl implements PowerUpManager {
         if (halfPointsFrames > 0) {
             halfPointsFrames--;
             if (halfPointsFrames == 0) {
-                scoreMultiplier = 1.0;
+                scoreMultiplier = BASE_MULTIPLIER;
             }
         }
         if (fastBallFrames > 0) {
             fastBallFrames--;
             if (fastBallFrames == 0) {
-                ball.setVelocityX(ball.getVelocityX() / 1.5);
-                ball.setVelocityY(ball.getVelocityY() / 1.5);
+                ball.setVelocityX(ball.getVelocityX() / FAST_BALL_FACTOR);
+                ball.setVelocityY(ball.getVelocityY() / FAST_BALL_FACTOR);
             }
         }
     }
@@ -150,17 +164,17 @@ public final class PowerUpManagerImpl implements PowerUpManager {
             if (powerUp.isOutOfBounds(screenHeight)) {
                 activePowerUp.remove(i);
                 i--;
-            } else if (powerUp.getX() + 20 > paddle.getX()
+            } else if (powerUp.getX() + CAPSULE_WIDTH > paddle.getX()
             && powerUp.getX() < paddle.getX() + paddle.getWidth()
-            && powerUp.getY() + 10 >  paddle.getY()
+            && powerUp.getY() + CAPSULE_HEIGHT >  paddle.getY()
             && powerUp.getY() < paddle.getY() + paddle.getHeight()) {
                 switch (powerUp.getType()) {
                     //extra life
-                    case 1:
+                    case TYPE_EXTRA_LIFE:
                         livesManager.addLife();
                         break;
                     //short paddle
-                    case 2:
+                    case TYPE_SHORT_PADDLE:
                         if (paddleShortFrames > 0) {
                             paddleShortFrames = EFFECT_FRAMES;
                         } else {
@@ -173,20 +187,20 @@ public final class PowerUpManagerImpl implements PowerUpManager {
                         }
                         break;
                     //double points
-                    case 3:
+                    case TYPE_DOUBLE_POINTS:
                         if (doublePointsFrames > 0) {
                             doublePointsFrames = EFFECT_FRAMES;
                         } else {
                             if (halfPointsFrames > 0) {
                                 halfPointsFrames = 0;
                             }
-                            scoreMultiplier = 2.0;
+                            scoreMultiplier = DOUBLE_MULTIPLIER;
                             doublePointsFrames = EFFECT_FRAMES;
                         }
                         break;
 
                     //large paddle
-                    case 4:
+                    case TYPE_LARGE_PADDLE:
                         if (paddleLargeFrames > 0) {
                             paddleLargeFrames = EFFECT_FRAMES;
                         } else {
@@ -200,27 +214,27 @@ public final class PowerUpManagerImpl implements PowerUpManager {
                         break;
 
                     //frozen blocks
-                    case 5:
+                    case TYPE_FREEZE:
                         freezeBlocksFrames = EFFECT_FRAMES;
                         break;
 
                     //half points
-                    case 6:
+                    case TYPE_HALF_POINTS:
                         if (halfPointsFrames > 0) {
                             halfPointsFrames = EFFECT_FRAMES;
                         } else {
                             if (doublePointsFrames > 0) {
                                 doublePointsFrames = 0;
                             }
-                            scoreMultiplier = 0.5;
+                            scoreMultiplier = HALF_MULTIPLIER;
                             halfPointsFrames = EFFECT_FRAMES;
                         }
                         break;
 
                     //fast ball
-                    case 7:
-                        ball.setVelocityX(ball.getVelocityX() * 1.5);
-                        ball.setVelocityY(ball.getVelocityY() * 1.5);
+                    case TYPE_FAST_BALL:
+                        ball.setVelocityX(ball.getVelocityX() * FAST_BALL_FACTOR);
+                        ball.setVelocityY(ball.getVelocityY() * FAST_BALL_FACTOR);
                         fastBallFrames = EFFECT_FRAMES;
                         break;
                     default:

@@ -98,7 +98,7 @@ public final class MainPanel extends JPanel {
      * @param powerUp
      */
     public void setPowerUp(final List<PowerUpImpl> powerUp) {
-        this.activePowerUp = powerUp;
+        this.activePowerUp = new ArrayList<>(powerUp);
     }
 
     @Override

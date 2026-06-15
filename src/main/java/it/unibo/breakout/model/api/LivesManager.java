@@ -1,28 +1,45 @@
 package it.unibo.breakout.model.api;
 
+/**
+ * Interface representing the manager for the player's lives.
+ */
 public interface LivesManager {
 
-    /**Get the player's number of lives
-    */
+    /**
+     * Get the player's number of lives.
+     *
+     * @return the player's current number of lives
+     */
     int getlives();
 
-    /**manage the game over
-    */
+    /**
+     * Manage the game over.
+     *
+     * @return true if the game is over, false otherwise
+     */
     boolean isGameOver();
 
-    /**Is a "signal" for the life lost
-    */
+    /**
+     * Is a "signal" for the life lost.
+     *
+     * @return true if a life was lost, false otherwise
+     */
     boolean isLifeLost();
 
-    /**Is a "signal" for the life gained 
-    */
+    /**
+     * Is a "signal" for the life gained.
+     *
+     * @return true if a life was gained, false otherwise
+     */
     boolean isLifeGained();
 
-    /**decrease the player's lives by 1
-    */
+    /**
+     * Decrease the player's lives by 1.
+     */
     void loseLives();
 
-    /**add a life to the player
-    */
+    /**
+     * Add a life to the player.
+     */
     void addLife();
 }

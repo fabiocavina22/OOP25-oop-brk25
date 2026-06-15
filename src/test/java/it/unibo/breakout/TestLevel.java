@@ -49,14 +49,14 @@ class LevelManagerImplTest {
 
     @BeforeEach
     void setUp() {
-        levelManager = new LevelManagerImpl(SCREEN_WIDTH, BRICK_WIDTH, BRICK_HEIGHT, SCREEN_HEIGHT);
+        levelManager = new LevelManagerImpl(SCREEN_WIDTH, BRICK_HEIGHT, SCREEN_HEIGHT);
     }
 
-    private void injectBricks(final List<Brick> bricks) throws Exception {
-        Field field = LevelManagerImpl.class.getDeclaredField("activeBricks");
-        field.setAccessible(true);
+    private void injectBricks(final List<Brick> bricks) throws ReflectiveOperationException {
+        final Field field = LevelManagerImpl.class.getDeclaredField("activeBricks");
+        field.setAccessible(true); // NOPMD - necessary for white-box testing of private state
         @SuppressWarnings("unchecked")
-        List<Brick> activeList = (List<Brick>) field.get(levelManager);
+        final List<Brick> activeList = (List<Brick>) field.get(levelManager);
         activeList.clear();
         activeList.addAll(bricks);
     }
@@ -93,7 +93,7 @@ class LevelManagerImplTest {
 
     @Test
     void testGetActiveBricksIsUnmodifiable() {
-        List<Brick> bricks = levelManager.getActiveBricks();
+        final List<Brick> bricks = levelManager.getActiveBricks();
         assertThrows(UnsupportedOperationException.class,
                 () -> bricks.remove(0),
                 "Active bricks list should be unmodifiable");
@@ -102,8 +102,8 @@ class LevelManagerImplTest {
     @Test
     void testInitialBrickCountMatchesExpectedRows() {
         // INITIAL_ROWS = 3, columns = SCREEN_WIDTH / BRICK_WIDTH = 10
-        int expectedColumns = SCREEN_WIDTH / BRICK_WIDTH;
-        int expectedBricks  = ROWS_GENERATED_INIT * expectedColumns;
+        final int expectedColumns = SCREEN_WIDTH / BRICK_WIDTH;
+        final int expectedBricks  = ROWS_GENERATED_INIT * expectedColumns;
         assertEquals(expectedBricks, levelManager.getActiveBricks().size(),
                 "Initial brick count should be INITIAL_ROWS * columns");
     }
@@ -114,16 +114,16 @@ class LevelManagerImplTest {
 
     @Test
     void testUpdateMovesBricksDown() {
-        double initialY = levelManager.getActiveBricks().get(0).getY();
+        final double initialY = levelManager.getActiveBricks().get(0).getY();
         levelManager.update(1.0);
-        double newY = levelManager.getActiveBricks().get(0).getY();
+        final double newY = levelManager.getActiveBricks().get(0).getY();
         assertTrue(newY > initialY,
                 "Bricks should move down after update");
     }
 
     @Test
     void testUpdateSpawnsNewRowOverTime() {
-        int initialRows = levelManager.getRowsGenerated();
+        final int initialRows = levelManager.getRowsGenerated();
         levelManager.update(UPDATE_DELTA_HUGE);
         assertTrue(levelManager.getRowsGenerated() > initialRows,
                 "New rows should be generated after sufficient time");
@@ -132,7 +132,7 @@ class LevelManagerImplTest {
     @Test
     void testUpdateRemovesOffScreenBricks() {
         levelManager.update(1000.0);
-        for (Brick b : levelManager.getActiveBricks()) {
+        for (final Brick b : levelManager.getActiveBricks()) {
             assertTrue(b.getY() <= SCREEN_HEIGHT,
                     "No brick should be below the screen after update");
         }
@@ -140,7 +140,7 @@ class LevelManagerImplTest {
 
     @Test
     void testScrollSpeedIncreasesOverTime() {
-        double initialSpeed = levelManager.getScrollSpeed();
+        final double initialSpeed = levelManager.getScrollSpeed();
         levelManager.update(THRESHOLD_OFFSET);
         assertTrue(levelManager.getScrollSpeed() > initialSpeed,
                 "Scroll speed should increase as more rows are generated");
@@ -152,9 +152,9 @@ class LevelManagerImplTest {
 
     @Test
     void testRemoveBrickDecreasesCount() {
-        List<Brick> bricks = levelManager.getActiveBricks();
-        int initialSize = bricks.size();
-        Brick toRemove = bricks.get(0);
+        final List<Brick> bricks = levelManager.getActiveBricks();
+        final int initialSize = bricks.size();
+        final Brick toRemove = bricks.get(0);
 
         levelManager.removeBrick(toRemove);
 
@@ -164,7 +164,7 @@ class LevelManagerImplTest {
 
     @Test
     void testRemoveBrickActuallyRemovesCorrectBrick() {
-        Brick toRemove = levelManager.getActiveBricks().get(0);
+        final Brick toRemove = levelManager.getActiveBricks().get(0);
         levelManager.removeBrick(toRemove);
         assertFalse(levelManager.getActiveBricks().contains(toRemove),
                 "Removed brick should no longer be in the active list");
@@ -175,15 +175,15 @@ class LevelManagerImplTest {
     // -------------------------------------------------------------------------
 
     @Test
-    void testRemoveDestroyedBricks() throws Exception {
-        BrickImpl normalBrick   = new BrickImpl(0, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 0);
-        BrickImpl destroyedBrick = new BrickImpl(BRICK_SIZE_INJECT, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 1);
+    void testRemoveDestroyedBricks() throws ReflectiveOperationException {
+        final BrickImpl normalBrick    = new BrickImpl(0, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 0);
+        final BrickImpl destroyedBrick = new BrickImpl(BRICK_SIZE_INJECT, 0, 1, BRICK_SIZE_INJECT, BRICK_SIZE_INJECT, 1, 1);
 
         destroyedBrick.hit();
 
         injectBricks(List.of(normalBrick, destroyedBrick));
         levelManager.removeDestroyedBricks();
-        List<Brick> bricks = levelManager.getActiveBricks();
+        final List<Brick> bricks = levelManager.getActiveBricks();
         assertEquals(1, bricks.size());
         assertTrue(bricks.contains(normalBrick));
         assertFalse(bricks.contains(destroyedBrick));
@@ -201,7 +201,7 @@ class LevelManagerImplTest {
 
     @Test
     void testHasBricksReachedThresholdTrueAfterScroll() {
-        double threshold = SCREEN_HEIGHT - THRESHOLD_OFFSET;
+        final double threshold = SCREEN_HEIGHT - THRESHOLD_OFFSET;
         boolean reached = false;
 
         for (int i = 0; i < FRAMES_MANY; i++) {
@@ -226,13 +226,14 @@ class LevelManagerImplTest {
         assertTrue(levelManager.hasBricksReachedThreshold(THRESHOLD_FIXED),
                 "Bottom edge of brick should trigger the threshold check");
     }
+
     // -------------------------------------------------------------------------
     // updateDimensions()
     // -------------------------------------------------------------------------
 
     @Test
     void testUpdateDimensionsInvalidInputs() {
-        int initialCount = levelManager.getActiveBricks().size();
+        final int initialCount = levelManager.getActiveBricks().size();
 
         levelManager.updateDimensions(INVALID_WIDTH_ZERO, SCREEN_HEIGHT);
         assertEquals(initialCount, levelManager.getActiveBricks().size());
@@ -245,7 +246,7 @@ class LevelManagerImplTest {
     void testUpdateDimensionsFirstResize() {
         levelManager.updateDimensions(RESIZE_WIDTH_FIRST, RESIZE_HEIGHT_FIRST);
 
-        List<Brick> bricks = levelManager.getActiveBricks();
+        final List<Brick> bricks = levelManager.getActiveBricks();
         assertFalse(bricks.isEmpty());
         assertEquals(EXPECTED_COL_WIDTH, bricks.get(0).getWidth(), SPEED_TOLERANCE);
     }
@@ -253,15 +254,14 @@ class LevelManagerImplTest {
     @Test
     void testUpdateDimensionsSubsequentResizeScalesBricks() {
         levelManager.updateDimensions(RESIZE_WIDTH_BASE, RESIZE_HEIGHT_BASE);
-        double originalX = levelManager.getActiveBricks().get(1).getX();
+        final double originalX = levelManager.getActiveBricks().get(1).getX();
 
         levelManager.updateDimensions(RESIZE_WIDTH_LARGE, RESIZE_HEIGHT_LARGE);
 
-        double scaledX = levelManager.getActiveBricks().get(1).getX();
+        final double scaledX = levelManager.getActiveBricks().get(1).getX();
         assertEquals(originalX * SCALE_FACTOR, scaledX, SCALE_TOLERANCE,
                 "The X coordinates of the existing blocks must be scaled proportionally");
     }
-
 
     // -------------------------------------------------------------------------
     // getScrollSpeed() / getRowsGenerated()
@@ -284,7 +284,7 @@ class LevelManagerImplTest {
         int prev = levelManager.getRowsGenerated();
         for (int i = 0; i < MONOTONE_ITERATIONS; i++) {
             levelManager.update(UPDATE_DELTA_LARGE);
-            int current = levelManager.getRowsGenerated();
+            final int current = levelManager.getRowsGenerated();
             assertTrue(current >= prev,
                     "rowsGenerated should never decrease");
             prev = current;

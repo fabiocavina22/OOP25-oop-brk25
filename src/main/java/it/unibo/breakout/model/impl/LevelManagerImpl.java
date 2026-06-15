@@ -1,17 +1,23 @@
 package it.unibo.breakout.model.impl;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import it.unibo.breakout.model.api.LevelManager;
 import it.unibo.breakout.model.api.Brick;
 
+/**
+ * Concrete implementation of the {@link LevelManager} interface.
+ * Handles level progression, brick placement, and real-time screen resizing.
+ */
 public class LevelManagerImpl implements LevelManager {
 
     private final List<Brick> activeBricks;
     private int screenWidth;
     private int screenHeight;
-    final int brickWidth;
     private final int brickHeight;
     private double rowSpacing;
     private double scrollSpeed;
@@ -26,17 +32,22 @@ public class LevelManagerImpl implements LevelManager {
     private static final double ROW_GAP         = 0.0;
     private static final int    INITIAL_ROWS    = 3;
 
+    // Constants to avoid magic numbers in random selection thresholds
+    private static final int ROLL_MAX                      = 100;
+    private static final int ROLL_THRESHOLD_INDESTRUCTIBLE = 10;
+    private static final int ROLL_THRESHOLD_DOUBLE         = 35;
+    private static final int ROLL_THRESHOLD_BONUS_MALUS    = 44;
+    private static final int ROLL_THRESHOLD_TNT            = 50;
+
     /**
      * @param screenWidth  width of the game screen in pixels
-     * @param brickWidth   width of a single brick in pixels
      * @param brickHeight  height of a single brick in pixels
      * @param screenHeight height of the game screen in pixels
      */
-    public LevelManagerImpl(final int screenWidth, final int brickWidth, final int brickHeight, final int screenHeight) {
+    public LevelManagerImpl(final int screenWidth, final int brickHeight, final int screenHeight) {
         this.activeBricks = new ArrayList<>();
         this.screenWidth  = screenWidth;
         this.screenHeight = screenHeight;
-        this.brickWidth   = brickWidth;
         this.brickHeight  = brickHeight;
         this.rowSpacing   = brickHeight + ROW_GAP;
         reset();
@@ -213,36 +224,44 @@ public class LevelManagerImpl implements LevelManager {
             if (type == BrickFactory.TYPE_BONUS_MALUS || type == BrickFactory.TYPE_TNT) {
                 specialGenerated = true;
             }
-            activeBricks.add(BrickFactory.create(currentX, yPosition, type, currentBrickWidth, currentBrickWidth, currentRowId, i)); //The bricks are squared
+
+            // Bricks are square, so we pass currentBrickWidth as both width and height
+            activeBricks.add(BrickFactory.create(
+                    currentX,
+                    yPosition,
+                    type,
+                    currentBrickWidth,
+                    currentBrickWidth,
+                    currentRowId,
+                    i
+            ));
             currentX += currentBrickWidth;
         }
         rowsGenerated++;
     }
 
     /**
-     * Picks a brick type using weighted random selection:
-     * 10% indestructible (type 3, capped at max),
-     * 25% double-hit (type 2),
-     * 9% special power up brick (type 4)
-     * 6% special tnt brick (type 5)
-     * 50%  normal classic 1 hit brick (type 1)
+     * Picks a brick type using weighted random selection.
+     * The distribution includes indestructible, double-hit,
+     * bonus/malus, tnt, and normal bricks.
      *
      * @param currentIndestructible indestructible bricks already placed in this row
      * @param max                   maximum allowed indestructible bricks per row
+     * @param specialGenerated      true if a special brick has already been generated in the row
      * @return brick type: 1, 2, 3, 4 or 5
      */
     private int chooseBrickType(final int currentIndestructible, final int max, final boolean specialGenerated) {
-        final int roll = rng.nextInt(100);
-        if (roll < 10 && currentIndestructible < max) {
+        final int roll = rng.nextInt(ROLL_MAX);
+        if (roll < ROLL_THRESHOLD_INDESTRUCTIBLE && currentIndestructible < max) {
             return BrickFactory.TYPE_INDESTRUCTIBLE;
         }
-        if (roll < 35) {
+        if (roll < ROLL_THRESHOLD_DOUBLE) {
             return BrickFactory.TYPE_DOUBLE;
         }
-        if (roll < 44 && !specialGenerated) {
+        if (roll < ROLL_THRESHOLD_BONUS_MALUS && !specialGenerated) {
             return BrickFactory.TYPE_BONUS_MALUS; //power up
         }
-        if (roll < 50 && !specialGenerated) {
+        if (roll < ROLL_THRESHOLD_TNT && !specialGenerated) {
             return BrickFactory.TYPE_TNT; //explosive block
         }
         return BrickFactory.TYPE_NORMAL;

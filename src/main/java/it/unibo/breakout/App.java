@@ -61,7 +61,7 @@ public final class App {
 
         final PaddleImpl paddle = new PaddleImpl(paddleX, paddleY, paddleWidth, paddleHeight, PADDLE_SPEED_PX);
         final BallImpl ball = new BallImpl(ballX, ballY, ballDiameter, 0.0, BALL_INIT_VY);
-        final LevelManagerImpl levelManager = new LevelManagerImpl(mainPanelWidth, brickSide, brickSide, mainPanelHeight);
+        final LevelManagerImpl levelManager = new LevelManagerImpl(mainPanelWidth, brickSide, mainPanelHeight);
         final LeaderboardImpl leaderboard = new LeaderboardImpl();
         final SoundManagerImpl soundManager = new SoundManagerImpl();
 

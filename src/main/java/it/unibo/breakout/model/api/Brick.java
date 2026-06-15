@@ -13,6 +13,7 @@ public interface Brick extends Collidable {
      *
      * @return the X coordinate in pixels
      */
+    @Override
     double getX();
 
     /**
@@ -20,6 +21,7 @@ public interface Brick extends Collidable {
      *
      * @return the Y coordinate in pixels
      */
+    @Override
     double getY();
 
     /**

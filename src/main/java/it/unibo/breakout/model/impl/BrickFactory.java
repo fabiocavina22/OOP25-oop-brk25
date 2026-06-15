@@ -63,5 +63,4 @@ public final class BrickFactory {
             default -> throw new IllegalArgumentException("Unknown brick type: " + type);
         };
     }
-
 }
